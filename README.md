@@ -26,8 +26,6 @@ Important thing now is all those packages are linked together so changing someth
 
 
 ### TODO
-- prettier for all packages
-- eslint for all packages
 - jest for all packages
 - changelog generation? - https://github.com/lerna/lerna-changelog
 - learna publish packages to npm script?
