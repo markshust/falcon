@@ -15,13 +15,13 @@ cd package-name
 yarn add dependency-name
 ```
 
-##### Example how to add @deity-falcon/client dependency into examples/shop-with-blog
+##### Example how to add @deity/falcon-client dependency into examples/shop-with-blog
 package version needs to be specified as it's not yet published to npm registry
 ```
 cd examples/shop-with-blog
-yarn add @deity-falcon/client@1.0.0
+yarn add @deity/falcon-client@1.0.0
 ```
-Important thing now is all those packages are linked together so changing something in `@deity-falcon/client` will be automatically reflected in `shop-with-blog` example
+Important thing now is all those packages are linked together so changing something in `@deity/falcon-client` will be automatically reflected in `shop-with-blog` example
 
 
 

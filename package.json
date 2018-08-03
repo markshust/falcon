@@ -1,11 +1,11 @@
 {
-  "name": "deity-falcon",
+  "name": "falcon",
   "private": true,
   "license": "osl-3.0",
   "devDependencies": {
     "lerna": "^3.0.0-rc.0"
   },
-  "repository": "git@github.com:deity-io/deity-falcon.git",
+  "repository": "git@github.com:deity-io/falcon.git",
   "workspaces": [
     "packages/*",
     "examples/*"

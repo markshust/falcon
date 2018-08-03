@@ -1,1 +1,1 @@
-require('@deity-falcon/client');
+require('@deity/falcon-client');
