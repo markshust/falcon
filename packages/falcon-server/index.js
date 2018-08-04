@@ -1,1 +1,1 @@
-console.log('@deity/falcon-server hello!')
+console.log('@deity/falcon-server hello!');
