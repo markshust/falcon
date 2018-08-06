@@ -1,25 +1,31 @@
 {
   "presets": [
     "react",
-    ["env", {
-      "useBuiltIns": true,
-      "targets": {
-        "node": "current",
-        "include": ["transform-export-extensions","transform-decorators-legacy"],
-        "browsers": ["last 2 versions", "safari >= 7"]
+    [
+      "env",
+      {
+        "useBuiltIns": true,
+        "targets": {
+          "node": "current",
+          "include": ["transform-export-extensions", "transform-decorators-legacy"],
+          "browsers": ["last 2 versions", "safari >= 7"]
+        }
       }
-    }]
+    ]
   ],
 
   "plugins": [
     "graphql-tag",
     "inline-import-graphql-ast",
-    ["module-resolver", {
-      "root": ["./node_modules", "./src", "./node_modules/deity-core/src"],
-      "alias": {
-        "deity-core": "deity-core/src"
+    [
+      "module-resolver",
+      {
+        "root": ["./node_modules", "./src", "./node_modules/falcon-core/src"],
+        "alias": {
+          "falcon-core": "falcon-core/src"
+        }
       }
-    }],
+    ],
     "transform-export-extensions",
     "add-module-exports",
     "transform-object-rest-spread",
@@ -32,12 +38,8 @@
       "plugins": []
     },
     "production": {
-      "plugins": [
-        "transform-react-remove-prop-types"
-      ]
+      "plugins": ["transform-react-remove-prop-types"]
     }
   },
-  "ignore": [
-    "**/adyen.encrypt.nodom.js"
-  ]
+  "ignore": ["**/adyen.encrypt.nodom.js"]
 }

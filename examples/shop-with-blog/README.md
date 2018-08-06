@@ -1,1 +1,1 @@
-Project based on [Deity](https://bitbucket.org/deity-core/deity-core)
+Project based on [Deity](https://bitbucket.org/falcon-core/falcon-core)

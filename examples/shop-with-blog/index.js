@@ -1,1 +1,1 @@
-require('@deity/falcon-client');
+import '@deity/falcon-client';
