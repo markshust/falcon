@@ -20,9 +20,9 @@
     [
       "module-resolver",
       {
-        "root": ["./node_modules", "./src", "./node_modules/falcon-core/src"],
+        "root": ["./node_modules", "./src", "./node_modules/@deity/falcon-core/src"],
         "alias": {
-          "falcon-core": "falcon-core/src"
+          "@deity/falcon-core": "@deity/falcon-core/src"
         }
       }
     ],
