@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { translate } from 'react-i18next';
-import multipleCssModules from 'falcon-core/lib/cssModules';
+import multipleCssModules from '@deity/falcon-core/lib/cssModules';
 import Grid from 'react-bootstrap/lib/Grid';
 import ProductList from 'components/Product/components/List';
 import { asyncConnect } from 'redux-connect';

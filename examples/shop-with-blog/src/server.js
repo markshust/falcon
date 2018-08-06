@@ -5,10 +5,10 @@ import path from 'path';
 import bodyParser from 'body-parser';
 import Bluebird from 'bluebird';
 import config from 'config';
-import Initiator from 'falcon-core/helpers/Initiator';
-import Logger from 'falcon-core/helpers/Logger';
-import { setQuoteId } from 'falcon-core/redux/modules/cart';
-import { getSessionStore, createSession } from 'falcon-core/helpers/session';
+import Initiator from '@deity/falcon-core/helpers/Initiator';
+import Logger from '@deity/falcon-core/helpers/Logger';
+import { setQuoteId } from '@deity/falcon-core/redux/modules/cart';
+import { getSessionStore, createSession } from '@deity/falcon-core/helpers/session';
 import getRoutes from './routes';
 import createStore from './redux/create';
 

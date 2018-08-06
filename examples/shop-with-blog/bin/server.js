@@ -26,7 +26,7 @@ require('../server.babel'); // babel registration (runtime transpilation for nod
 // https://github.com/halt-hammerzeit/webpack-isomorphic-tools
 const WebpackIsomorphicTools = require('webpack-isomorphic-tools');
 global.webpackIsomorphicTools = new WebpackIsomorphicTools(
-  require('falcon-core/webpack/webpack-isomorphic-tools')
+  require('@deity/falcon-core/webpack/webpack-isomorphic-tools')
 ).server(rootDir, function() {
   require('../src/server');
 });

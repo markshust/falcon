@@ -3,3 +3,4 @@ yarn.lock
 package-lock.json
 .vscode/
 examples/**/static/dist/
+examples/**/webpack-assets.json
