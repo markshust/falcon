@@ -1,5 +1,5 @@
 import App from 'containers/App';
-import routes from '@deity/falcon-core/routes';
+import routes from 'falcon-core/routes';
 
 if (typeof require.ensure !== 'function') require.ensure = (deps, callback) => callback(require);
 
@@ -20,7 +20,7 @@ export default store => {
         },
         childRoutes: [
           ...coreRoutes,
-          require('@deity/falcon-core/routes/dynamic')(store, {
+          require('falcon-core/routes/dynamic')(store, {
             getComponent: type => {
               // todo move to core ?
               switch (type) {

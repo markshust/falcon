@@ -1,4 +1,4 @@
-import Logger from '@deity/falcon-core/helpers/Logger';
+import Logger from 'falcon-core/helpers/Logger';
 import uniq from 'lodash/uniq';
 
 export default function clientMiddleware(client) {

@@ -22,7 +22,7 @@
       {
         "root": ["./node_modules", "./src", "./node_modules/@deity/falcon-core/src"],
         "alias": {
-          "@deity/falcon-core": "@deity/falcon-core/src"
+          "falcon-core": "@deity/falcon-core/src"
         }
       }
     ],
