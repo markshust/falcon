@@ -1,0 +1,72 @@
+// Transitions styles (react-transition-group)
+
+// Button on product page (while adding to cart)
+.btnLoading {
+  &-entering,
+  &-entered,
+  &-exiting {
+    cursor: not-allowed;
+    pointer-events: none;
+    opacity: 0.4;
+    position: relative;
+    overflow: hidden;
+    &:after {
+      content: '';
+      position: absolute;
+      height: 100%;
+      width: 50%;
+      background: #62bbff;
+      top: 0;
+      z-index: -1;
+      @include vendor-prefix(animation, progress 0.7s infinite linear);
+    }
+  }
+}
+
+@keyframes progress {
+  0% {
+    left: 0;
+    @include vendor-prefix(transform, translateX(-100%));
+  }
+  100% {
+    left: 100%;
+    @include vendor-prefix(transform, translateX(0));
+  }
+}
+
+// Minicart in header and on product page
+
+.minicartTransition {
+  @include vendor-prefix(transition, all 300ms ease-in);
+  @include vendor-prefix(transition-timing-function, cubic-bezier(0.01, 1.26, 1, 1.18));
+  opacity: 0;
+  position: absolute;
+  top: -30px;
+  &-entering,
+  &-entered {
+    opacity: 1;
+    top: 0;
+  }
+  &.minicartHeader {
+    z-index: 2;
+    right: 0;
+  }
+}
+
+// Minicart items transitions (while adding and removing them)
+.fade {
+  &-enter {
+    opacity: 0.01;
+    &.fade-enter-active {
+      opacity: 1;
+      transition: opacity 1000ms ease-in;
+    }
+  }
+  &-exit {
+    opacity: 1;
+    &.fade-exit-active {
+      opacity: 0.01;
+      transition: opacity 800ms ease-in;
+    }
+  }
+}

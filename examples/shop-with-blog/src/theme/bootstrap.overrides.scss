@@ -1,0 +1,39 @@
+// Node modules styles
+@import '~react-image-gallery/styles/scss/image-gallery.scss';
+
+// Overwrite Modules styles
+@import 'fonts';
+@import 'modules/gallery';
+@import 'modules/base';
+@import 'modules/product-list';
+@import 'modules/filters';
+@import 'modules/navs';
+@import 'modules/base';
+@import 'modules/btn';
+@import 'modules/transitions';
+
+html,
+body {
+  font-smooth: always;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizelegibility;
+}
+
+html {
+  overflow-x: hidden;
+  min-height: 100%;
+  @include md {
+    position: relative;
+    padding-bottom: 250px;
+    footer {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+    }
+  }
+}
+
+.container-fluid {
+  max-width: 1280px;
+}

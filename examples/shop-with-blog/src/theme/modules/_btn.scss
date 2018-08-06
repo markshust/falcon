@@ -1,0 +1,62 @@
+// Available buttons: btn, btn-primary, btn-cart
+
+// Base class for every button
+.btn {
+  background-image: none;
+  background: $client-primary;
+  border: 1px solid $client-primary;
+  color: #fff;
+  cursor: pointer;
+  display: inline-block;
+  font-weight: 600;
+  padding: 7px 15px;
+  font-size: 1.4rem;
+  box-sizing: border-box;
+  vertical-align: middle;
+  text-decoration: none;
+  margin: 0;
+  border-radius: 3px;
+  user-select: none;
+  white-space: nowrap;
+  @include transition();
+  &:focus {
+    text-decoration: none;
+    box-shadow: none;
+    outline: 0;
+    color: #fff;
+  }
+  &:hover {
+    background: darken($client-primary, 10%);
+    color: #fff;
+    text-decoration: none;
+  }
+  + .btn,
+  + a {
+    margin-left: 15px;
+  }
+  &:visited {
+    color: #fff;
+  }
+}
+
+// 100% width buttons on lower resolutions ( >768 )
+.btn-primary {
+  width: 100%;
+  margin-bottom: 10px;
+  @include sm {
+    width: auto;
+    margin-bottom: 0;
+  }
+  + .btn,
+  + a {
+    margin-left: 0;
+    @include sm {
+      margin-left: 15px;
+    }
+  }
+}
+
+// Cart buttons on products list
+.btn-cart {
+  font-size: 1.3rem;
+}

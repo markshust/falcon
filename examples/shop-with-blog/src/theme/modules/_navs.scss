@@ -1,0 +1,39 @@
+.product-tabs {
+  margin-bottom: 30px;
+}
+
+.nav-tabs {
+  border-bottom: 0;
+  li {
+    margin-right: -1px;
+    a {
+      margin-right: 0;
+      color: #333;
+      background: #f6f6f6;
+      border-radius: 0;
+      border: 1px solid #ccc;
+      &:visited {
+        color: #7d7d7d;
+      }
+      &:hover {
+        background: #fff;
+        border: 1px solid #ccc;
+        color: #333;
+      }
+    }
+  }
+  &.active {
+    background: #fff;
+    > a {
+      color: #333;
+    }
+  }
+}
+
+.tab-content {
+  > .active {
+    display: block;
+    padding: 25px;
+    border: 1px solid #ccc;
+  }
+}
