@@ -1,1 +1,0 @@
-import '@deity/falcon-client';
