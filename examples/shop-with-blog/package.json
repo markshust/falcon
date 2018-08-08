@@ -1,8 +1,0 @@
-{
-  "name": "@falcon/shop-and-blog",
-  "private": true,
-  "license": "osl-3.0",
-  "version": "1.0.0",
-  "dependencies": {},
-  "devDependencies": {}
-}

@@ -1,0 +1,19 @@
+{
+  "name": "@falcon/shop-and-blog",
+  "private": true,
+  "license": "osl-3.0",
+  "version": "1.0.0",
+  "scripts": {
+    "start": "razzle start",
+    "test": "razzle test --env=jsdom",
+    "build": "razzle build",
+    "start:prod": "NODE_ENV=production node build/server.js"
+  },
+  "dependencies": {
+    "@deity/falcon-client": "1.0.0",
+    "react": "^16.2.0",
+    "react-dom": "^16.2.0",
+    "react-router-dom": "^4.2.2"
+  },
+  "devDependencies": {}
+}
