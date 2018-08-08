@@ -1,14 +1,19 @@
+import fetch from 'isomorphic-unfetch';
 import React from 'react';
 import { StaticRouter } from 'react-router-dom';
 import Koa from 'koa';
 import serve from 'koa-static';
 import helmet from 'koa-helmet';
 import Router from 'koa-router';
-import { renderToString } from 'react-dom/server';
+import { ApolloProvider, renderToStringWithData } from 'react-apollo';
 import App from './App';
+import ApolloClient from './apollo';
 
 // eslint-disable-next-line
 const assets = require(process.env.RAZZLE_ASSETS_MANIFEST);
+
+// Polyfill fetch() on the server (used by apollo-client)
+global.fetch = fetch;
 
 // Initialize `koa-router` and setup a route listening on `GET /*`
 // Logic has been splitted into two chained middleware functions
@@ -16,14 +21,19 @@ const assets = require(process.env.RAZZLE_ASSETS_MANIFEST);
 const router = new Router();
 router.get(
   '/*',
-  (ctx, next) => {
+  async (ctx, next) => {
+    const client = new ApolloClient();
     const context = {};
-    const markup = renderToString(
-      <StaticRouter context={context} location={ctx.url}>
-        <App />
-      </StaticRouter>
+    const AppComponent = (
+      <ApolloProvider client={client}>
+        <StaticRouter location={ctx.url} context={context}>
+          <App />
+        </StaticRouter>
+      </ApolloProvider>
     );
-    ctx.state.markup = markup;
+
+    ctx.state.client = client;
+    ctx.state.markup = await renderToStringWithData(AppComponent);
     return context.url ? ctx.redirect(context.url) : next();
   },
   ctx => {
@@ -45,6 +55,10 @@ router.get(
       </head>
       <body>
           <div id="root">${ctx.state.markup}</div>
+          <script>window.__APOLLO_STATE__ = ${JSON.stringify(ctx.state.client.extract()).replace(
+            /</g,
+            '\\u003c'
+          )};</script>
       </body>
     </html>`;
   }
