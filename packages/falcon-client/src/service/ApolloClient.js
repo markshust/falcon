@@ -25,7 +25,7 @@ export default (isBrowser = false, initialState = {}, serverUri = 'http://localh
 
   return new ApolloClient({
     cache,
-    connectToDevTools: isBrowser,
+    connectToDevTools: isBrowser && process.env.NODE_ENV !== 'production',
     ssrMode: !isBrowser,
     link: from([linkState, httpLink])
   });
