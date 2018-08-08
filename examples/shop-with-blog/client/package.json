@@ -1,7 +1,7 @@
 {
   "name": "@falcon/shop-and-blog",
   "private": true,
-  "license": "osl-3.0",
+  "license": "OSL-3.0",
   "version": "1.0.0",
   "scripts": {
     "start": "razzle start",

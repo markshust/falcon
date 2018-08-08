@@ -1,0 +1,9 @@
+{
+  "name": "@deity/shop-with-blog-server",
+  "license": "OSL-3.0",
+  "main": "index.js",
+  "version": "1.0.0",
+  "dependencies": {
+    "@deity/falcon-server": "1.0.0"
+  }
+}

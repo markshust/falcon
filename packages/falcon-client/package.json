@@ -1,7 +1,7 @@
 {
   "name": "@deity/falcon-client",
   "version": "1.0.0",
-  "license": "osl-3.0",
+  "license": "OSL-3.0",
   "main": "index.js",
   "bin": {
     "falcon-client": "./src/index.js"
