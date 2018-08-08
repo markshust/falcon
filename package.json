@@ -22,7 +22,8 @@
   "repository": "git@github.com:deity-io/falcon.git",
   "workspaces": [
     "packages/*",
-    "examples/*"
+    "examples/*",
+    "examples/shop-with-blog/client"
   ],
   "version": "1.0.0"
 }
