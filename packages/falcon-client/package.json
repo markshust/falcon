@@ -8,15 +8,25 @@
   },
   "repository": "git@github.com:deity-io/falcon.git",
   "dependencies": {
-    "koa": "^2.5.0",
+    "apollo-client": "^2.3.7",
+    "apollo-link": "^1.2.2",
+    "apollo-link-http": "^1.5.4",
+    "apollo-link-state": "^0.4.1",
+    "apollo-cache-inmemory": "^1.2.6",
+    "graphql": "^0.13.2",
+    "graphql-tag": "^2.9.2",
+    "isomorphic-unfetch": "^2.1.1",
+    "koa": "^2.5.2",
     "koa-helmet": "^3.3.0",
     "koa-router": "^7.4.0",
     "koa-static": "^4.0.2",
-    "react": "^16.2.0",
-    "react-dom": "^16.2.0",
-    "react-router-dom": "^4.2.2"
+    "react": "^16.4.2",
+    "react-apollo": "^2.1.9",
+    "react-dom": "^16.4.2",
+    "react-router-dom": "^4.3.1"
   },
   "devDependencies": {
+    "apollo-link-logger": "^1.2.3",
     "razzle": "^0.8.12"
   }
 }
