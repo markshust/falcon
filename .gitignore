@@ -2,6 +2,9 @@ node_modules/
 yarn.lock
 package-lock.json
 .vscode/
+.vimrc
+*.swp
+*.swo
 examples/**/static/dist/
 examples/**/static/manifest.json
 examples/**/webpack-assets.json
