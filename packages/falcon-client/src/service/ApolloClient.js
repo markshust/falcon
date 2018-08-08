@@ -8,10 +8,10 @@ import { InMemoryCache } from 'apollo-cache-inmemory';
  * Creates an ApolloClient instance with the provided arguments
  * @param {boolean} [isBrowser=false] Boolean flag to determine the current environment
  * @param {object} [initialState={}] Object to restore Cache data from
- * @param {string} [serverUri="http://localhost:3000/graphql"] ApolloServer URL
+ * @param {string} [serverUri="http://localhost:4000/graphql"] ApolloServer URL
  * @return {ApolloClient} ApolloClient instance
  */
-export default (isBrowser = false, initialState = {}, serverUri = 'http://localhost:3000/graphql') => {
+export default (isBrowser = false, initialState = {}, serverUri = 'http://localhost:4000/graphql') => {
   const cache = new InMemoryCache().restore(initialState || {});
   const linkState = withClientState({
     cache,
