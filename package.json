@@ -21,9 +21,11 @@
   },
   "repository": "git@github.com:deity-io/falcon.git",
   "workspaces": [
-    "packages/*",
-    "examples/*",
-    "examples/shop-with-blog/client"
+    "packages/falcon-client",
+    "packages/falcon-server",
+    "packages/falcon-ui",
+    "examples/shop-with-blog/client",
+    "examples/shop-with-blog/server"
   ],
   "version": "1.0.0"
 }
