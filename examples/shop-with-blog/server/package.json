@@ -7,7 +7,7 @@
     "@deity/falcon-server": "1.0.0"
   },
   "scripts": {
-    "dev": "nodemon --exec falcon-server index.js"
+    "dev": "nodemon --inspect index.js"
   },
   "devDependencies": {
     "nodemon": "^1.18.3"
