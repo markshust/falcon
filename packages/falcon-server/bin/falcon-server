@@ -1,5 +1,7 @@
 #!/usr/bin/env node
 
+global.__SERVER__ = true;
+
 const fs = require('fs');
 const path = require('path');
 const FalconServer = require('../src/index.js');

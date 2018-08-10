@@ -8,6 +8,7 @@
     "falcon-server": "bin/falcon-server"
   },
   "dependencies": {
+    "@deity/falcon-logger": "1.0.0",
     "apollo-server-koa": "^2.0.0",
     "graphql": "^0.13.2",
     "koa": "^2.5.2"

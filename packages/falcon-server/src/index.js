@@ -1,11 +1,14 @@
 const Koa = require('koa');
 const { ApolloServer, gql } = require('apollo-server-koa');
+const Logger = require('@deity/falcon-logger');
 
 const ENV = process.env.NODE_ENV || 'development';
 const isDevelopment = ENV === 'development';
 
 class FalconServer {
   constructor(conf) {
+    Logger.setLogLevel(conf.logLevel);
+
     this.config = conf;
   }
 
@@ -35,7 +38,7 @@ class FalconServer {
     server.applyMiddleware({ app });
 
     app.listen({ port: this.config.port }, () => {
-      console.log(`🚀 Server ready at http://localhost:${this.config.port}`);
+      Logger.info(`🚀 Server ready at http://localhost:${this.config.port}`);
     });
   }
 }

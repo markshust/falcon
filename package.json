@@ -24,6 +24,7 @@
     "packages/falcon-client",
     "packages/falcon-server",
     "packages/falcon-ui",
+    "packages/falcon-logger",
     "examples/shop-with-blog/client",
     "examples/shop-with-blog/server"
   ],

@@ -1,0 +1,11 @@
+{
+  "name": "@deity/falcon-logger",
+  "license": "OSL-3.0",
+  "main": "src/index.js",
+  "version": "1.0.0",
+  "repository": "git@github.com:deity-io/falcon.git",
+  "dependencies": {
+    "util": "^0.11.0",
+    "winston": "^3.0.0"
+  }
+}
