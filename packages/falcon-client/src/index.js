@@ -1,4 +1,5 @@
 import http from 'http';
+import ClientApp from '@clientApp';
 import app from './server';
 
 // Use `app#callback()` method here instead of directly
@@ -13,6 +14,9 @@ server.listen(process.env.PORT || 3000, error => {
   }
 
   console.log('🚀 started');
+  if (ClientApp.onServerStarted) {
+    ClientApp.onServerStarted(server);
+  }
 });
 
 if (module.hot) {
