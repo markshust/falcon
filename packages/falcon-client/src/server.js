@@ -7,7 +7,7 @@ import helmet from 'koa-helmet';
 import Router from 'koa-router';
 import { ApolloProvider, renderToStringWithData } from 'react-apollo';
 import ClientApp from '@clientApp/index';
-import ApolloClient from './apollo';
+import ApolloClient from './service/ApolloClient';
 
 // eslint-disable-next-line
 const assets = require(process.env.RAZZLE_ASSETS_MANIFEST);
