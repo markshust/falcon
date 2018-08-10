@@ -1,12 +1,12 @@
 import React from 'react';
-import logo from './koajs-logo.png';
+import logo from './../public/logo.png';
 import './Home.css';
 
 const Home = () => (
   <div className="Home">
     <div className="Home-header">
       <img src={logo} className="Home-logo" alt="logo" />
-      <h2>Welcome to Razzle + Koa</h2>
+      <h2>Welcome to @deity + Razzle + Koa </h2>
     </div>
     <pre className="Home-intro">
       To get started, edit <b>src/App.js</b> or <b>src/Home.js</b> and save to reload.
