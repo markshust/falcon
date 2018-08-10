@@ -3,10 +3,13 @@ coverage/
 .DS_Store
 yarn.lock
 package-lock.json
+
 .vscode/
 .vimrc
 *.swp
 *.swo
+
+examples/**/build/
 examples/**/static/dist/
 examples/**/static/manifest.json
 examples/**/webpack-assets.json
