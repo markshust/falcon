@@ -8,8 +8,6 @@ switch (script) {
   case 'build':
   case 'start':
   case 'test': {
-    // const result = spawn.sync('yarn razzle-start', { stdio: 'inherit' });
-
     const result = spawn.sync('node', [require.resolve(`razzle/scripts/${script}`)].concat(args), { stdio: 'inherit' });
 
     if (result.signal) {
