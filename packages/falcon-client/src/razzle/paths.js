@@ -11,6 +11,7 @@ module.exports = {
     appClientIndexJs: resolveApp('src/client')
   },
   falconClient: {
+    rootDir: path.dirname(require.resolve('@deity/falcon-client/package.json')),
     appServerIndexJs: require.resolve('@deity/falcon-client/src/index'),
     appClientIndexJs: require.resolve('@deity/falcon-client/src/client')
   }

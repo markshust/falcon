@@ -32,15 +32,14 @@ function setEntryToFalconClient(config, target) {
   return config;
 }
 
-function makeFalconClientJsFilesResolvedByWebpack(config) {
+function makeFalconClientJsFileResolvedByWebpack(config) {
   const babelLoaderFinder = makeLoaderFinder('babel-loader');
   const babelLoader = config.module.rules.find(babelLoaderFinder);
   if (!babelLoader) {
     throw new Error(`'babel-loader' was erased from config, it is required to configure '@deity/falcon-client'`);
   }
 
-  const falconClientDir = path.dirname(require.resolve('@deity/falcon-client/package.json'));
-  babelLoader.include.push(path.join(falconClientDir, 'src'));
+  babelLoader.include.push(path.join(paths.falconClient.rootDir, 'src'));
 
   return config;
 }
@@ -53,9 +52,9 @@ function addAliasToClientAppSrc(config) {
 
 // eslint-disable-next-line no-unused-vars
 module.exports = (config, { target, dev }, webpackObject) => {
-  config = addAliasToClientAppSrc(config);
-  config = setEntryToFalconClient(config, target);
-  config = makeFalconClientJsFilesResolvedByWebpack(config);
+  addAliasToClientAppSrc(config);
+  setEntryToFalconClient(config, target);
+  makeFalconClientJsFileResolvedByWebpack(config);
 
   return config;
 };
