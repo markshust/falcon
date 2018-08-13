@@ -6,7 +6,7 @@ import serve from 'koa-static';
 import helmet from 'koa-helmet';
 import Router from 'koa-router';
 import { ApolloProvider, renderToStringWithData } from 'react-apollo';
-import ClientApp from '@clientApp/index';
+import ClientApp from './clientApp';
 import ApolloClient from './service/ApolloClient';
 
 // eslint-disable-next-line
@@ -68,9 +68,7 @@ router.get(
 
 // Intialize and configure Koa application
 const server = new Koa();
-if (ClientApp.onServerCreated) {
-  ClientApp.onServerCreated(server);
-}
+ClientApp.onServerCreated(server);
 
 server
   // `koa-helmet` provides security headers to help prevent common, well known attacks
@@ -81,8 +79,6 @@ server
   .use(router.routes())
   .use(router.allowedMethods());
 
-if (ClientApp.onServerInitialized) {
-  ClientApp.onServerInitialized(server);
-}
+ClientApp.onServerInitialized(server);
 
 export default server;

@@ -2,7 +2,7 @@ import { ApolloProvider } from 'react-apollo';
 import BrowserRouter from 'react-router-dom/BrowserRouter';
 import React from 'react';
 import { hydrate } from 'react-dom';
-import ClientApp from '@clientApp';
+import ClientApp from './clientApp';
 import ApolloClient from './service/ApolloClient';
 
 /* eslint-disable-next-line no-underscore-dangle */

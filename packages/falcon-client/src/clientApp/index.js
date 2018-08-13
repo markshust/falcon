@@ -1,0 +1,15 @@
+import React from 'react';
+import app from '@clientApp';
+
+if (!React.isValidElement(app.component)) {
+  const clientAppIndexJs = require.resolve('@clientApp');
+  throw new Error(`File ${clientAppIndexJs} does not export valid React component!
+   Make sure that you export React component e.g. 'export const component = <App />'`);
+}
+
+export default {
+  component: app.component,
+  onServerCreated: app.onServerCreated || function() {},
+  onServerInitialized: app.onServerInitialized || function() {},
+  onServerStarted: app.onServerStarted || function() {}
+};
