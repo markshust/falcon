@@ -64,14 +64,14 @@ This is the same as --inspect, but will also break before user code starts. (to 
 If your application is running, and you need to manually restart your server, you do not need to completely kill and rebundle your application. Instead you can just type `rs` and press enter in terminal.
 
 ## API contract [TODO]
-File `./src/index.js` needs to exports:
+File `./src/index.js` needs to export:
 
 * `component: React.ReactElement<any>` - valid React element
 
 optionally you can export following configuration to inject your customisations
-* `onServerCreated(server: object)` - handler invoked immediately after koa server creation
-* `onServerInitialized(server: object)` - handler invoked immediately after koa server setup (when middlewares like handling errors, serving static files and routes were seted up)
-* `onServerStarted(server: object)` - handler invoked when koa server started with no errors
+* `onServerCreated(server: Koa)` - handler invoked immediately after koa server creation
+* `onServerInitialized(server: Koa)` - handler invoked immediately after koa server setup (when middlewares like handling errors, serving static files and routes were seted up)
+* `onServerStarted(server: Koa)` - handler invoked when koa server started with no errors
 
 ## Idea behind the `falcon-server` [TODO]
 `falcon-client` is a application host installed as npm module which cover all necessary configuration ad provide API for Magento, WordPress, Algolia or Elasitc Search. All what you need to do is
