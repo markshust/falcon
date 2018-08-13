@@ -7,6 +7,22 @@ module.exports = {
     jest: true
   },
   rules: {
+    'class-methods-use-this': 'off',
+    'consistent-return': 0,
+    'global-require': 'off',
+    'import/default': 0,
+    'import/no-duplicates': 0,
+    'import/named': 0,
+    'import/namespace': 0,
+    'import/no-unresolved': 0,
+    'import/no-named-as-default': 2,
+    'import/extensions': ['off', 'never'],
+    'import/no-extraneous-dependencies': [
+      'error',
+      {
+        devDependencies: ['**/__tests__/*', '**/*.test.js', '**/webpack/*.js']
+      }
+    ],
     'jsx-a11y/anchor-is-valid': [
       'off',
       {
@@ -34,19 +50,7 @@ module.exports = {
     // problem with redux-connect decorator so we cannot use required on props,
     // therefore everything would need to be defined in default props
     'react/require-default-props': [0],
-    'import/default': 0,
-    'import/no-duplicates': 0,
-    'import/named': 0,
-    'import/namespace': 0,
-    'import/no-unresolved': 0,
-    'import/no-named-as-default': 2,
-    'import/extensions': ['off', 'never'],
-    'import/no-extraneous-dependencies': [
-      'error',
-      {
-        devDependencies: ['**/__tests__/*', '**/*.test.js', '**/webpack/*.js']
-      }
-    ],
+
     'prefer-destructuring': [
       'error',
       {
@@ -66,13 +70,10 @@ module.exports = {
         exceptions: ['_', 'e', 't', 'x']
       }
     ],
-    'global-require': 'off',
+
     'one-var': 0,
     'no-param-reassign': 'off',
     'object-curly-newline': 'off',
-    'class-methods-use-this': 'off',
-    'consistent-return': 0,
-    'arrow-parens': ['error', 'as-needed'],
     'valid-jsdoc': [
       'error',
       {
