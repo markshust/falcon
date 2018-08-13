@@ -20,7 +20,8 @@
   },
   "scripts": {
     "precommit": "lint-staged",
-    "test": "jest"
+    "test": "jest",
+    "lint": "./node_modules/.bin/eslint ./"
   },
   "repository": "git@github.com:deity-io/falcon.git",
   "workspaces": [
