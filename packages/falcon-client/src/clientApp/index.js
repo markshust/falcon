@@ -9,7 +9,7 @@ if (!React.isValidElement(app.component)) {
 
 export default {
   component: app.component,
-  onServerCreated: app.onServerCreated || function() {},
-  onServerInitialized: app.onServerInitialized || function() {},
-  onServerStarted: app.onServerStarted || function() {}
+  onServerCreated: app.onServerCreated || (() => {}),
+  onServerInitialized: app.onServerInitialized || (() => {}),
+  onServerStarted: app.onServerStarted || (() => {})
 };
