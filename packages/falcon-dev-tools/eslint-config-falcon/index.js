@@ -47,18 +47,17 @@ module.exports = {
         enforceForRenamedProperties: false
       }
     ],
+    'no-alert': 0,
+    'no-console': 0,
     'no-plusplus': 'off',
-    'comma-dangle': 0, // not sure why airbnb turned this on. gross!
     'id-length': [
       1,
       {
         exceptions: ['_', 'e', 't', 'x']
       }
     ],
-    'no-console': 0,
     'global-require': 'off',
     'react/no-danger': 'off',
-    'no-alert': 0,
     'one-var': 0,
     'no-param-reassign': 'off',
     'object-curly-newline': 'off',
