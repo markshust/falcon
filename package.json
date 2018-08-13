@@ -18,12 +18,23 @@
     "lint-staged": "^7.2.0",
     "prettier": "^1.14.0"
   },
+  "scripts": {
+    "precommit": "lint-staged",
+    "test": "jest",
+    "lint": "./node_modules/.bin/eslint ./"
+  },
   "workspaces": [
     "packages/create-falcon-app",
     "packages/falcon-client",
     "packages/falcon-server",
     "packages/falcon-ui",
     "packages/falcon-logger",
+    "packages/falcon-shop-extension",
+    "packages/falcon-blog-extension",
+    "packages/falcon-magento2-extension",
+    "packages/falcon-tweets-extension",
+    "packages/falcon-url-extension",
+    "packages/falcon-wordpress-extension",
     "packages/falcon-dev-tools/eslint-config-falcon",
     "examples/shop-with-blog/client",
     "examples/shop-with-blog/server"

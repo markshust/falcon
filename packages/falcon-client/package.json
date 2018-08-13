@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "license": "OSL-3.0",
   "main": "index.js",
+  "repository": "https://github.com/deity-io/falcon/tree/master/packages/falcon-client",
   "bin": {
     "falcon-client": "./bin/falcon-client.js"
   },

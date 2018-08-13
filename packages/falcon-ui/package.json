@@ -3,5 +3,5 @@
   "license": "OSL-3.0",
   "main": "index.js",
   "version": "1.0.0",
-  "repository": "git@github.com:deity-io/falcon.git"
+  "repository": "https://github.com/deity-io/falcon/tree/master/packages/falcon-ui"
 }
