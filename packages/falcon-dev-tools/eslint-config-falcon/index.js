@@ -12,7 +12,7 @@ module.exports = {
   },
   rules: {
     'class-methods-use-this': 'off',
-    'consistent-return': 0,
+    'consistent-return': 'off',
     'global-require': 'off',
     'id-length': [
       1,
@@ -20,12 +20,12 @@ module.exports = {
         exceptions: ['_', 'e', 't', 'x']
       }
     ],
-    'import/default': 0,
-    'import/no-duplicates': 0,
-    'import/named': 0,
-    'import/namespace': 0,
-    'import/no-unresolved': 0,
-    'import/no-named-as-default': 2,
+    'import/default': 'off',
+    'import/no-duplicates': 'off',
+    'import/named': 'off',
+    'import/namespace': 'off',
+    'import/no-unresolved': 'off',
+    'import/no-named-as-default': 'error',
     'import/extensions': ['off', 'never'],
     'import/no-extraneous-dependencies': [
       'error',
@@ -49,12 +49,13 @@ module.exports = {
         allowChildren: false
       }
     ],
-    'no-alert': 0,
-    'no-console': 0,
+    'linebreak-style': ['error', 'unix'],
+    'no-alert': 'off',
+    'no-console': 'off',
     'no-param-reassign': 'off',
     'no-plusplus': 'off',
     'object-curly-newline': 'off',
-    'one-var': 0,
+    'one-var': 'off',
     'prefer-destructuring': [
       'error',
       {
@@ -80,10 +81,10 @@ module.exports = {
       }
     ],
     'react/no-danger': 'off',
-    'react/no-multi-comp': 0,
+    'react/no-multi-comp': 'off',
     // problem with redux-connect decorator so we cannot use required on props,
     // therefore everything would need to be defined in default props
-    'react/require-default-props': [0],
+    'react/require-default-props': ['off'],
     'valid-jsdoc': [
       'error',
       {
