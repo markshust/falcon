@@ -10,6 +10,12 @@ module.exports = {
     'class-methods-use-this': 'off',
     'consistent-return': 0,
     'global-require': 'off',
+    'id-length': [
+      1,
+      {
+        exceptions: ['_', 'e', 't', 'x']
+      }
+    ],
     'import/default': 0,
     'import/no-duplicates': 0,
     'import/named': 0,
@@ -39,6 +45,23 @@ module.exports = {
         allowChildren: false
       }
     ],
+    'no-alert': 0,
+    'no-console': 0,
+    'no-param-reassign': 'off',
+    'no-plusplus': 'off',
+
+    'object-curly-newline': 'off',
+    'one-var': 0,
+    'prefer-destructuring': [
+      'error',
+      {
+        array: false,
+        object: true
+      },
+      {
+        enforceForRenamedProperties: false
+      }
+    ],
     'react/jsx-filename-extension': [
       1,
       {
@@ -50,30 +73,6 @@ module.exports = {
     // problem with redux-connect decorator so we cannot use required on props,
     // therefore everything would need to be defined in default props
     'react/require-default-props': [0],
-
-    'prefer-destructuring': [
-      'error',
-      {
-        array: false,
-        object: true
-      },
-      {
-        enforceForRenamedProperties: false
-      }
-    ],
-    'no-alert': 0,
-    'no-console': 0,
-    'no-plusplus': 'off',
-    'id-length': [
-      1,
-      {
-        exceptions: ['_', 'e', 't', 'x']
-      }
-    ],
-
-    'one-var': 0,
-    'no-param-reassign': 'off',
-    'object-curly-newline': 'off',
     'valid-jsdoc': [
       'error',
       {
