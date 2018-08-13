@@ -6,9 +6,6 @@
   "bin": {
     "falcon-client": "./bin/falcon-client.js"
   },
-  "scripts": {
-    "test": "jest"
-  },
   "repository": "git@github.com:deity-io/falcon.git",
   "dependencies": {
     "apollo-client": "^2.3.8",
@@ -32,8 +29,6 @@
     "serialize-javascript": "^1.5.0"
   },
   "devDependencies": {
-    "identity-obj-proxy": "^3.0.0",
-    "jest": "^23.5.0",
     "razzle": "^2.4.0"
   }
 }
