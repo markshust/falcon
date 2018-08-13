@@ -1,6 +1,10 @@
 module.exports = {
   parser: 'babel-eslint',
   extends: ['eslint-config-airbnb', 'plugin:prettier/recommended'],
+  plugins: ['react', 'import', 'prettier'],
+  settings: {
+    'import/parser': 'babel-eslint'
+  },
   env: {
     browser: true,
     node: true,
@@ -49,7 +53,6 @@ module.exports = {
     'no-console': 0,
     'no-param-reassign': 'off',
     'no-plusplus': 'off',
-
     'object-curly-newline': 'off',
     'one-var': 0,
     'prefer-destructuring': [
@@ -60,6 +63,14 @@ module.exports = {
       },
       {
         enforceForRenamedProperties: false
+      }
+    ],
+    'prettier/prettier': [
+      'error',
+      {
+        tabWidth: 2,
+        singleQuote: true,
+        printWidth: 120
       }
     ],
     'react/jsx-filename-extension': [
@@ -79,10 +90,6 @@ module.exports = {
         requireReturn: false
       }
     ]
-  },
-  plugins: ['react', 'import'],
-  settings: {
-    'import/parser': 'babel-eslint'
   },
   globals: {
     __DEVELOPMENT__: true,
