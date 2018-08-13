@@ -23,7 +23,17 @@ module.exports = {
         allowChildren: false
       }
     ],
+    'react/jsx-filename-extension': [
+      1,
+      {
+        extensions: ['.js', '.jsx']
+      }
+    ],
+    'react/no-danger': 'off',
     'react/no-multi-comp': 0,
+    // problem with redux-connect decorator so we cannot use required on props,
+    // therefore everything would need to be defined in default props
+    'react/require-default-props': [0],
     'import/default': 0,
     'import/no-duplicates': 0,
     'import/named': 0,
@@ -57,23 +67,11 @@ module.exports = {
       }
     ],
     'global-require': 'off',
-    'react/no-danger': 'off',
     'one-var': 0,
     'no-param-reassign': 'off',
     'object-curly-newline': 'off',
     'class-methods-use-this': 'off',
     'consistent-return': 0,
-    'max-len': ['error', 120],
-    'no-trailing-spaces': 0,
-    'react/jsx-filename-extension': [
-      1,
-      {
-        extensions: ['.js', '.jsx']
-      }
-    ],
-    // problem with redux-connect decorator so we cannot use required on props,
-    // therefore everything would need to be defined in default props
-    'react/require-default-props': [0],
     'arrow-parens': ['error', 'as-needed'],
     'valid-jsdoc': [
       'error',
