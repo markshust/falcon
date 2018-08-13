@@ -25,6 +25,5 @@ yarn prod
 
 
 ## Idea behind the example
-TODO
-
-(entry file `src/index.js`)
+This is a basic example of Shop with Blog scenario.
+File `src/index.js` is the entry point.
