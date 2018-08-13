@@ -5,7 +5,7 @@ import { hydrate } from 'react-dom';
 import ClientApp from './clientApp';
 import ApolloClient from './service/ApolloClient';
 
-/* eslint-disable-next-line no-underscore-dangle */
+// eslint-disable-next-line no-underscore-dangle
 const client = new ApolloClient(true, window.__APOLLO_STATE__);
 
 const markup = (
