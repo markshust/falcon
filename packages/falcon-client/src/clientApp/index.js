@@ -9,6 +9,15 @@ if (!React.isValidElement(app.component)) {
 
 export default {
   component: app.component,
+  config: {
+    host: undefined,
+    port: undefined,
+    usePWAManifest: undefined,
+    gtmCode: undefined,
+
+    ...app.config
+  },
+
   onServerCreated: app.onServerCreated || (() => {}),
   onServerInitialized: app.onServerInitialized || (() => {}),
   onServerStarted: app.onServerStarted || (() => {})
