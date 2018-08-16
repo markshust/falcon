@@ -10,9 +10,9 @@ if (!React.isValidElement(app.component)) {
 export default {
   component: app.component,
   config: {
-    host: undefined,
-    port: undefined,
-    usePWAManifest: undefined,
+    // host: undefined,
+    // port: undefined,
+    usePwaManifest: true,
     gtmCode: undefined,
 
     ...app.config
