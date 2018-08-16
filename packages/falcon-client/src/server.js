@@ -1,5 +1,6 @@
 import fetch from 'isomorphic-unfetch';
 import React from 'react';
+import { renderToString } from 'react-dom/server';
 import { StaticRouter } from 'react-router-dom';
 import Koa from 'koa';
 import serve from 'koa-static';
@@ -8,6 +9,7 @@ import Router from 'koa-router';
 import { ApolloProvider, renderToStringWithData } from 'react-apollo';
 import ClientApp from './clientApp';
 import ApolloClient from './service/ApolloClient';
+import Html from './components/Html';
 
 // eslint-disable-next-line
 const assets = require(process.env.RAZZLE_ASSETS_MANIFEST);
@@ -39,30 +41,19 @@ router.get(
     return context.url ? ctx.redirect(context.url) : next();
   },
   ctx => {
+    const { usePwaManifest, gtmCode } = ClientApp.config;
+    const htmlDocument = renderToString(
+      <Html
+        assets={assets}
+        store={ctx.state.client.extract()}
+        content={ctx.state.markup}
+        usePwaManifest={usePwaManifest}
+        gtmCode={gtmCode}
+      />
+    );
+
     ctx.status = 200;
-    ctx.body = `
-    <!doctype html>
-      <html lang="">
-      <head>
-          <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-          <meta charset="utf-8" />
-          <title>Welcome to Razzle + Koa</title>
-          <meta name="viewport" content="width=device-width, initial-scale=1">
-          ${assets.client.css ? `<link rel="stylesheet" href="${assets.client.css}">` : ''}
-          ${
-            process.env.NODE_ENV === 'production'
-              ? `<script src="${assets.client.js}" defer></script>`
-              : `<script src="${assets.client.js}" defer crossorigin></script>`
-          }
-      </head>
-      <body>
-          <div id="root">${ctx.state.markup}</div>
-          <script>window.__APOLLO_STATE__ = ${JSON.stringify(ctx.state.client.extract()).replace(
-            /</g,
-            '\\u003c'
-          )};</script>
-      </body>
-    </html>`;
+    ctx.body = `<!doctype html>${htmlDocument}`;
   }
 );
 
