@@ -64,7 +64,7 @@ export default class Html extends Component {
           {process.env.NODE_ENV === 'production' ? (
             <script src={assets.client.js} charSet="UTF-8" async />
           ) : (
-            <script src={assets.client.js} charSet="UTF-8" async crossOrigin />
+            <script src={assets.client.js} charSet="UTF-8" async crossOrigin="true" />
           )}
         </body>
       </html>
