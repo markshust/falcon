@@ -8,6 +8,7 @@
   },
   "repository": "git@github.com:deity-io/falcon.git",
   "dependencies": {
+    "@deity/falcon-logger": "1.0.0",
     "apollo-cache-inmemory": "^1.2.7",
     "apollo-client": "^2.3.8",
     "apollo-link": "^1.2.2",
@@ -20,6 +21,7 @@
     "koa": "2.5.2",
     "koa-helmet": "^4.0.0",
     "koa-router": "^7.4.0",
+    "koa-send": "5.0.0",
     "koa-static": "^5.0.0",
     "prop-types": "15.6.2",
     "razzle": "^2.4.0",
