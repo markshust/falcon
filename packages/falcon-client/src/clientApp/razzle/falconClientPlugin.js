@@ -1,4 +1,3 @@
-const path = require('path');
 const makeLoaderFinder = require('razzle-dev-utils/makeLoaderFinder');
 const paths = require('./paths');
 
@@ -39,20 +38,23 @@ function makeFalconClientJsFileResolvedByWebpack(config) {
     throw new Error(`'babel-loader' was erased from config, it is required to configure '@deity/falcon-client'`);
   }
 
-  babelLoader.include.push(path.join(paths.falconClient.rootDir, 'src'));
+  babelLoader.include.push(paths.falconClient.appSrc);
 
   return config;
 }
 
-function addAliasToClientAppSrc(config) {
-  config.resolve.alias['@clientApp'] = paths.razzle.appSrc;
+function addPathResolutionAlias(config, name, value) {
+  config.resolve.alias[name] = value;
 
   return config;
 }
 
 // eslint-disable-next-line no-unused-vars
 module.exports = (config, { target, dev }, webpackObject) => {
-  addAliasToClientAppSrc(config);
+  addPathResolutionAlias(config, '@src', paths.razzle.appSrc);
+  addPathResolutionAlias(config, '@clientSrc', paths.razzle.appSrc);
+  addPathResolutionAlias(config, '@hostSrc', paths.falconClient.appSrc);
+
   setEntryToFalconClient(config, target);
   makeFalconClientJsFileResolvedByWebpack(config);
 
