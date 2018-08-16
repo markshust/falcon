@@ -1,5 +1,5 @@
 const makeLoaderFinder = require('razzle-dev-utils/makeLoaderFinder');
-const paths = require('./paths');
+const paths = require('./../paths');
 
 function setEntryToFalconClient(config, target) {
   if (target === 'web') {
