@@ -7,9 +7,13 @@ import serve from 'koa-static';
 import helmet from 'koa-helmet';
 import Router from 'koa-router';
 import { ApolloProvider, renderToStringWithData } from 'react-apollo';
+import Logger from '@deity/falcon-logger';
 import ClientApp from './clientApp';
 import ApolloClient from './service/ApolloClient';
 import Html from './components/Html';
+import error500 from './middlewares/error500Middleware';
+
+Logger.setLogLevel(ClientApp.config.logLevel);
 
 // eslint-disable-next-line
 const assets = require(process.env.RAZZLE_ASSETS_MANIFEST);
@@ -64,10 +68,10 @@ const server = new Koa();
 ClientApp.onServerCreated(server);
 
 server
+  .use(error500)
   // `koa-helmet` provides security headers to help prevent common, well known attacks
   // @see https://helmetjs.github.io/
   .use(helmet())
-  // Serve static files located under `process.env.RAZZLE_PUBLIC_DIR`
   .use(serve(process.env.RAZZLE_PUBLIC_DIR))
   .use(router.routes())
   .use(router.allowedMethods());
