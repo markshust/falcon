@@ -4,11 +4,12 @@
   "license": "OSL-3.0",
   "version": "1.0.0",
   "scripts": {
-    "dev": "cross-env VERBOSE=true falcon-client start -- --inspect",
-    "lint": "./node_modules/.bin/eslint ./",
-    "test": "falcon-client test --env=jsdom",
+    "start": "falcon-client start",
+    "start:dbg": "cross-env VERBOSE=true falcon-client start -- --inspect",
+    "start:prod": "cross-env NODE_ENV=production node build/server.js",
     "build": "falcon-client build",
-    "prod": "cross-env NODE_ENV=production node build/server.js"
+    "test": "falcon-client test --env=jsdom",
+    "lint": "./node_modules/.bin/eslint ./"
   },
   "dependencies": {
     "@deity/falcon-client": "1.0.0",
