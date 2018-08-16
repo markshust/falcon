@@ -4,7 +4,7 @@
   "license": "OSL-3.0",
   "version": "1.0.0",
   "scripts": {
-    "dev": "falcon-client start -- --inspect",
+    "dev": "cross-env VERBOSE=true falcon-client start -- --inspect",
     "lint": "./node_modules/.bin/eslint ./",
     "test": "falcon-client test --env=jsdom",
     "build": "falcon-client build",
