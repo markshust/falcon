@@ -65,13 +65,24 @@ If your application is running, and you need to manually restart your server, yo
 
 ## API contract [TODO]
 File `./src/index.js` needs to export:
-
 * `component: React.ReactElement<any>` - valid React element
+* `config: Object` - configuration object, with possible settings listed below
+  * `usePwaManifest` - default is `true`
+  * `gtmCode` - Google Tag Manager code
+
 
 optionally you can export following configuration to inject your customisations
 * `onServerCreated(server: Koa)` - handler invoked immediately after koa server creation
 * `onServerInitialized(server: Koa)` - handler invoked immediately after koa server setup (when middlewares like handling errors, serving static files and routes were seted up)
 * `onServerStarted(server: Koa)` - handler invoked when koa server started with no errors
+
+## Environment Variables
+### Build-time Variables
+* `process.env.NODE_ENV` - `development` or `production`
+* `process.env.VERBOSE`- default is `false`, setting this to true will not clear the console when you make edits in development (useful for debugging).
+* `process.env.PORT`- default is `3000`, unless changed
+* `process.env.HOST`- default is `0.0.0.0`
+
 
 ## Idea behind the `falcon-server` [TODO]
 `falcon-client` is a application host installed as npm module which cover all necessary configuration ad provide API for Magento, WordPress, Algolia or Elasitc Search. All what you need to do is
