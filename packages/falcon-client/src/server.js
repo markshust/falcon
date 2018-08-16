@@ -27,7 +27,7 @@ router.get(
     const client = new ApolloClient();
     const context = {};
 
-    const AppComponent = (
+    const markup = (
       <ApolloProvider client={client}>
         <StaticRouter context={context} location={ctx.url}>
           {ClientApp.component}
@@ -36,17 +36,19 @@ router.get(
     );
 
     ctx.state.client = client;
-    ctx.state.markup = await renderToStringWithData(AppComponent);
+    ctx.state.markup = await renderToStringWithData(markup);
 
     return context.url ? ctx.redirect(context.url) : next();
   },
   ctx => {
+    const { markup, client } = ctx.state;
     const { usePwaManifest, gtmCode } = ClientApp.config;
+
     const htmlDocument = renderToString(
       <Html
         assets={assets}
-        store={ctx.state.client.extract()}
-        content={ctx.state.markup}
+        store={client.extract()}
+        content={markup}
         usePwaManifest={usePwaManifest}
         gtmCode={gtmCode}
       />
