@@ -1,14 +1,11 @@
 import fetch from 'isomorphic-unfetch';
-import React from 'react';
-import { StaticRouter } from 'react-router-dom';
 import Koa from 'koa';
 import serve from 'koa-static';
 import helmet from 'koa-helmet';
 import Router from 'koa-router';
-import { ApolloProvider, renderToStringWithData } from 'react-apollo';
 import Logger from '@deity/falcon-logger';
 import ClientApp from './clientApp';
-import ApolloClient from './service/ApolloClient';
+import ssr from './middlewares/ssrMiddleware';
 import htmlShellRenderer from './middlewares/htmlShellRendererMiddleware';
 import error500 from './middlewares/error500Middleware';
 
@@ -24,30 +21,7 @@ global.fetch = fetch;
 // Logic has been splitted into two chained middleware functions
 // @see https://github.com/alexmingoia/koa-router#multiple-middleware
 const router = new Router();
-router.get(
-  '/*',
-  async (ctx, next) => {
-    const client = new ApolloClient();
-    const context = {};
-
-    const markup = (
-      <ApolloProvider client={client}>
-        <StaticRouter context={context} location={ctx.url}>
-          {ClientApp.component}
-        </StaticRouter>
-      </ApolloProvider>
-    );
-
-    ctx.state.client = client;
-    ctx.state.prerenderedApp = {
-      markup: await renderToStringWithData(markup),
-      state: client.extract()
-    };
-
-    return context.url ? ctx.redirect(context.url) : next();
-  },
-  htmlShellRenderer
-);
+router.get('/*', ssr, htmlShellRenderer);
 
 // Intialize and configure Koa application
 const server = new Koa();
