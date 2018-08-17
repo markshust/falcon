@@ -52,7 +52,7 @@ router.get(
       serverSideRendering ? (
         <Html
           assets={assets}
-          store={client.extract()}
+          state={client.extract()}
           content={markup}
           usePwaManifest={usePwaManifest}
           gtmCode={gtmCode}
