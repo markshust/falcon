@@ -83,6 +83,11 @@ optionally you can export following configuration to inject your customisations
 * `process.env.PORT`- default is `3000`, unless changed
 * `process.env.HOST`- default is `0.0.0.0`
 
+## Internal Server Error page
+`falcon-client` provide default error page for http 500 error. You can override it and provide your own by placing `500.http` file in `src/views/errors/` directory.
+
+## Maintenance page
+<!-- `falcon-client` provide default maintenance page. You can override it and provide your own by placing `index.html` file in `src/views/maintenance/` directory. To switch app to maintenance mode, you need to put `maintenance.flag` file into app root directory. -->
 
 ## Idea behind the `falcon-server` [TODO]
 `falcon-client` is a application host installed as npm module which cover all necessary configuration ad provide API for Magento, WordPress, Algolia or Elasitc Search. All what you need to do is
