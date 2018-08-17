@@ -46,16 +46,20 @@ router.get(
   },
   ctx => {
     const { markup, client } = ctx.state;
-    const { usePwaManifest, gtmCode } = ClientApp.config;
+    const { serverSideRendering, usePwaManifest, gtmCode } = ClientApp.config;
 
     const htmlDocument = renderToString(
-      <Html
-        assets={assets}
-        store={client.extract()}
-        content={markup}
-        usePwaManifest={usePwaManifest}
-        gtmCode={gtmCode}
-      />
+      serverSideRendering ? (
+        <Html
+          assets={assets}
+          store={client.extract()}
+          content={markup}
+          usePwaManifest={usePwaManifest}
+          gtmCode={gtmCode}
+        />
+      ) : (
+        <Html assets={assets} usePwaManifest={usePwaManifest} gtmCode={gtmCode} />
+      )
     );
 
     ctx.status = 200;

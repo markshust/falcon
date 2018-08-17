@@ -1,7 +1,7 @@
 import { ApolloProvider } from 'react-apollo';
 import BrowserRouter from 'react-router-dom/BrowserRouter';
 import React from 'react';
-import { hydrate } from 'react-dom';
+import { hydrate, render } from 'react-dom';
 import ClientApp from './clientApp';
 import ApolloClient from './service/ApolloClient';
 
@@ -14,7 +14,13 @@ const markup = (
   </ApolloProvider>
 );
 
-hydrate(markup, document.getElementById('root'));
+const rootHtmlElement = document.getElementById('root');
+const { serverSideRendering } = ClientApp.config;
+if (serverSideRendering) {
+  hydrate(markup, rootHtmlElement);
+} else {
+  render(markup, rootHtmlElement);
+}
 
 if (module.hot) {
   module.hot.accept();

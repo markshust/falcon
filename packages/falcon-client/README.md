@@ -67,6 +67,7 @@ If your application is running, and you need to manually restart your server, yo
 File `./src/index.js` needs to export:
 * `component: React.ReactElement<any>` - valid React element
 * `config: Object` - configuration object, with possible settings listed below
+  * `serverSideRendering` - switch to control whether the Server Side Rendering is enabled, default is `true`
   * `usePwaManifest` - default is `true`
   * `gtmCode` - Google Tag Manager code
 

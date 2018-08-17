@@ -12,6 +12,7 @@ export default {
   config: {
     // host: undefined,
     // port: undefined,
+    serverSideRendering: true,
     logLevel: 'error',
     usePwaManifest: true,
     gaCode: undefined,
