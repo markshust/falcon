@@ -1,4 +1,5 @@
 import http from 'http';
+import Logger from '@deity/falcon-logger';
 import app from './server';
 import ClientApp from './clientApp';
 
@@ -10,18 +11,19 @@ const server = http.createServer(currentHandler);
 
 server.listen(process.env.PORT || 3000, error => {
   if (error) {
-    console.log(error);
+    Logger.error(error);
   }
 
-  console.log('🚀 started');
+  Logger.log('🚀  started');
   ClientApp.onServerStarted(server);
 });
 
 if (module.hot) {
-  console.log('✅  Server-side HMR Enabled!');
+  Logger.log('✅  Server-side HMR Enabled!');
 
   module.hot.accept('./server', () => {
-    console.log('🔁  HMR Reloading `./server`...');
+    Logger.log('🔁  HMR Reloading `./server`...');
+
     server.removeListener('request', currentHandler);
     const newHandler = require('./server').default.callback();
     server.on('request', newHandler);
