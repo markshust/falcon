@@ -43,17 +43,11 @@ function makeFalconClientJsFileResolvedByWebpack(config) {
   return config;
 }
 
-function addPathResolutionAlias(config, name, value) {
-  config.resolve.alias[name] = value;
-
-  return config;
-}
-
 // eslint-disable-next-line no-unused-vars
 module.exports = (config, { target, dev }, webpackObject) => {
-  addPathResolutionAlias(config, '@src', paths.razzle.appSrc);
-  addPathResolutionAlias(config, '@clientSrc', paths.razzle.appSrc);
-  addPathResolutionAlias(config, '@hostSrc', paths.falconClient.appSrc);
+  config.resolve.alias['@src'] = paths.razzle.appSrc;
+  config.resolve.alias['@clientSrc'] = paths.razzle.appSrc;
+  config.resolve.alias['@hostSrc'] = paths.falconClient.appSrc;
 
   setEntryToFalconClient(config, target);
   makeFalconClientJsFileResolvedByWebpack(config);
