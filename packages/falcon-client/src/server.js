@@ -1,6 +1,5 @@
 import fetch from 'isomorphic-unfetch';
 import React from 'react';
-import { renderToString } from 'react-dom/server';
 import { StaticRouter } from 'react-router-dom';
 import Koa from 'koa';
 import serve from 'koa-static';
@@ -10,7 +9,7 @@ import { ApolloProvider, renderToStringWithData } from 'react-apollo';
 import Logger from '@deity/falcon-logger';
 import ClientApp from './clientApp';
 import ApolloClient from './service/ApolloClient';
-import Html from './components/Html';
+import htmlShellRenderer from './middlewares/htmlShellRendererMiddleware';
 import error500 from './middlewares/error500Middleware';
 
 Logger.setLogLevel(ClientApp.config.logLevel);
@@ -47,27 +46,7 @@ router.get(
 
     return context.url ? ctx.redirect(context.url) : next();
   },
-  ctx => {
-    const { prerenderedApp } = ctx.state;
-    const { serverSideRendering, usePwaManifest, gtmCode } = ClientApp.config;
-
-    const htmlDocument = renderToString(
-      serverSideRendering ? (
-        <Html
-          assets={assets}
-          state={prerenderedApp.state}
-          content={prerenderedApp.markup}
-          usePwaManifest={usePwaManifest}
-          gtmCode={gtmCode}
-        />
-      ) : (
-        <Html assets={assets} usePwaManifest={usePwaManifest} gtmCode={gtmCode} />
-      )
-    );
-
-    ctx.status = 200;
-    ctx.body = `<!doctype html>${htmlDocument}`;
-  }
+  htmlShellRenderer
 );
 
 // Intialize and configure Koa application
