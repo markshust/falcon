@@ -40,20 +40,23 @@ router.get(
     );
 
     ctx.state.client = client;
-    ctx.state.markup = await renderToStringWithData(markup);
+    ctx.state.prerenderedApp = {
+      markup: await renderToStringWithData(markup),
+      state: client.extract()
+    };
 
     return context.url ? ctx.redirect(context.url) : next();
   },
   ctx => {
-    const { markup, client } = ctx.state;
+    const { prerenderedApp } = ctx.state;
     const { serverSideRendering, usePwaManifest, gtmCode } = ClientApp.config;
 
     const htmlDocument = renderToString(
       serverSideRendering ? (
         <Html
           assets={assets}
-          state={client.extract()}
-          content={markup}
+          state={prerenderedApp.state}
+          content={prerenderedApp.markup}
           usePwaManifest={usePwaManifest}
           gtmCode={gtmCode}
         />
