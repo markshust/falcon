@@ -20,7 +20,11 @@ const Home = () => (
         }
       `}
     >
-      {({ data: { hi } }) => <pre>Saying `{hi}` from the Client State!</pre>}
+      {({ data: { hi } }) => (
+        <pre>
+          Saying <b>{hi}</b> from the Client State!
+        </pre>
+      )}
     </Query>
     <ul className="Home-resources">
       <li>
