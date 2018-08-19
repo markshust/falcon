@@ -19,6 +19,7 @@
     "prettier": "^1.14.0"
   },
   "workspaces": [
+    "packages/create-falcon-app",
     "packages/falcon-client",
     "packages/falcon-server",
     "packages/falcon-ui",

@@ -1,0 +1,13 @@
+{
+  "name": "create-falcon-app",
+  "version": "1.0.0",
+  "description": "CLI tool to bootstrap Falcon applications",
+  "main": "index.js",
+  "bin": {
+    "create-falcon-app": "./bin/create-falcon-app"
+  },
+  "license": "OSL-3.0",
+  "dependencies": {
+    
+  }
+}
