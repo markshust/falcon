@@ -5,8 +5,11 @@ import { hydrate, render } from 'react-dom';
 import ClientApp from './clientApp';
 import ApolloClient from './service/ApolloClient';
 
-// eslint-disable-next-line no-underscore-dangle
-const client = new ApolloClient(true, window.__APOLLO_STATE__);
+const client = new ApolloClient({
+  isBrowser: true,
+  // eslint-disable-next-line no-underscore-dangle
+  initialState: window.__APOLLO_STATE__ || {}
+});
 
 const markup = (
   <ApolloProvider client={client}>

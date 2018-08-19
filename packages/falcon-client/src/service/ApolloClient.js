@@ -5,13 +5,20 @@ import { createHttpLink } from 'apollo-link-http';
 import { InMemoryCache } from 'apollo-cache-inmemory';
 
 /**
+ * @typedef {object} FalconApolloClientConfig
+ * @property {boolean} [isBrowser=false] Boolean flag to determine the current environment
+ * @property {object} [initialState={}] Object to restore Cache data from
+ * @property {string} [serverUri="http://localhost:4000/graphql"] ApolloServer URL
+ */
+
+/**
  * Creates an ApolloClient instance with the provided arguments
- * @param {boolean} [isBrowser=false] Boolean flag to determine the current environment
- * @param {object} [initialState={}] Object to restore Cache data from
- * @param {string} [serverUri="http://localhost:4000/graphql"] ApolloServer URL
+ * @param {FalconApolloClientConfig} config Falcon configuration for creating ApolloClient instance
  * @return {ApolloClient} ApolloClient instance
  */
-export default (isBrowser = false, initialState = {}, serverUri = 'http://localhost:4000/graphql') => {
+export default (config = {}) => {
+  const { isBrowser = false, initialState = {}, serverUri = 'http://localhost:4000/graphql' } = config;
+
   const cache = new InMemoryCache().restore(initialState || {});
   const linkState = withClientState({
     cache,
