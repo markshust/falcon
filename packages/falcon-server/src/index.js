@@ -6,24 +6,34 @@ const ENV = process.env.NODE_ENV || 'development';
 const isDevelopment = ENV === 'development';
 
 class FalconServer {
-  constructor(conf) {
-    Logger.setLogLevel(conf.logLevel);
+  constructor(config) {
+    Logger.setLogLevel(config.logLevel);
 
-    this.config = conf;
+    this.config = config;
   }
 
   start() {
     // Construct a schema, using GraphQL schema language
     const typeDefs = gql`
+      type UrlResult {
+        type: String
+        url: String
+      }
+
       type Query {
-        hello: String
+        getUrl(url: String!): UrlResult
       }
     `;
 
     // Provide resolver functions for your schema fields
     const resolvers = {
       Query: {
-        hello: () => 'World'
+        getUrl: async (_, { url }) => {
+          return {
+            url,
+            type: 'shop'
+          };
+        }
       }
     };
 

@@ -1,12 +1,9 @@
-import fetch from 'isomorphic-unfetch';
+import gql from 'graphql-tag';
 import React from 'react';
 import { StaticRouter } from 'react-router-dom';
 import { ApolloProvider, renderToStringWithData } from 'react-apollo';
 import ClientApp from '@hostSrc/clientApp';
 import ApolloClient from '@hostSrc/service/ApolloClient';
-
-// Polyfill fetch() on the server (used by apollo-client)
-global.fetch = fetch;
 
 /**
  * Server Side Rendering middleware.
@@ -19,7 +16,23 @@ export default async (ctx, next) => {
   const client = new ApolloClient({
     clientState: ClientApp.clientState
   });
-  const context = {};
+  const getUrlResult = await client.query({
+    query: gql`
+      query GetUrl($url: String!) {
+        getUrl(url: $url) {
+          type
+          url
+        }
+      }
+    `,
+    variables: {
+      url: ctx.url
+    }
+  });
+
+  const context = {
+    urlResult: getUrlResult
+  };
 
   const markup = (
     <ApolloProvider client={client}>
