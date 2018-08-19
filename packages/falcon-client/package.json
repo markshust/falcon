@@ -9,8 +9,8 @@
   "repository": "git@github.com:deity-io/falcon.git",
   "dependencies": {
     "@deity/falcon-logger": "1.0.0",
-    "apollo-cache-inmemory": "^1.2.7",
-    "apollo-client": "^2.3.8",
+    "apollo-cache-inmemory": "^1.2.8",
+    "apollo-client": "^2.4.0",
     "apollo-link": "^1.2.2",
     "apollo-link-http": "^1.5.4",
     "apollo-link-state": "^0.4.1",

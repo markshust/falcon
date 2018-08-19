@@ -20,6 +20,7 @@ export default {
 
     ...app.config
   },
+  clientState: app.clientState || {},
 
   onServerCreated: app.onServerCreated || (() => {}),
   onServerInitialized: app.onServerInitialized || (() => {}),

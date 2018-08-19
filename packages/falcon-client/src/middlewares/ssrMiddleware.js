@@ -16,7 +16,9 @@ global.fetch = fetch;
  * @returns {Promise<void>} - next middleware or redirect
  */
 export default async (ctx, next) => {
-  const client = new ApolloClient({});
+  const client = new ApolloClient({
+    clientState: ClientApp.clientState
+  });
   const context = {};
 
   const markup = (

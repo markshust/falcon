@@ -5,10 +5,17 @@ import { createHttpLink } from 'apollo-link-http';
 import { InMemoryCache } from 'apollo-cache-inmemory';
 
 /**
+ * @typedef {object} FalconApolloLinkStateConfig
+ * @property {object} defaults https://www.apollographql.com/docs/link/links/state.html#defaults
+ * @property {object} resolvers https://www.apollographql.com/docs/link/links/state.html#resolver
+ */
+
+/**
  * @typedef {object} FalconApolloClientConfig
  * @property {boolean} [isBrowser=false] Boolean flag to determine the current environment
  * @property {object} [initialState={}] Object to restore Cache data from
  * @property {string} [serverUri="http://localhost:4000/graphql"] ApolloServer URL
+ * @property {FalconApolloLinkStateConfig} [clientState={}] https://www.apollographql.com/docs/link/links/state.html
  */
 
 /**
@@ -17,13 +24,17 @@ import { InMemoryCache } from 'apollo-cache-inmemory';
  * @return {ApolloClient} ApolloClient instance
  */
 export default (config = {}) => {
-  const { isBrowser = false, initialState = {}, serverUri = 'http://localhost:4000/graphql' } = config;
+  const {
+    isBrowser = false,
+    initialState = {},
+    clientState = {},
+    serverUri = 'http://localhost:4000/graphql'
+  } = config;
 
   const cache = new InMemoryCache().restore(initialState || {});
   const linkState = withClientState({
     cache,
-    resolvers: {},
-    defaults: {}
+    ...clientState
   });
   const httpLink = createHttpLink({
     uri: serverUri,

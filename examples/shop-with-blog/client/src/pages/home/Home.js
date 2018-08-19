@@ -1,4 +1,6 @@
 import React from 'react';
+import { Query } from 'react-apollo';
+import gql from 'graphql-tag';
 import logo from './../../../public/logo.png';
 import './Home.css';
 
@@ -11,6 +13,15 @@ const Home = () => (
     <pre className="Home-intro">
       To get started, edit <b>src/App.js</b> or <b>src/Home.js</b> and save to reload.
     </pre>
+    <Query
+      query={gql`
+        query Hi {
+          hi @client
+        }
+      `}
+    >
+      {({ data: { hi } }) => <pre>Saying `{hi}` from the Client State!</pre>}
+    </Query>
     <ul className="Home-resources">
       <li>
         <a href="https://github.com/jaredpalmer/razzle">Docs</a>
