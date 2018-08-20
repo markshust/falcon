@@ -1,33 +1,40 @@
-import { ApolloProvider } from 'react-apollo';
-import BrowserRouter from 'react-router-dom/BrowserRouter';
+import gql from 'graphql-tag';
 import React from 'react';
-import { hydrate } from 'react-dom';
-import App from '@clientSrc/App';
-import ApolloClient from './service/ApolloClient';
+import { hydrate, render } from 'react-dom';
+import BrowserRouter from 'react-router-dom/BrowserRouter';
+import { ApolloProvider } from 'react-apollo';
+import ApolloClient from '@hostSrc/service/ApolloClient';
+import App, { clientState } from '@hostSrc/clientApp';
 
 const client = new ApolloClient({
   isBrowser: true,
+  clientState,
   // eslint-disable-next-line no-underscore-dangle
   initialState: window.__APOLLO_STATE__ || {}
 });
 
-const markup = (
-  <ApolloProvider client={client}>
-    <BrowserRouter>
-      <App />
-    </BrowserRouter>
-  </ApolloProvider>
-);
+client
+  .query({
+    query: gql`
+      {
+        config @client {
+          serverSideRendering
+        }
+      }
+    `
+  })
+  .then(({ data: { config } }) => {
+    const renderApp = config.serverSideRendering ? hydrate : render;
 
-const rootHtmlElement = document.getElementById('root');
-
-// TODO load configuration from apollo client
-// const { serverSideRendering } = ClientApp.config;
-// if (serverSideRendering) {
-hydrate(markup, rootHtmlElement);
-// } else {
-//   render(markup, rootHtmlElement);
-// }
+    const markup = (
+      <ApolloProvider client={client}>
+        <BrowserRouter>
+          <App />
+        </BrowserRouter>
+      </ApolloProvider>
+    );
+    renderApp(markup, document.getElementById('root'));
+  });
 
 if (module.hot) {
   module.hot.accept();
