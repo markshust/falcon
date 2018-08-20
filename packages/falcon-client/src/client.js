@@ -1,8 +1,8 @@
 import { ApolloProvider } from 'react-apollo';
 import BrowserRouter from 'react-router-dom/BrowserRouter';
 import React from 'react';
-import { hydrate, render } from 'react-dom';
-import ClientApp from './clientApp';
+import { hydrate } from 'react-dom';
+import App from '@clientSrc/App';
 import ApolloClient from './service/ApolloClient';
 
 const client = new ApolloClient({
@@ -14,17 +14,21 @@ const client = new ApolloClient({
 
 const markup = (
   <ApolloProvider client={client}>
-    <BrowserRouter>{ClientApp.component}</BrowserRouter>
+    <BrowserRouter>
+      <App />
+    </BrowserRouter>
   </ApolloProvider>
 );
 
 const rootHtmlElement = document.getElementById('root');
-const { serverSideRendering } = ClientApp.config;
-if (serverSideRendering) {
-  hydrate(markup, rootHtmlElement);
-} else {
-  render(markup, rootHtmlElement);
-}
+
+// TODO load configuration from apollo client
+// const { serverSideRendering } = ClientApp.config;
+// if (serverSideRendering) {
+hydrate(markup, rootHtmlElement);
+// } else {
+//   render(markup, rootHtmlElement);
+// }
 
 if (module.hot) {
   module.hot.accept();
