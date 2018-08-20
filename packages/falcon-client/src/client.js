@@ -7,7 +7,6 @@ import ApolloClient from './service/ApolloClient';
 
 const client = new ApolloClient({
   isBrowser: true,
-  clientState: ClientApp.clientState,
   // eslint-disable-next-line no-underscore-dangle
   initialState: window.__APOLLO_STATE__ || {}
 });
