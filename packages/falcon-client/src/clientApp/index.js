@@ -1,4 +1,4 @@
-import ClientApp from '@clientSrc';
+import app from '@clientSrc';
 
 export default {
   config: {
@@ -10,11 +10,11 @@ export default {
     gaCode: undefined,
     gtmCode: undefined,
 
-    ...ClientApp.config
+    ...app.config
   },
   clientState: app.clientState || {},
 
-  onServerCreated: ClientApp.onServerCreated || (() => {}),
-  onServerInitialized: ClientApp.onServerInitialized || (() => {}),
-  onServerStarted: ClientApp.onServerStarted || (() => {})
+  onServerCreated: app.onServerCreated || (() => {}),
+  onServerInitialized: app.onServerInitialized || (() => {}),
+  onServerStarted: app.onServerStarted || (() => {})
 };

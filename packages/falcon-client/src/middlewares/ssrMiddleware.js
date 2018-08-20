@@ -2,6 +2,7 @@ import gql from 'graphql-tag';
 import React from 'react';
 import { StaticRouter } from 'react-router-dom';
 import { ApolloProvider, renderToStringWithData } from 'react-apollo';
+import app from '@clientSrc';
 import App from '@clientSrc/App';
 import ApolloClient from '@hostSrc/service/ApolloClient';
 
@@ -14,7 +15,7 @@ import ApolloClient from '@hostSrc/service/ApolloClient';
  */
 export default async (ctx, next) => {
   const client = new ApolloClient({
-    clientState: ClientApp.clientState
+    clientState: app.clientState
   });
   const getUrlResult = await client.query({
     query: gql`
