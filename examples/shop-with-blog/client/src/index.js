@@ -1,11 +1,6 @@
-import clientState from './clientState';
+import App from '@src/App';
+import clientState from '@src/clientState';
 
-const config = require('config');
+export default App;
 
-export default {
-  config: { ...config },
-  clientState
-  // onServerCreated: server => { console.log('created'); },
-  // onServerInitialized: server => { console.log('initialized'); },
-  // onServerStarted: server => { console.log('started'); }
-};
+export { clientState };
