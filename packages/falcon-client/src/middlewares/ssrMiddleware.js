@@ -2,9 +2,7 @@ import gql from 'graphql-tag';
 import React from 'react';
 import { StaticRouter } from 'react-router-dom';
 import { ApolloProvider, renderToStringWithData } from 'react-apollo';
-import app from '@clientSrc';
-import App from '@clientSrc/App';
-import ApolloClient from '@hostSrc/service/ApolloClient';
+import App from '@hostSrc/clientApp';
 
 /**
  * Server Side Rendering middleware.
@@ -14,9 +12,8 @@ import ApolloClient from '@hostSrc/service/ApolloClient';
  * @returns {Promise<void>} - next middleware or redirect
  */
 export default async (ctx, next) => {
-  const client = new ApolloClient({
-    clientState: app.clientState
-  });
+  const { client } = ctx.state;
+
   const getUrlResult = await client.query({
     query: gql`
       query GetUrl($url: String!) {
@@ -42,12 +39,7 @@ export default async (ctx, next) => {
       </StaticRouter>
     </ApolloProvider>
   );
-
-  ctx.state.client = client;
-  ctx.state.prerenderedApp = {
-    markup: await renderToStringWithData(markup),
-    state: client.extract()
-  };
+  ctx.state.prerenderedApp = await renderToStringWithData(markup);
 
   return context.url ? ctx.redirect(context.url) : next();
 };
