@@ -1,10 +1,9 @@
-import React from 'react';
-import App from './App';
 import clientState from './clientState';
 
+const config = require('config');
+
 export default {
-  component: <App />,
-  config: {},
+  config: { ...config },
   clientState
   // onServerCreated: server => { console.log('created'); },
   // onServerInitialized: server => { console.log('initialized'); },
