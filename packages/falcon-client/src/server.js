@@ -3,12 +3,13 @@ import serve from 'koa-static';
 import helmet from 'koa-helmet';
 import Router from 'koa-router';
 import Logger from '@deity/falcon-logger';
-import ClientApp from './clientApp';
-import ssr from './middlewares/ssrMiddleware';
-import htmlShellRenderer from './middlewares/htmlShellRendererMiddleware';
-import error500 from './middlewares/error500Middleware';
+import configuration from '@hostSrc/clientApp/configuration';
+import apolloClientProvider from '@hostSrc/middlewares/apolloClientProvider';
+import ssr from '@hostSrc/middlewares/ssrMiddleware';
+import htmlShellRenderer from '@hostSrc/middlewares/htmlShellRendererMiddleware';
+import error500 from '@hostSrc/middlewares/error500Middleware';
 
-const { config } = ClientApp;
+const { config } = configuration;
 Logger.setLogLevel(config.logLevel);
 
 // eslint-disable-next-line
@@ -16,14 +17,14 @@ const assets = require(process.env.RAZZLE_ASSETS_MANIFEST);
 
 const router = new Router();
 if (config.serverSideRendering) {
-  router.get('/*', ssr, htmlShellRenderer);
+  router.get('/*', apolloClientProvider, ssr, htmlShellRenderer);
 } else {
-  router.get('/*', htmlShellRenderer);
+  router.get('/*', apolloClientProvider, htmlShellRenderer);
 }
 
 // Intialize and configure Koa application
 const server = new Koa();
-ClientApp.onServerCreated(server);
+configuration.onServerCreated(server);
 
 server
   .use(error500)
@@ -34,6 +35,6 @@ server
   .use(router.routes())
   .use(router.allowedMethods());
 
-ClientApp.onServerInitialized(server);
+configuration.onServerInitialized(server);
 
 export default server;
