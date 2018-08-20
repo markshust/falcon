@@ -25,7 +25,7 @@ export default class Html extends Component {
   }
 
   render() {
-    const { assets, state, content, usePwaManifest } = this.props;
+    const { assets, asyncContext = {}, state = {}, content, usePwaManifest } = this.props;
     const head = Helmet.rewind();
 
     return (
@@ -58,7 +58,13 @@ export default class Html extends Component {
           <script
             charSet="UTF-8"
             dangerouslySetInnerHTML={{
-              __html: `window.__APOLLO_STATE__=${serialize(state)}`
+              __html: `window.__APOLLO_STATE__=${serialize(state || {})}`
+            }}
+          />
+          <script
+            charSet="UTF-8"
+            dangerouslySetInnerHTML={{
+              __html: `window.ASYNC_COMPONENTS_STATE=${serialize(asyncContext || {})}`
             }}
           />
           {process.env.NODE_ENV === 'production' ? (
@@ -79,6 +85,7 @@ Html.propTypes = {
       css: PropTypes.string
     })
   }),
+  asyncContext: PropTypes.shape({}),
   state: PropTypes.shape({}),
   content: PropTypes.string,
 
@@ -88,6 +95,7 @@ Html.propTypes = {
 
 Html.defaultProps = {
   assets: {},
+  asyncContext: {},
   state: {},
   content: '',
   gtmCode: '',

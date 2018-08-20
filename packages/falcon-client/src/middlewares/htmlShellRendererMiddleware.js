@@ -12,12 +12,13 @@ const assets = require(process.env.RAZZLE_ASSETS_MANIFEST);
  * @param {string} next - Koa next.
  */
 export default ctx => {
-  const { prerenderedApp, client } = ctx.state;
+  const { prerenderedApp, asyncContext, client } = ctx.state;
   const { usePwaManifest, gtmCode } = configuration.config;
 
   const htmlDocument = renderToString(
     <Html
       assets={assets}
+      asyncContext={asyncContext}
       state={client.extract()}
       content={prerenderedApp}
       usePwaManifest={usePwaManifest}

@@ -1,3 +1,4 @@
+const { basename } = require('path');
 const Koa = require('koa');
 const { ApolloServer, gql } = require('apollo-server-koa');
 const Logger = require('@deity/falcon-logger');
@@ -28,12 +29,10 @@ class FalconServer {
     // Provide resolver functions for your schema fields
     const resolvers = {
       Query: {
-        getUrl: async (_, { url }) => {
-          return {
-            url,
-            type: 'shop'
-          };
-        }
+        getUrl: async (_, { url }) => ({
+          url,
+          type: basename(url)
+        })
       }
     };
 

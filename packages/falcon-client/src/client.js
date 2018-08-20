@@ -1,4 +1,6 @@
 import gql from 'graphql-tag';
+import { AsyncComponentProvider } from 'react-async-component';
+import asyncBootstrapper from 'react-async-bootstrapper';
 import React from 'react';
 import { hydrate, render } from 'react-dom';
 import BrowserRouter from 'react-router-dom/BrowserRouter';
@@ -28,12 +30,15 @@ client
 
     const markup = (
       <ApolloProvider client={client}>
-        <BrowserRouter>
-          <App />
-        </BrowserRouter>
+        <AsyncComponentProvider rehydrateState={window.ASYNC_COMPONENTS_STATE}>
+          <BrowserRouter>
+            <App />
+          </BrowserRouter>
+        </AsyncComponentProvider>
       </ApolloProvider>
     );
-    renderApp(markup, document.getElementById('root'));
+
+    return asyncBootstrapper(markup).then(() => renderApp(markup, document.getElementById('root')));
   });
 
 if (module.hot) {

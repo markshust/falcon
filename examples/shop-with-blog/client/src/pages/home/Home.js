@@ -1,6 +1,7 @@
 import React from 'react';
 import { Query } from 'react-apollo';
 import gql from 'graphql-tag';
+import { Link } from 'react-router-dom';
 import logo from './../../../public/logo.png';
 import './Home.css';
 
@@ -29,6 +30,12 @@ const Home = () => (
     <ul className="Home-resources">
       <li>
         <a href="https://github.com/jaredpalmer/razzle">Docs</a>
+      </li>
+      <li>
+        <Link to="/post">Post (dynamic)</Link>
+      </li>
+      <li>
+        <Link to="/shop">Shop (dynamic)</Link>
       </li>
       <li>
         <a href="http://koajs.com">Koa official site</a>
