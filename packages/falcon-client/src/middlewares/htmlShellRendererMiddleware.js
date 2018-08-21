@@ -1,7 +1,7 @@
 import React from 'react';
 import { renderToString } from 'react-dom/server';
-import gql from 'graphql-tag';
 import Html from '@hostSrc/components/Html';
+import { APP_INIT } from '@hostSrc/graphql/config.gql';
 
 // eslint-disable-next-line
 const assets = require(process.env.RAZZLE_ASSETS_MANIFEST);
@@ -13,18 +13,7 @@ const assets = require(process.env.RAZZLE_ASSETS_MANIFEST);
  */
 export default async ctx => {
   const { client, prerenderedApp, asyncContext } = ctx.state;
-  const { data } = await client.query({
-    query: gql`
-      {
-        config @client {
-          usePwaManifest
-          googleTagManager {
-            id
-          }
-        }
-      }
-    `
-  });
+  const { config } = client.readQuery({ query: APP_INIT });
 
   const htmlDocument = renderToString(
     <Html
@@ -32,7 +21,7 @@ export default async ctx => {
       asyncContext={asyncContext}
       state={client.extract()}
       content={prerenderedApp}
-      config={data.config}
+      config={config}
     />
   );
 

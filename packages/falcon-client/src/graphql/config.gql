@@ -1,0 +1,14 @@
+query SSR {
+  config @client {
+    serverSideRendering
+  }
+}
+
+query APP_INIT {
+  config @client {
+    usePwaManifest
+    googleTagManager {
+      id
+    }
+  }
+}
