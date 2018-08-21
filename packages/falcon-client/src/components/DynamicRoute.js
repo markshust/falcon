@@ -1,17 +1,8 @@
 import React from 'react';
 import Route from 'react-router-dom/Route';
 import PropTypes from 'prop-types';
-import gql from 'graphql-tag';
 import { Query } from 'react-apollo';
-
-const query = gql`
-  query GetUrl($url: String!) {
-    getUrl(url: $url) {
-      type
-      url
-    }
-  }
-`;
+import { GET_URL } from '@hostSrc/graphql/url.gql';
 
 const DynamicRoute = props => {
   const {
@@ -20,7 +11,7 @@ const DynamicRoute = props => {
   } = props;
 
   return (
-    <Query query={query} variables={{ url: pathname }}>
+    <Query query={GET_URL} variables={{ url: pathname }}>
       {({ loading, data: { getUrl } }) =>
         loading ? <p>Loading...</p> : <Route path="/*" component={components[getUrl.type]} />
       }

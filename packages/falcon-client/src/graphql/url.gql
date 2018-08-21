@@ -1,0 +1,6 @@
+query GET_URL($url: String!) {
+  getUrl(url: $url) {
+    type
+    url
+  }
+}
