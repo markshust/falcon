@@ -1,10 +1,10 @@
-import gql from 'graphql-tag';
-import { AsyncComponentProvider } from 'react-async-component';
-import asyncBootstrapper from 'react-async-bootstrapper';
 import React from 'react';
 import { hydrate, render } from 'react-dom';
 import BrowserRouter from 'react-router-dom/BrowserRouter';
 import { ApolloProvider } from 'react-apollo';
+import { AsyncComponentProvider } from 'react-async-component';
+import asyncBootstrapper from 'react-async-bootstrapper';
+import gql from 'graphql-tag';
 import ApolloClient from '@hostSrc/service/ApolloClient';
 import App, { clientState } from '@hostSrc/clientApp';
 

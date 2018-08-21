@@ -15,7 +15,7 @@ import GoogleTagManager from '@hostSrc/google/GoogleTagManager';
  */
 export default class Html extends Component {
   renderGtm(noScript = false) {
-    const { gtmCode } = this.props;
+    const { gtmCode } = this.props.config;
 
     if (gtmCode) {
       return <GoogleTagManager gtmId={gtmCode} noScript={noScript} />;
@@ -25,7 +25,7 @@ export default class Html extends Component {
   }
 
   render() {
-    const { assets, asyncContext = {}, state = {}, content, usePwaManifest } = this.props;
+    const { assets, asyncContext = {}, state = {}, content, config } = this.props;
     const head = Helmet.rewind();
 
     return (
@@ -37,7 +37,7 @@ export default class Html extends Component {
           {head.meta.toComponent()}
           {head.link.toComponent()}
           {head.script.toComponent()}
-          {usePwaManifest && <link rel="manifest" href="/manifest.json" />}
+          {config.usePwaManifest && <link rel="manifest" href="/manifest.json" />}
           <link rel="shortcut icon" href="/favicon.ico" />
           <meta name="viewport" content="width=device-width, initial-scale=1" />
           <meta name="theme-color" content="#fff" />
@@ -88,9 +88,10 @@ Html.propTypes = {
   asyncContext: PropTypes.shape({}),
   state: PropTypes.shape({}),
   content: PropTypes.string,
-
-  gtmCode: PropTypes.string,
-  usePwaManifest: PropTypes.bool
+  config: PropTypes.shape({
+    gtmCode: PropTypes.string,
+    usePwaManifest: PropTypes.bool
+  })
 };
 
 Html.defaultProps = {
@@ -98,6 +99,5 @@ Html.defaultProps = {
   asyncContext: {},
   state: {},
   content: '',
-  gtmCode: '',
-  usePwaManifest: false
+  config: {}
 };

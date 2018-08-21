@@ -1,6 +1,6 @@
 import React from 'react';
 import { renderToString } from 'react-dom/server';
-import configuration from '@hostSrc/clientApp/configuration';
+import gql from 'graphql-tag';
 import Html from '@hostSrc/components/Html';
 
 // eslint-disable-next-line
@@ -11,9 +11,18 @@ const assets = require(process.env.RAZZLE_ASSETS_MANIFEST);
  * @param {string} ctx - Koa context, if ctx.state.prerenderedApp exists then prerendered app will be injected.
  * @param {string} next - Koa next.
  */
-export default ctx => {
-  const { prerenderedApp, asyncContext, client } = ctx.state;
-  const { usePwaManifest, gtmCode } = configuration.config;
+export default async ctx => {
+  const { client, prerenderedApp, asyncContext } = ctx.state;
+  const { data } = await client.query({
+    query: gql`
+      {
+        config @client {
+          usePwaManifest
+          gtmCode
+        }
+      }
+    `
+  });
 
   const htmlDocument = renderToString(
     <Html
@@ -21,8 +30,7 @@ export default ctx => {
       asyncContext={asyncContext}
       state={client.extract()}
       content={prerenderedApp}
-      usePwaManifest={usePwaManifest}
-      gtmCode={gtmCode}
+      config={data.config}
     />
   );
 
