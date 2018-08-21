@@ -16,7 +16,7 @@ Logger.setLogLevel(config.logLevel);
 const assets = require(process.env.RAZZLE_ASSETS_MANIFEST);
 
 const router = new Router();
-if (config.serverSideRendering) {
+if (config.config.serverSideRendering) {
   router.get('/*', apolloClientProvider, ssr, htmlShellRenderer);
 } else {
   router.get('/*', apolloClientProvider, htmlShellRenderer);
