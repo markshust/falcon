@@ -12,9 +12,6 @@ import error500 from '@hostSrc/middlewares/error500Middleware';
 const { config } = configuration;
 Logger.setLogLevel(config.logLevel);
 
-// eslint-disable-next-line
-const assets = require(process.env.RAZZLE_ASSETS_MANIFEST);
-
 const router = new Router();
 if (config.config.serverSideRendering) {
   router.get('/*', apolloClientProvider, ssr, htmlShellRenderer);
