@@ -1,30 +1,76 @@
 const { basename } = require('path');
 const Koa = require('koa');
-const { ApolloServer, gql } = require('apollo-server-koa');
+const Router = require('koa-router');
+const session = require('koa-session');
+const { ApolloServer } = require('apollo-server-koa');
 const Logger = require('@deity/falcon-logger');
+const ExtensionsContainer = require('./extensions');
+const ApiEngine = require('./apiEngine');
+const { makeExecutableSchema } = require('graphql-tools');
 
 const ENV = process.env.NODE_ENV || 'development';
 const isDevelopment = ENV === 'development';
 
 class FalconServer {
-  constructor(config) {
-    Logger.setLogLevel(config.logLevel);
-
-    this.config = config;
+  constructor(conf) {
+    Logger.setLogLevel(conf.logLevel);
+    this.config = conf;
+    this.initApp();
+    this.initApis();
+    this.initExtensions();
+    this.initApolloServer();
+    this.registerRoutes();
   }
 
-  start() {
-    // Construct a schema, using GraphQL schema language
-    const typeDefs = gql`
-      type UrlResult {
-        type: String
-        url: String
-      }
+  initApp() {
+    this.app = new Koa();
+    this.app.keys = this.config.session.keys;
+    delete this.config.session.keys;
 
-      type Query {
-        getUrl(url: String!): UrlResult
+    this.router = new Router();
+
+    // todo: implement backend session store e.g. https://www.npmjs.com/package/koa-redis-session
+    this.app.use(session(this.config.session || {}, this.app));
+
+    this.app.use((ctx, next) => {
+      // copy session to native Node's req object because GraphQL execution context doesn't have access to Koa's
+      // context, see https://github.com/apollographql/apollo-server/issues/1551
+      ctx.req.session = ctx.session;
+      return next();
+    });
+  }
+
+  initExtensions() {
+    this.extensions = new ExtensionsContainer({
+      extensions: this.config.extensions,
+      getApiInstance: this.apiEngine.getApiInstance
+    });
+  }
+
+  initApis() {
+    this.apiEngine = new ApiEngine({
+      apis: this.config.apis,
+      app: this.app,
+      config: {
+        logLevel: this.config.logLevel
       }
-    `;
+    });
+  }
+
+  // this is havy-WIP :)
+  initApolloServer() {
+    const cache = this.initCacheBackend();
+
+    // Construct a schema, using GraphQL schema language
+    const schemas = [
+      makeExecutableSchema({
+        typeDefs: `
+        type Query {
+          hello: String
+        }
+      `
+      })
+    ];
 
     // Provide resolver functions for your schema fields
     const resolvers = {
@@ -36,17 +82,60 @@ class FalconServer {
       }
     };
 
-    const server = new ApolloServer({
+    const apolloServerConfig = this.extensions.createGraphQLConfig({
+      schemas,
+      resolvers,
+      dataSources: this.apiEngine.getDataSources(),
+      // inject session to graph context
+      context: ({ ctx }) => ({
+        session: ctx.req.session
+      }),
+      cache,
       tracing: isDevelopment,
-      playground: isDevelopment,
-      typeDefs,
-      resolvers
+      playground: isDevelopment && {
+        settings: {
+          'request.credentials': 'include'
+        }
+      }
     });
 
-    const app = new Koa();
-    server.applyMiddleware({ app });
+    const server = new ApolloServer(apolloServerConfig);
 
-    app.listen({ port: this.config.port }, () => {
+    server.applyMiddleware({ app: this.app });
+  }
+
+  /**
+   * Create instance of cache backend based on configuration ("cache" key from config)
+   * @return {Object} instance of cache backend
+   */
+  initCacheBackend() {
+    if (this.config.cache && this.config.cache.enabled) {
+      try {
+        const CacheBackend = require(this.config.cache.package); // eslint-disable-line import/no-dynamic-require
+        return new CacheBackend(this.config.cache.options || {});
+      } catch (ex) {
+        Logger.error(
+          `Cannot load cache backend from package ${
+            this.config.cache.package
+          } so Apollo Server will start without cache`
+        );
+      }
+    }
+  }
+
+  registerRoutes() {
+    const routes = this.apiEngine.getRoutes();
+    routes.forEach(route => {
+      (Array.isArray(route.methods) ? route.methods : [route.methods]).forEach(method => {
+        this.router[method](route.path, route.handler);
+      });
+    });
+
+    this.app.use(this.router.routes()).use(this.router.allowedMethods());
+  }
+
+  start() {
+    this.app.listen({ port: this.config.port }, () => {
       Logger.info(`🚀 Server ready at http://localhost:${this.config.port}`);
     });
   }

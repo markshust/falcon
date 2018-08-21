@@ -3,6 +3,7 @@ coverage/
 .DS_Store
 yarn.lock
 package-lock.json
+yarn-error.log
 
 .vscode/
 */**/jsconfig.json
