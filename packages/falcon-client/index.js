@@ -1,3 +1,3 @@
 module.exports = {
-  razzlePluginFalconClient: require('./src/clientApp/razzle/falconClientPlugin')
+  razzlePluginFalconClient: require('./src/razzle/falconClientPlugin')
 };
