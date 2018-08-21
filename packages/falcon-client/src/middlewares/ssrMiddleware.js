@@ -28,8 +28,12 @@ export default async (ctx, next) => {
     </ApolloProvider>
   );
 
+  // First 'getDataFromTree' call - fetching data for static components
   await getDataFromTree(markup);
+  // Mounting async components (defined by GraphQL response)
   await asyncBootstrapper(markup);
+  // Second 'getDataFromTree' call - fetching data for newly mounted dynamic components (DynamicRoute)
+  await getDataFromTree(markup);
 
   ctx.state.prerenderedApp = renderToString(markup);
   ctx.state.asyncContext = asyncContext.getState();
