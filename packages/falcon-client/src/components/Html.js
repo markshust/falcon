@@ -15,10 +15,10 @@ import GoogleTagManager from '@hostSrc/google/GoogleTagManager';
  */
 export default class Html extends Component {
   renderGtm(noScript = false) {
-    const { gtmCode } = this.props.config;
+    const { googleTagManager } = this.props.config;
 
-    if (gtmCode) {
-      return <GoogleTagManager gtmId={gtmCode} noScript={noScript} />;
+    if (googleTagManager.id) {
+      return <GoogleTagManager gtmId={googleTagManager.id} noScript={noScript} />;
     }
 
     return null;
@@ -89,8 +89,8 @@ Html.propTypes = {
   state: PropTypes.shape({}),
   content: PropTypes.string,
   config: PropTypes.shape({
-    gtmCode: PropTypes.string,
-    usePwaManifest: PropTypes.bool
+    usePwaManifest: PropTypes.bool,
+    googleTagManager: PropTypes.shape({})
   })
 };
 

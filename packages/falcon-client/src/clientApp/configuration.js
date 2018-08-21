@@ -1,17 +1,23 @@
 import configuration from '@clientSrc/configuration';
 
-export default {
-  config: {
-    // host: undefined,
-    // port: undefined,
-    serverSideRendering: true,
-    logLevel: 'error',
-    usePwaManifest: true,
-    gaCode: '',
-    gtmCode: '',
+const { logLevel = 'error', serverSideRendering = true, usePwaManifest = true, googleTagManager = { id: null } } =
+  configuration.config || {};
 
-    ...configuration.config
-  },
+const configDefaults = {
+  config: {
+    __typename: 'config',
+    logLevel,
+    serverSideRendering,
+    usePwaManifest,
+    googleTagManager: {
+      __typename: 'googleTagManager',
+      ...googleTagManager
+    }
+  }
+};
+
+export default {
+  config: configDefaults,
 
   onServerCreated: configuration.onServerCreated || (() => {}),
   onServerInitialized: configuration.onServerInitialized || (() => {}),

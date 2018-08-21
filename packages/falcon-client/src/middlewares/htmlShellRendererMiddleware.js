@@ -18,7 +18,9 @@ export default async ctx => {
       {
         config @client {
           usePwaManifest
-          gtmCode
+          googleTagManager {
+            id
+          }
         }
       }
     `
