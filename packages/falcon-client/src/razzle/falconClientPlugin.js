@@ -30,8 +30,6 @@ function setEntryToFalconClient(config, target) {
 
     config.entry[indexOfAppServerIndexJs] = paths.falconClient.appServerIndexJs;
   }
-
-  return config;
 }
 
 function makeFalconClientJsFileResolvedByWebpack(config) {
@@ -42,8 +40,18 @@ function makeFalconClientJsFileResolvedByWebpack(config) {
   }
 
   babelLoader.include.push(paths.falconClient.appSrc);
+}
 
-  return config;
+function addGraphQLTagLoader(config) {
+  config.module.rules.find(conf => conf.loader && conf.loader.includes('file-loader')).exclude.push(/\.(graphql|gql)$/);
+
+  config.module.rules.push({
+    test: /\.(graphql|gql)$/,
+    exclude: /node_modules/,
+    include: [paths.falconClient.appSrc],
+    use: require.resolve('graphql-tag/loader')
+  });
+  config.resolve.extensions.push('.graphql', '.gql');
 }
 
 // eslint-disable-next-line no-unused-vars
@@ -61,6 +69,7 @@ module.exports = (config, { target, dev }, webpackObject) => {
 
   setEntryToFalconClient(config, target);
   makeFalconClientJsFileResolvedByWebpack(config);
+  addGraphQLTagLoader(config);
 
   return config;
 };
