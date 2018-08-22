@@ -2,6 +2,7 @@ import path from 'path';
 import fs from 'fs';
 import Logger from '@deity/falcon-logger';
 import send from 'koa-send';
+// import paths from '@hostSrc/razzle/paths';
 
 /**
  * Custom 500 error middleware.
@@ -21,6 +22,14 @@ export default async (ctx, next) => {
       process.env.NODE_ENV === 'production'
         ? path.resolve(path.join(process.env.RAZZLE_PUBLIC_DIR, './../../views/errors'))
         : path.resolve(path.join(process.env.RAZZLE_PUBLIC_DIR, './../views/errors'));
+
+    // TODO way of resolving paths (@hostSrc/razzle/paths) needs to be fixed!
+    // const root = fs.existsSync(path.join(paths.razzle.appSrc, `views/errors/500.html`))
+    //   ? path.join(paths.razzle.appSrc, `views/errors`)
+    //   : path.join(paths.falconClient.appSrc, `views/errors`);
+
+    // ctx.status = 500;
+    // await send(ctx, '/500.html', { root });
 
     ctx.status = 500;
 
