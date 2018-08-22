@@ -13,7 +13,7 @@ const { config } = configuration;
 Logger.setLogLevel(config.logLevel);
 
 const router = new Router();
-if (config.config.serverSideRendering) {
+if (config.serverSideRendering) {
   router.get('/*', apolloClientProvider, ssr, htmlShellRenderer);
 } else {
   router.get('/*', apolloClientProvider, htmlShellRenderer);
