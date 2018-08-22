@@ -29,13 +29,18 @@ export default async (ctx, next) => {
   );
 
   // First 'getDataFromTree' call - fetching data for static components
-  await getDataFromTree(markup);
-  // Mounting async components (defined by GraphQL response)
-  await asyncBootstrapper(markup);
-  // Second 'getDataFromTree' call - fetching data for newly mounted dynamic components (DynamicRoute)
-  await getDataFromTree(markup);
+  await ctx.state.timings.profile(async () => getDataFromTree(markup), 'getDataFromTree() #1');
 
-  ctx.state.prerenderedApp = renderToString(markup);
+  // Mounting async components (defined by GraphQL response)
+  await ctx.state.timings.profile(async () => asyncBootstrapper(markup), 'asyncBootstrapper() #1');
+
+  // Second 'getDataFromTree' call - fetching data for newly mounted dynamic components (DynamicRoute)
+  await ctx.state.timings.profile(async () => getDataFromTree(markup), 'getDataFromTree() #2');
+
+  await ctx.state.timings.profile(() => {
+    ctx.state.prerenderedApp = renderToString(markup);
+  }, 'SSR renderToString()');
+
   ctx.state.asyncContext = asyncContext.getState();
 
   return context.url ? ctx.redirect(context.url) : next();
