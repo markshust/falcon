@@ -14,7 +14,7 @@ export default async (ctx, next) => {
   const client = new ApolloClient({
     clientState: {
       defaults: {
-        ...configuration.config,
+        ...configuration.configState.defaults,
         ...clientState.defaults
       },
       resolvers: { ...clientState.resolvers }
