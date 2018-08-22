@@ -1,0 +1,35 @@
+---
+name: Button
+menu: Components
+---
+
+import { Playground } from 'docz'
+import { PropsTable } from '../docs/PropsTable'
+import { Button, GridLayout, Card } from '../'
+
+# Button
+description
+
+### Best practices
+TODO
+
+### Basic usage
+<Playground>
+ <GridLayout gridTemplateColumns={{ xs: '1fr 2fr', md: '2fr 2fr' }}>
+  <Card>
+    <Button bg={{ xs: 'primary', md: 'secondary' }}>Hello!</Button>
+  </Card>
+  <Card>
+    <Button>World</Button>
+  </Card>
+  <Card>
+    <Button>test</Button>
+  </Card>
+  <Card>
+    <Button variant="primary">test 2</Button>
+  </Card>
+</GridLayout>
+</Playground>
+
+### Properties
+<PropsTable of={Button} />

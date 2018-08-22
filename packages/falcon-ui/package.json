@@ -1,7 +1,62 @@
 {
   "name": "@deity/falcon-ui",
   "license": "OSL-3.0",
-  "main": "index.js",
   "version": "1.0.0",
-  "repository": "git@github.com:deity-io/falcon.git"
+  "repository": "git@github.com:deity-io/falcon.git",
+  "main": "dist/falcon-ui.cjs.js",
+  "module": "dist/falcon-ui.esm.js",
+  "types": "dist/index.d.ts",
+  "source": "src/index.ts",
+  "sideEffects": false,
+  "files": [
+    "dist",
+    "src"
+  ],
+  "peerDependencies": {
+    "react": "^16.4.2",
+    "react-dom": "^16.4.2"
+  },
+  "scripts": {
+    "prebuild": "rimraf dist",
+    "build": "rollup -c & tsc & docz build",
+    "start": "docz dev",
+    "test": "jest"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.0.0-rc.1",
+    "@babel/core": "^7.0.0-rc.1",
+    "@babel/plugin-proposal-class-properties": "^7.0.0-rc.1",
+    "@babel/plugin-proposal-object-rest-spread": "^7.0.0-rc.1",
+    "@babel/preset-env": "^7.0.0-rc.1",
+    "@babel/preset-react": "^7.0.0-rc.1",
+    "@babel/preset-typescript": "^7.0.0-rc.1",
+    "@types/deepmerge": "^2.1.0",
+    "@types/jest": "^23.3.1",
+    "@types/react": "^16.4.9",
+    "babel-jest": "^23.4.2",
+    "babel-loader": "8.0.0-beta.4",
+    "babel-plugin-module-resolver": "^3.1.1",
+    "docz": "^0.10.3",
+    "jest-cli": "^23.4.2",
+    "jest-config": "^23.4.2",
+    "jest-serializer-html": "^5.0.0",
+    "react": "^16.4.2",
+    "react-dom": "^16.4.2",
+    "react-test-renderer": "^16.4.2",
+    "rimraf": "^2.6.1",
+    "rollup": "^0.64.1",
+    "rollup-plugin-babel": "^4.0.0-beta.8",
+    "rollup-plugin-node-resolve": "^3.3.0",
+    "rollup-plugin-size-snapshot": "^0.6.1",
+    "typescript": "^3.0.1"
+  },
+  "dependencies": {
+    "@emotion/core": "^0.13.0",
+    "@emotion/is-prop-valid": "^0.6.5",
+    "@emotion/provider": "^0.11.1",
+    "@emotion/styled-base": "^0.10.3",
+    "@mdx-js/tag": "^0.15.0-2",
+    "csstype": "^2.5.6",
+    "deepmerge": "^2.1.1"
+  }
 }

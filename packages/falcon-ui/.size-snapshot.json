@@ -1,0 +1,35 @@
+{
+  "dist/falcon-ui.cjs.js": {
+    "bundled": 15553,
+    "minified": 7559,
+    "gzipped": 2747
+  },
+  "dist/falcon-ui.es.js": {
+    "bundled": 2149,
+    "minified": 937,
+    "gzipped": 506,
+    "treeshaked": {
+      "rollup": {
+        "code": 689,
+        "import_statements": 57
+      },
+      "webpack": {
+        "code": 1753
+      }
+    }
+  },
+  "dist/falcon-ui.esm.js": {
+    "bundled": 15117,
+    "minified": 7200,
+    "gzipped": 2662,
+    "treeshaked": {
+      "rollup": {
+        "code": 6240,
+        "import_statements": 146
+      },
+      "webpack": {
+        "code": 7410
+      }
+    }
+  }
+}

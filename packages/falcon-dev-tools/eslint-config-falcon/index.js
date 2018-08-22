@@ -3,7 +3,11 @@ module.exports = {
   extends: ['eslint-config-airbnb', 'plugin:prettier/recommended'],
   plugins: ['react', 'import', 'prettier'],
   settings: {
-    'import/parser': 'babel-eslint'
+    'import/parser': 'babel-eslint',
+    'import/resolver': {
+      node: true,
+      'eslint-import-resolver-typescript': true
+    }
   },
   env: {
     browser: true,
@@ -27,12 +31,7 @@ module.exports = {
     'import/no-unresolved': 'off',
     'import/no-named-as-default': 'error',
     'import/extensions': ['off', 'never'],
-    'import/no-extraneous-dependencies': [
-      'error',
-      {
-        devDependencies: ['**/__tests__/*', '**/*.test.js', '**/webpack/*.js']
-      }
-    ],
+    'import/no-extraneous-dependencies': ['error'],
     'jsx-a11y/anchor-is-valid': [
       'off',
       {
@@ -77,7 +76,7 @@ module.exports = {
     'react/jsx-filename-extension': [
       1,
       {
-        extensions: ['.js', '.jsx']
+        extensions: ['.js', '.jsx', '.tsx']
       }
     ],
     'react/no-danger': 'off',
@@ -99,5 +98,25 @@ module.exports = {
     __DEVTOOLS__: true,
     socket: true,
     webpackIsomorphicTools: true
-  }
+  },
+  overrides: [
+    {
+      files: ['**/*.ts', '**/*.tsx'],
+      parser: 'typescript-eslint-parser',
+      plugins: ['typescript'],
+      rules: {
+        'no-undef': 'off',
+        'no-unused-vars': 'off',
+        'no-restricted-globals': 'off',
+        'react/prefer-stateless-function': 'off',
+        'react/react-in-jsx-scope': 'off',
+        'no-use-before-define': 'off',
+        'no-continue': 'off',
+        'dot-notation': 'off',
+        'react/prop-types': 'off',
+        'import/prefer-default-export': 'off',
+        'import-name': [true, { react: 'React' }]
+      }
+    }
+  ]
 };

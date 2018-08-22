@@ -1,0 +1,41 @@
+---
+name: GridLayout
+menu: Components
+---
+
+import { Playground } from 'docz'
+import { PropsTable } from '../docs/PropsTable'
+import {  GridLayout, Card } from '../'
+
+# Grid Layout
+description
+
+### Best practices
+TODO
+
+### Basic usage
+<Playground>
+<GridLayout gridTemplateColumns={{ xs: '1fr 2fr', md: '2fr 2fr' }} gridTemplateRows='1fr 50vh 1fr'>
+	<Card>
+		c 1
+	</Card>
+	<Card>
+		c 2
+	</Card>
+	<Card>
+		c 3
+	</Card>
+	<Card>
+		c 4
+	</Card>
+	<Card>
+		c 5
+	</Card>
+	<Card>
+		c 6
+	</Card>
+</GridLayout>
+</Playground>
+
+### Properties
+<PropsTable of={GridLayout} />
