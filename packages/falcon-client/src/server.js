@@ -25,12 +25,12 @@ const server = new Koa();
 configuration.onServerCreated(server);
 
 server
-  .use(error500)
-  // `koa-helmet` provides security headers to help prevent common, well known attacks
-  // @see https://helmetjs.github.io/
   .use(helmet())
   .use(serverTiming())
   .use(serve(process.env.RAZZLE_PUBLIC_DIR))
+  .use(error500())
+  // `koa-helmet` provides security headers to help prevent common, well known attacks
+  // @see https://helmetjs.github.io/
   .use(router.routes())
   .use(router.allowedMethods());
 
