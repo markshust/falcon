@@ -1,4 +1,4 @@
-import configuration from '@clientSrc/configuration';
+import configuration from 'app-src/configuration';
 
 const { logLevel = 'error', serverSideRendering = true, usePwaManifest = true, googleTagManager = { id: null } } =
   configuration.config || {};

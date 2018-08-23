@@ -63,9 +63,9 @@ module.exports = (config, { target, dev }, webpackObject) => {
     Logger.logAndThrow(`There is no 'configuration.js' file in '${paths.razzle.appSrc}' directory!`);
   }
 
-  config.resolve.alias['@src'] = paths.razzle.appSrc;
-  config.resolve.alias['@clientSrc'] = paths.razzle.appSrc;
-  config.resolve.alias['@hostSrc'] = paths.falconClient.appSrc;
+  config.resolve.alias.src = paths.razzle.appSrc;
+  config.resolve.alias['app-src'] = paths.razzle.appSrc;
+  config.resolve.alias['falcon-client/src'] = paths.falconClient.appSrc;
 
   setEntryToFalconClient(config, target);
   makeFalconClientJsFileResolvedByWebpack(config);

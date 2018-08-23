@@ -1,7 +1,7 @@
 import { ApolloLink } from 'apollo-link';
-import ApolloClient from '@hostSrc/service/ApolloClient';
-import { clientState } from '@hostSrc/clientApp';
-import configuration from '@hostSrc/clientApp/configuration';
+import ApolloClient from 'falcon-client/src/service/ApolloClient';
+import { clientState } from 'falcon-client/src/clientApp';
+import configuration from 'falcon-client/src/clientApp/configuration';
 
 /**
  * Apollo Client Provider middleware.

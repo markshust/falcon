@@ -3,12 +3,12 @@ import serve from 'koa-static';
 import helmet from 'koa-helmet';
 import Router from 'koa-router';
 import Logger from '@deity/falcon-logger';
-import configuration from '@hostSrc/clientApp/configuration';
-import apolloClientProvider from '@hostSrc/middlewares/apolloClientProvider';
-import ssr from '@hostSrc/middlewares/ssrMiddleware';
-import htmlShellRenderer from '@hostSrc/middlewares/htmlShellRendererMiddleware';
-import error500 from '@hostSrc/middlewares/error500Middleware';
-import serverTiming from '@hostSrc/middlewares/serverTimingMiddleware';
+import configuration from './clientApp/configuration';
+import apolloClientProvider from './middlewares/apolloClientProvider';
+import ssr from './middlewares/ssrMiddleware';
+import htmlShellRenderer from './middlewares/htmlShellRendererMiddleware';
+import error500 from './middlewares/error500Middleware';
+import serverTiming from './middlewares/serverTimingMiddleware';
 
 const { config } = configuration;
 Logger.setLogLevel(config.logLevel);

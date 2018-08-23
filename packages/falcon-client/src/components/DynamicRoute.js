@@ -2,7 +2,7 @@ import React from 'react';
 import Route from 'react-router-dom/Route';
 import PropTypes from 'prop-types';
 import { Query } from 'react-apollo';
-import { GET_URL } from '@hostSrc/graphql/url.gql';
+import { GET_URL } from 'falcon-client/src/graphql/url.gql';
 
 const DynamicRoute = props => {
   const {
