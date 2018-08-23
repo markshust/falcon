@@ -40,7 +40,11 @@ function makeFalconClientJsFileResolvedByWebpack(config) {
 }
 
 function addGraphQLTagLoader(config) {
-  config.module.rules.find(conf => conf.loader && conf.loader.includes('file-loader')).exclude.push(/\.(graphql|gql)$/);
+  const fileLoaderFinder = makeLoaderFinder('file-loader');
+  const fileLoader = config.module.rules.find(fileLoaderFinder);
+  if (fileLoader) {
+    fileLoader.exclude.push(/\.(graphql|gql)$/);
+  }
 
   config.module.rules.push({
     test: /\.(graphql|gql)$/,
