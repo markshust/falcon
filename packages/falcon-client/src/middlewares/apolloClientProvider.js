@@ -12,7 +12,7 @@ import configuration from '@hostSrc/clientApp/configuration';
  * @returns {Promise<void>} - next middleware
  */
 export default async (ctx, next) => {
-  const { timings } = ctx.state;
+  const { serverTiming } = ctx.state;
 
   const profileMiddleware = new ApolloLink((operation, forward) => {
     let name = operation.operationName;
@@ -26,9 +26,9 @@ export default async (ctx, next) => {
       name = '<unknown>';
     }
 
-    const qTimer = timings.startTimer(`> ${operation.query.definitions[0].operation}: ${name}`);
+    const qTimer = serverTiming.startTimer(`> ${operation.query.definitions[0].operation}: ${name}`);
     return forward(operation).map(result => {
-      timings.stopTimer(qTimer);
+      serverTiming.stopTimer(qTimer);
       return result;
     });
   });

@@ -1,5 +1,5 @@
 export default () => async (ctx, next) => {
-  ctx.state.timings = {
+  ctx.state.serverTiming = {
     counter: 0,
     all: new Map(),
     convertToMs(hrtime) {
@@ -7,9 +7,8 @@ export default () => async (ctx, next) => {
       return ms.toFixed(3);
     },
     startTimer(desc) {
-      const generatedId = this.counter ? this.counter : 'total';
+      const generatedId = this.counter++ || 'total';
       this.all.set(generatedId, { start: process.hrtime(), desc });
-      this.counter++;
       return generatedId;
     },
     stopTimer(id) {
@@ -23,16 +22,16 @@ export default () => async (ctx, next) => {
     }
   };
 
-  await ctx.state.timings.profile(async () => next(), 'Complete SSR');
+  await ctx.state.serverTiming.profile(async () => next(), 'Complete SSR');
 
-  ctx.state.timings.all.forEach(timing => {
+  ctx.state.serverTiming.all.forEach(timing => {
     if (!timing.stop) timing.stop = process.hrtime(timing.start);
   });
 
   const metrics = [];
   // eslint-disable-next-line no-restricted-syntax
-  for (const [key, { stop, desc }] of ctx.state.timings.all) {
-    metrics.push(`${key};dur=${ctx.state.timings.convertToMs(stop)};desc="${desc}"`);
+  for (const [key, { stop, desc }] of ctx.state.serverTiming.all) {
+    metrics.push(`${key};dur=${ctx.state.serverTiming.convertToMs(stop)};desc="${desc}"`);
   }
 
   ctx.append('Server-Timing', metrics.join(', '));

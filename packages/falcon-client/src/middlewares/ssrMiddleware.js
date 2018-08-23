@@ -14,7 +14,7 @@ import asyncBootstrapper from 'react-async-bootstrapper';
  * @returns {Promise<void>} - next middleware or redirect
  */
 export default async (ctx, next) => {
-  const { client, timings } = ctx.state;
+  const { client, serverTiming } = ctx.state;
   const context = {};
   const asyncContext = createAsyncContext();
 
@@ -29,15 +29,15 @@ export default async (ctx, next) => {
   );
 
   // First 'getDataFromTree' call - fetching data for static components
-  await timings.profile(async () => getDataFromTree(markup), 'getDataFromTree() #1');
+  await serverTiming.profile(async () => getDataFromTree(markup), 'getDataFromTree() #1');
 
   // Mounting async components (defined by GraphQL response)
-  await timings.profile(async () => asyncBootstrapper(markup), 'asyncBootstrapper() #1');
+  await serverTiming.profile(async () => asyncBootstrapper(markup), 'asyncBootstrapper() #1');
 
   // Second 'getDataFromTree' call - fetching data for newly mounted dynamic components (DynamicRoute)
-  await timings.profile(async () => getDataFromTree(markup), 'getDataFromTree() #2');
+  await serverTiming.profile(async () => getDataFromTree(markup), 'getDataFromTree() #2');
 
-  await timings.profile(() => {
+  await serverTiming.profile(() => {
     ctx.state.prerenderedApp = renderToString(markup);
   }, 'SSR renderToString()');
 

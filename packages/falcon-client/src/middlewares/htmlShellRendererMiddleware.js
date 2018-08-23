@@ -12,10 +12,10 @@ const assets = require(process.env.RAZZLE_ASSETS_MANIFEST);
  * @param {string} next - Koa next.
  */
 export default async ctx => {
-  const { client, prerenderedApp, asyncContext, timings } = ctx.state;
+  const { client, prerenderedApp, asyncContext, serverTiming } = ctx.state;
   const { config } = client.readQuery({ query: APP_INIT });
 
-  const renderTimer = timings.startTimer('HTML renderToString()');
+  const renderTimer = serverTiming.startTimer('HTML renderToString()');
   const htmlDocument = renderToString(
     <Html
       assets={assets}
@@ -25,7 +25,7 @@ export default async ctx => {
       config={config}
     />
   );
-  timings.stopTimer(renderTimer);
+  serverTiming.stopTimer(renderTimer);
 
   ctx.status = 200;
   ctx.body = `<!doctype html>${htmlDocument}`;
