@@ -4,9 +4,11 @@ import BrowserRouter from 'react-router-dom/BrowserRouter';
 import { ApolloProvider } from 'react-apollo';
 import { AsyncComponentProvider } from 'react-async-component';
 import asyncBootstrapper from 'react-async-bootstrapper';
+import { I18nextProvider } from 'react-i18next';
 import ApolloClient from './service/ApolloClient';
 import App, { clientApolloSchema } from './clientApp';
 import { SSR } from './graphql/config.gql';
+import i18next from './i18n/i18nextClient';
 
 const client = new ApolloClient({
   isBrowser: true,
@@ -21,11 +23,13 @@ const renderApp = config.serverSideRendering ? hydrate : render;
 
 const markup = (
   <ApolloProvider client={client}>
-    <AsyncComponentProvider rehydrateState={window.ASYNC_COMPONENTS_STATE}>
-      <BrowserRouter>
-        <App />
-      </BrowserRouter>
-    </AsyncComponentProvider>
+    <I18nextProvider i18n={i18next()}>
+      <AsyncComponentProvider rehydrateState={window.ASYNC_COMPONENTS_STATE}>
+        <BrowserRouter>
+          <App />
+        </BrowserRouter>
+      </AsyncComponentProvider>
+    </I18nextProvider>
   </ApolloProvider>
 );
 
