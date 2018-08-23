@@ -26,6 +26,7 @@ import fetch from 'node-fetch';
  */
 export default (config = {}) => {
   const {
+    extraLinks = [],
     isBrowser = false,
     initialState = {},
     clientState = {},
@@ -47,6 +48,6 @@ export default (config = {}) => {
     cache,
     connectToDevTools: isBrowser && process.env.NODE_ENV !== 'production',
     ssrMode: !isBrowser,
-    link: from([linkState, httpLink])
+    link: from([...extraLinks, linkState, httpLink])
   });
 };
