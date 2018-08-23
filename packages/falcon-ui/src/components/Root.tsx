@@ -5,7 +5,6 @@ export const Root = themed({
   as: 'div'
 })({
   '*': {
-    boxSizing: 'border-box',
-    margin: 0
+    boxSizing: 'border-box'
   }
 });
