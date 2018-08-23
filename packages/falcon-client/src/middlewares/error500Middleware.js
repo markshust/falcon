@@ -1,42 +1,25 @@
-import path from 'path';
-import fs from 'fs';
 import Logger from '@deity/falcon-logger';
-import send from 'koa-send';
-import paths from 'falcon-client/src/buildTools/paths';
 
 /**
  * Custom 500 error middleware.
- * @async
- * @param {string} ctx - Koa context.
- * @param {string} next - Koa next.
+ * @returns {Function} Koa2 middleware
  */
-export default async (ctx, next) => {
+export default () => async (ctx, next) => {
   try {
     await next();
   } catch (error) {
-    Logger.error(`Error: ${error}`);
-
-    // path.resolve(path.join(__dirname, '/../views/errors/500.html'));
-
-    // TODO way of resolving paths (falcon-client/src/razzle/paths) needs to be fixed!
-    const root = fs.existsSync(path.join(paths.razzle.appSrc, `views/errors/500.html`))
-      ? path.join(paths.razzle.appSrc, `views/errors`)
-      : path.join(paths.falconClient.appSrc, `views/errors`);
-
     ctx.status = 500;
-    await send(ctx, '/500.html', { root });
+    ctx.body = 'Internal Server Error';
 
-    // const rootDir =
-    //   process.env.NODE_ENV === 'production'
-    //     ? path.resolve(path.join(process.env.RAZZLE_PUBLIC_DIR, './../../views/errors'))
-    //     : path.resolve(path.join(process.env.RAZZLE_PUBLIC_DIR, './../views/errors'));
+    Logger.error(`Internal Server Error:\n  ${error}`);
 
-    // ctx.status = 500;
-
-    // if (fs.existsSync(path.join(rootDir, `500.html`))) {
-    //   await send(ctx, '/500.html', { root });
-    // } else {
-    //   ctx.body = 'Internal Server Error';
-    // }
+    try {
+      ctx.type = 'html';
+      ctx.body = require('app-src/views/errors/500.html');
+    } catch (e) {
+      // using default view instead
+      ctx.type = 'html';
+      ctx.body = require('falcon-client/src/views/errors/500.html');
+    }
   }
 };
