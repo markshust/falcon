@@ -29,10 +29,12 @@
     "@deity/falcon-client": "1.0.0",
     "config": "^2.0.1",
     "graphql-tag": "^2.9.2",
+    "prop-types": "15.6.2",
     "react": "^16.4.2",
     "react-apollo": "^2.1.11",
     "react-async-component": "^2.0.0",
     "react-dom": "^16.4.2",
+    "react-i18next": "^7.10.1",
     "react-router-dom": "^4.3.1"
   },
   "devDependencies": {
