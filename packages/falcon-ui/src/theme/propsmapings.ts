@@ -106,9 +106,7 @@ export const mappings = propsMapping({
   borderRadius: {
     themeProp: 'borderRadius'
   },
-  borderColor: {
-    themeProp: 'colors'
-  },
+
   border: {
     themeProp: 'borders'
   },
@@ -124,6 +122,9 @@ export const mappings = propsMapping({
   borderLeft: {
     themeProp: 'borders'
   },
+  borderColor: {
+    themeProp: 'colors'
+  },
   boxShadow: {
     themeProp: 'boxShadows'
   },
@@ -135,7 +136,10 @@ export const mappings = propsMapping({
   left: {},
   zIndex: {
     themeProp: 'zIndex'
-  }
+  },
+  overflow: {},
+  overflowX: {},
+  overflowY: {}
 });
 
 export type PropsMappings = typeof mappings;

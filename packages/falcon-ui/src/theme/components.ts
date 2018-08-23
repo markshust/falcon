@@ -90,6 +90,38 @@ const tr: ThemedComponent = {
 };
 const tbody: ThemedComponent = {};
 
+const h1: ThemedComponent = {
+  fontSize: 'xxl',
+  fontWeight: 'bold',
+  lineHeight: 'small',
+  p: 'sm',
+  m: 'none'
+};
+
+const h2: ThemedComponent = {
+  fontSize: 'xl',
+  fontWeight: 'bold',
+  lineHeight: 'small',
+  p: 'sm',
+  m: 'none'
+};
+
+const h3: ThemedComponent = {
+  fontSize: 'lg',
+  fontWeight: 'bold',
+  lineHeight: 'small',
+  p: 'sm',
+  m: 'none'
+};
+
+const h4: ThemedComponent = {
+  fontSize: 'md',
+  fontWeight: 'bold',
+  lineHeight: 'small',
+  p: 'sm',
+  m: 'none'
+};
+
 export const components: ThemedComponents = {
   root,
   button,
@@ -101,5 +133,9 @@ export const components: ThemedComponents = {
   th,
   td,
   tr,
-  tbody
+  tbody,
+  h1,
+  h2,
+  h3,
+  h4
 };

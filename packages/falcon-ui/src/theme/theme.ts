@@ -55,7 +55,8 @@ export const theme = {
   },
 
   lineHeights: {
-    default: 1.3,
+    small: 1.2,
+    default: 1.4,
     large: 2
   },
 
