@@ -46,7 +46,7 @@ export default params => {
     .use(error500())
     .use(serverTiming())
     .use(serve(`${process.env.RAZZLE_PUBLIC_DIR || './static'}`))
-    .use(i18next)
+    .use(i18next())
     .use(router.routes())
     .use(router.allowedMethods());
 

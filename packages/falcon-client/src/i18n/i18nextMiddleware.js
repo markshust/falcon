@@ -16,22 +16,19 @@ const defaultOptions = {
   }
 };
 
-const i18nextServer = () =>
+const i18nextServer = options =>
   i18next.use(Backend).init({
     ...defaultOptions,
+    ...options,
     backend: {
       loadPath: path.resolve(path.join(process.env.RAZZLE_PUBLIC_DIR, '/locales/{{lng}}/{{ns}}.json')),
       jsonIndent: 2
     }
   });
 
-export default koaI18next(i18nextServer(), {
-  // lookupCookie: 'i18n', // detecting language in cookie
-  // order: ['cookie'],
-  lookupCookie: 'i18next',
-  // lookupQuerystring: 'lng',
-  // lookupPath: 'lng',
-  order: ['cookie'],
-
-  next: true // if koa is version 2
-});
+export default options =>
+  koaI18next(i18nextServer(options), {
+    lookupCookie: 'i18n',
+    order: ['cookie'],
+    next: true // if koa is version 2
+  });
