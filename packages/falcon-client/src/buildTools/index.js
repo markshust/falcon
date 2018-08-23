@@ -1,5 +1,5 @@
 const path = require('path');
-const fs = require('fs');
+const fs = require('fs-extra');
 const Logger = require('@deity/falcon-logger');
 const paths = require('./paths');
 
