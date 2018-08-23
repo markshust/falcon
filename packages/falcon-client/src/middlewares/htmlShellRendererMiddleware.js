@@ -15,7 +15,7 @@ export default async ctx => {
   const { client, prerenderedApp, asyncContext, serverTiming } = ctx.state;
   const { config } = client.readQuery({ query: APP_INIT });
 
-  const renderTimer = serverTiming.startTimer('HTML renderToString()');
+  const renderTimer = serverTiming.start('HTML renderToString()');
   const htmlDocument = renderToString(
     <Html
       assets={assets}
@@ -25,7 +25,7 @@ export default async ctx => {
       config={config}
     />
   );
-  serverTiming.stopTimer(renderTimer);
+  serverTiming.stop(renderTimer);
 
   ctx.status = 200;
   ctx.body = `<!doctype html>${htmlDocument}`;

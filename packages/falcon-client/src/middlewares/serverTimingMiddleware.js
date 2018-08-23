@@ -6,19 +6,19 @@ export default () => async (ctx, next) => {
       const ms = hrtime[0] * 1e3 + hrtime[1] * 1e-6;
       return ms.toFixed(3);
     },
-    startTimer(desc) {
+    start(desc) {
       const generatedId = this.counter++ || 'total';
       this.all.set(generatedId, { start: process.hrtime(), desc });
       return generatedId;
     },
-    stopTimer(id) {
+    stop(id) {
       const timing = this.all.get(id);
       timing.stop = process.hrtime(timing.start);
     },
     async profile(callback, desc) {
-      const generatedId = this.startTimer(desc);
+      const generatedId = this.start(desc);
       await callback();
-      this.stopTimer(generatedId);
+      this.stop(generatedId);
     }
   };
 

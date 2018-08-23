@@ -26,9 +26,9 @@ export default async (ctx, next) => {
       name = '<unknown>';
     }
 
-    const qTimer = serverTiming.startTimer(`> ${operation.query.definitions[0].operation}: ${name}`);
+    const qTimer = serverTiming.start(`> ${operation.query.definitions[0].operation}: ${name}`);
     return forward(operation).map(result => {
-      serverTiming.stopTimer(qTimer);
+      serverTiming.stop(qTimer);
       return result;
     });
   });
