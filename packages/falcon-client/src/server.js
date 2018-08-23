@@ -27,7 +27,7 @@ configuration.onServerCreated(server);
 server
   .use(helmet())
   .use(serverTiming())
-  .use(serve(process.env.RAZZLE_PUBLIC_DIR))
+  .use(serve(`${process.env.RAZZLE_PUBLIC_DIR}/static`))
   .use(error500())
   // `koa-helmet` provides security headers to help prevent common, well known attacks
   // @see https://helmetjs.github.io/

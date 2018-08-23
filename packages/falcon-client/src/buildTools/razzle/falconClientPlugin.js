@@ -1,3 +1,4 @@
+const path = require('path');
 const makeLoaderFinder = require('razzle-dev-utils/makeLoaderFinder');
 const paths = require('./../paths');
 
@@ -66,9 +67,13 @@ function addGraphQLTagLoader(config) {
 
 // eslint-disable-next-line no-unused-vars
 module.exports = (config, { target, dev }, webpackObject) => {
-  config.resolve.alias.src = paths.razzle.appSrc;
-  config.resolve.alias['app-path'] = paths.razzle.appPath;
-  config.resolve.alias['falcon-client/src'] = paths.falconClient.appSrc;
+  config.resolve.alias = {
+    ...(config.resolve.alias || {}),
+    public: path.join(paths.razzle.appPath, 'public'),
+    src: paths.razzle.appSrc,
+    'app-path': paths.razzle.appPath,
+    'falcon-client/src': paths.falconClient.appSrc
+  };
 
   setEntryToFalconClient(config, target);
   makeFalconClientJsFileResolvedByWebpack(config);
