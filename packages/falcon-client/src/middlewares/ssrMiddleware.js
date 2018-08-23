@@ -2,6 +2,7 @@ import React from 'react';
 import { renderToString } from 'react-dom/server';
 import { StaticRouter } from 'react-router-dom';
 import { ApolloProvider, getDataFromTree } from 'react-apollo';
+import { I18nextProvider } from 'react-i18next';
 import { AsyncComponentProvider, createAsyncContext } from 'react-async-component';
 import asyncBootstrapper from 'react-async-bootstrapper';
 
@@ -12,18 +13,23 @@ import asyncBootstrapper from 'react-async-bootstrapper';
  * @param {string} next - Koa next.
  * @returns {Promise<void>} - next middleware or redirect
  */
+
 export default ({ App }) => async (ctx, next) => {
-  const { client, serverTiming } = ctx.state;
+  const { client, serverTiming, lng } = ctx.state;
+  const { i18next } = ctx;
+
   const context = {};
   const asyncContext = createAsyncContext();
 
   const markup = (
     <ApolloProvider client={client}>
-      <AsyncComponentProvider asyncContext={asyncContext}>
-        <StaticRouter context={context} location={ctx.url}>
-          <App />
-        </StaticRouter>
-      </AsyncComponentProvider>
+      <I18nextProvider i18n={i18next} initialLanguage={lng}>
+        <AsyncComponentProvider asyncContext={asyncContext}>
+          <StaticRouter context={context} location={ctx.url}>
+            <App />
+          </StaticRouter>
+        </AsyncComponentProvider>
+      </I18nextProvider>
     </ApolloProvider>
   );
 
