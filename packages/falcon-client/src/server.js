@@ -8,6 +8,7 @@ import ssr from './middlewares/ssrMiddleware';
 import htmlShellRenderer from './middlewares/htmlShellRendererMiddleware';
 import error500 from './middlewares/error500Middleware';
 import serverTiming from './middlewares/serverTimingMiddleware';
+import i18next from './i18n/i18nextMiddleware';
 
 /**
  * @typedef {object} ServerAppConfig
@@ -45,6 +46,7 @@ export default params => {
     .use(error500())
     .use(serverTiming())
     .use(serve(`${process.env.RAZZLE_PUBLIC_DIR || './static'}`))
+    .use(i18next)
     .use(router.routes())
     .use(router.allowedMethods());
 
