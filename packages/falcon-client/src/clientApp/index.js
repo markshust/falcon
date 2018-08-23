@@ -1,4 +1,4 @@
-import App, { clientState } from 'app-src';
+import App, { clientState } from 'app-path';
 
 export default App;
 export { clientState };
