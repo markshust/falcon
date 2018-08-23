@@ -1,6 +1,3 @@
-const path = require('path');
-const fs = require('fs');
-const Logger = require('@deity/falcon-logger');
 const makeLoaderFinder = require('razzle-dev-utils/makeLoaderFinder');
 const paths = require('./../paths');
 
@@ -56,13 +53,6 @@ function addGraphQLTagLoader(config) {
 
 // eslint-disable-next-line no-unused-vars
 module.exports = (config, { target, dev }, webpackObject) => {
-  if (fs.existsSync(path.join(paths.razzle.appPath, `index.js`)) === false) {
-    Logger.logAndThrow(`There is no 'index.js' file in '${paths.razzle.appPath}' directory!`);
-  }
-  if (fs.existsSync(path.join(paths.razzle.appPath, `falcon-client.config.js`)) === false) {
-    Logger.logAndThrow(`There is no 'falcon-client.config.js' file in '${paths.razzle.appPath}' directory!`);
-  }
-
   config.resolve.alias.src = paths.razzle.appSrc;
   config.resolve.alias['app-path'] = paths.razzle.appPath;
   config.resolve.alias['falcon-client/src'] = paths.falconClient.appSrc;
