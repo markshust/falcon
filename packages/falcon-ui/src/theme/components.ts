@@ -50,10 +50,56 @@ const card: ThemedComponent = {
   border: 'light'
 };
 
+const table: ThemedComponent = {
+  borderRadius: 'xs',
+  fontSize: 'sm',
+  width: '100%',
+  boxShadow: 'sm',
+  overflowY: {
+    xs: 'hidden',
+    md: 'initial'
+  },
+  display: {
+    xs: 'block',
+    md: 'table'
+  }
+};
+
+const thead: ThemedComponent = {
+  bg: 'primary'
+};
+
+const th: ThemedComponent = {
+  p: 'md',
+  fontWeight: 'regular',
+  fontSize: 'md',
+  textAlign: 'left'
+};
+
+const td: ThemedComponent = {
+  p: 'md',
+  fontWeight: 'light',
+  textAlign: 'left',
+  lineHeight: 'large'
+};
+
+const tr: ThemedComponent = {
+  display: 'table-row',
+  borderTop: 'light',
+  borderColor: 'primary'
+};
+const tbody: ThemedComponent = {};
+
 export const components: ThemedComponents = {
   root,
   button,
   gridLayout,
   flexLayout,
-  card
+  card,
+  table,
+  thead,
+  th,
+  td,
+  tr,
+  tbody
 };

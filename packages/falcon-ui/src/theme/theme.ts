@@ -55,7 +55,8 @@ export const theme = {
   },
 
   lineHeights: {
-    default: 1.3
+    default: 1.3,
+    large: 2
   },
 
   letterSpacings: {
@@ -64,8 +65,8 @@ export const theme = {
   },
 
   borders: {
-    light: '0.5px',
-    regular: '1px'
+    light: '0.5px solid',
+    regular: '1px solid'
   },
 
   borderRadius: {
