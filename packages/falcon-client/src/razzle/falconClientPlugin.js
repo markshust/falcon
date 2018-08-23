@@ -59,8 +59,8 @@ module.exports = (config, { target, dev }, webpackObject) => {
   if (fs.existsSync(path.join(paths.razzle.appSrc, `index.js`)) === false) {
     Logger.logAndThrow(`There is no 'index.js' file in '${paths.razzle.appSrc}' directory!`);
   }
-  if (fs.existsSync(path.join(paths.razzle.appSrc, `configuration.js`)) === false) {
-    Logger.logAndThrow(`There is no 'configuration.js' file in '${paths.razzle.appSrc}' directory!`);
+  if (fs.existsSync(path.join(paths.razzle.appSrc, `falcon-client.config.js`)) === false) {
+    Logger.logAndThrow(`There is no 'falcon-client.config.js' file in '${paths.razzle.appSrc}' directory!`);
   }
 
   config.resolve.alias.src = paths.razzle.appSrc;

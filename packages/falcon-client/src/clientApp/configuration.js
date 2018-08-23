@@ -1,4 +1,4 @@
-import configuration from 'app-src/configuration';
+import configuration from 'app-src/falcon-client.config';
 
 const { logLevel = 'error', serverSideRendering = true, usePwaManifest = true, googleTagManager = { id: null } } =
   configuration.config || {};
