@@ -29,8 +29,6 @@ server
   .use(serverTiming())
   .use(serve(`${process.env.RAZZLE_PUBLIC_DIR}/static`))
   .use(error500())
-  // `koa-helmet` provides security headers to help prevent common, well known attacks
-  // @see https://helmetjs.github.io/
   .use(router.routes())
   .use(router.allowedMethods());
 
