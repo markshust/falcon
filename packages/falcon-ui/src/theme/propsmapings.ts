@@ -103,6 +103,7 @@ export const mappings = propsMapping({
   gridAutoColumns: {},
   gridTemplateRows: {},
   gridTemplateColumns: {},
+  gridTemplateAreas: {},
   borderRadius: {
     themeProp: 'borderRadius'
   },
