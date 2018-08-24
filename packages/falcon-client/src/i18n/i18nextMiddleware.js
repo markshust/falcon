@@ -10,13 +10,12 @@ const defaultOptions = {
   ns: ['common'],
   defaultNS: 'common',
   fallbackNS: 'common',
-  debug: false,
   interpolation: {
     escapeValue: false // not needed for react!!
   }
 };
 
-const i18nextServer = options =>
+const i18nextServer = (options = {}) =>
   i18next.use(Backend).init({
     ...defaultOptions,
     ...options,
