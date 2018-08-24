@@ -13,23 +13,21 @@ import asyncBootstrapper from 'react-async-bootstrapper';
  * @param {string} next - Koa next.
  * @returns {Promise<void>} - next middleware or redirect
  */
-
 export default ({ App }) => async (ctx, next) => {
-  const { client, serverTiming, lng } = ctx.state;
+  const { client, serverTiming } = ctx.state;
   const { i18next } = ctx;
-
   const context = {};
   const asyncContext = createAsyncContext();
 
   const markup = (
     <ApolloProvider client={client}>
-      <I18nextProvider i18n={i18next} initialLanguage={lng}>
-        <AsyncComponentProvider asyncContext={asyncContext}>
+      <AsyncComponentProvider asyncContext={asyncContext}>
+        <I18nextProvider i18n={i18next}>
           <StaticRouter context={context} location={ctx.url}>
             <App />
           </StaticRouter>
-        </AsyncComponentProvider>
-      </I18nextProvider>
+        </I18nextProvider>
+      </AsyncComponentProvider>
     </ApolloProvider>
   );
 
