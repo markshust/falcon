@@ -20,8 +20,11 @@ const button: ThemedComponent = {
     }
   }),
   variants: {
-    primary: {
-      borderRadius: 'none'
+    secondary: {
+      bg: 'white',
+      color: 'secondary',
+      border: 'regular',
+      borderColor: 'secondary'
     }
   }
 };
@@ -46,8 +49,7 @@ const card: ThemedComponent = {
   p: 'md',
   pt: 'lg',
   pb: 'lg',
-  boxShadow: 'sm',
-  border: 'light'
+  boxShadow: 'sm'
 };
 
 const table: ThemedComponent = {
