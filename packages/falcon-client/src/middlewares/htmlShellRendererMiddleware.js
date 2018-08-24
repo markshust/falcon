@@ -16,6 +16,7 @@ const assets = process.env.RAZZLE_ASSETS_MANIFEST && require(process.env.RAZZLE_
  * @param {string} next - Koa next.
  */
 export default async ctx => {
+  const { i18next } = ctx;
   const { client, prerenderedApp, asyncContext, serverTiming } = ctx.state;
   const { config } = client.readQuery({ query: APP_INIT });
 
@@ -25,6 +26,10 @@ export default async ctx => {
       assets={assets}
       asyncContext={asyncContext}
       state={client.extract()}
+      i18nextState={{
+        language: i18next.language,
+        data: i18next.services.resourceStore.data
+      }}
       content={prerenderedApp}
       config={config}
     />
