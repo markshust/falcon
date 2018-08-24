@@ -47,8 +47,6 @@ const flexLayout: ThemedComponent = {
 const card: ThemedComponent = {
   display: 'block',
   p: 'md',
-  pt: 'lg',
-  pb: 'lg',
   boxShadow: 'sm'
 };
 
