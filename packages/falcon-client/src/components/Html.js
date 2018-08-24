@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import serialize from 'serialize-javascript';
 import Helmet from 'react-helmet';
 import GoogleTagManager from '../google/GoogleTagManager';
+import SerializeState from './SerializeState';
 
 /**
  * Wrapper component containing HTML metadata and boilerplate tags.
@@ -55,24 +55,9 @@ export default class Html extends Component {
         <body>
           {this.renderGtm(true)}
           <div id="root" dangerouslySetInnerHTML={{ __html: content }} />
-          <script
-            charSet="UTF-8"
-            dangerouslySetInnerHTML={{
-              __html: `window.__APOLLO_STATE__=${serialize(state || {})}`
-            }}
-          />
-          <script
-            charSet="UTF-8"
-            dangerouslySetInnerHTML={{
-              __html: `window.ASYNC_COMPONENTS_STATE=${serialize(asyncContext || {})}`
-            }}
-          />
-          <script
-            charSet="UTF-8"
-            dangerouslySetInnerHTML={{
-              __html: `window.I18NEXT_STATE=${serialize(i18nextState || {})}`
-            }}
-          />
+          <SerializeState variable="__APOLLO_STATE__" value={state} />
+          <SerializeState variable="ASYNC_COMPONENTS_STATE" value={asyncContext} />
+          <SerializeState variable="I18NEXT_STATE" value={i18nextState} />
           {process.env.NODE_ENV === 'production' ? (
             <script src={assets.client.js} charSet="UTF-8" async />
           ) : (
