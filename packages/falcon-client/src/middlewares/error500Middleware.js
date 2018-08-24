@@ -1,3 +1,7 @@
+import send from 'koa-send';
+import fs from 'fs';
+import path from 'path';
+import resolve from 'resolve';
 import Logger from '@deity/falcon-logger';
 
 /**
@@ -8,18 +12,13 @@ export default () => async (ctx, next) => {
   try {
     await next();
   } catch (error) {
-    ctx.status = 500;
-    ctx.body = 'Internal Server Error';
-
     Logger.error(`Internal Server Error:\n  ${error}`);
 
-    try {
-      ctx.type = 'html';
-      ctx.body = require('app-src/views/errors/500.html');
-    } catch (e) {
-      // using default view instead
-      ctx.type = 'html';
-      ctx.body = require('falcon-client/src/views/errors/500.html');
+    let viewsDir = path.join(process.env.RAZZLE_PUBLIC_DIR, 'views');
+    if (fs.existsSync(path.join(viewsDir, '/errors/500.html')) === false) {
+      viewsDir = path.resolve(resolve.sync('@deity/falcon-client/views/errors/500.html'), './../..');
     }
+
+    await send(ctx, '/errors/500.html', { root: viewsDir });
   }
 };
