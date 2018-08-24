@@ -14,7 +14,7 @@ export default () => async (ctx, next) => {
   } catch (error) {
     Logger.error(`Internal Server Error:\n  ${error}`);
 
-    let viewsDir = path.join(process.env.RAZZLE_PUBLIC_DIR, 'views');
+    let viewsDir = path.resolve(__dirname, './../', 'views');
     if (fs.existsSync(path.join(viewsDir, '/errors/500.html')) === false) {
       viewsDir = path.resolve(resolve.sync('@deity/falcon-client/views/errors/500.html'), './../..');
     }

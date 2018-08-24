@@ -26,9 +26,10 @@ configuration.onServerCreated(server);
 
 server
   .use(helmet())
-  .use(serverTiming())
-  .use(serve(`${process.env.RAZZLE_PUBLIC_DIR}/static`))
   .use(error500())
+  .use(serverTiming())
+  .use(serve(`${process.env.RAZZLE_PUBLIC_DIR}`))
+
   .use(router.routes())
   .use(router.allowedMethods());
 
