@@ -16,20 +16,19 @@ const client = new ApolloClient({
   // eslint-disable-next-line no-underscore-dangle
   initialState: window.__APOLLO_STATE__ || {}
 });
-
 const { config } = client.readQuery({ query: SSR });
-
 const renderApp = config.serverSideRendering ? hydrate : render;
+const i18nextState = window.I18NEXT_STATE || {};
 
 const markup = (
   <ApolloProvider client={client}>
-    <I18nextProvider i18n={i18next()}>
-      <AsyncComponentProvider rehydrateState={window.ASYNC_COMPONENTS_STATE}>
+    <AsyncComponentProvider rehydrateState={window.ASYNC_COMPONENTS_STATE}>
+      <I18nextProvider i18n={i18next()} initialLanguage={i18nextState.language} initialI18nStore={i18nextState.data}>
         <BrowserRouter>
           <App />
         </BrowserRouter>
-      </AsyncComponentProvider>
-    </I18nextProvider>
+      </I18nextProvider>
+    </AsyncComponentProvider>
   </ApolloProvider>
 );
 
