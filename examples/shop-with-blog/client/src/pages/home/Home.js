@@ -56,7 +56,7 @@ const Home = props => {
   );
 };
 Home.propTypes = {
-  t: PropTypes.func
+  t: PropTypes.func.isRequired
 };
 
 export default translate()(Home);

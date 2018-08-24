@@ -7,7 +7,8 @@ const defaultOptions = {
   whitelist: ['en'], // base on extensions configuration
   lng: 'en',
   fallbackLng: 'en',
-  ns: ['common'],
+  ns: ['common', 'shop'],
+  // preload: ['en'],
   defaultNS: 'common',
   fallbackNS: 'common',
   interpolation: {
