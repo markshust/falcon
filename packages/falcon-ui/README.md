@@ -1,53 +1,90 @@
-// rename docs na docs helpers? wyniesc ponad src? chyba tak
-// komponent hide?
+# falcon-ui
 
-2 docz - dodac custom tsconfig, jak?
-// jak powinna wygladac tabelka z props? design
+## TODO
 
-// Dodać conventional commits?
-// TODO:
-// 1 obsluga refs przetestowac
+- support top level themable hover, disabled, focus props?
+- make `jest` tests working
+- consider separating `as` prop to `tag` and `extend` - similar to https://github.com/jxnblk/styled-system/pull/267 ?
+- separate theme to basic and featured?
+- solve issue with SSR rendering of styles
 
-// dodac docsy dla flex, css, theme, root itp
-// tak powinien wyglądać doc z theme - https://pricelinelabs.github.io/design-system/Color plus edycja? tak jak tu? https://material-ui.com/style/color/#color-tool albo tu https://material.io/tools/color/#!/?view.left=0&view.right=0
+  - https://github.com/emotion-js/emotion/issues/819
+  - https://github.com/apollographql/react-apollo/pull/2304
+  - https://github.com/ctrlplusb/react-tree-walker/issues/40
 
-//2 mozna dodac komentarze do props mapping i to zadziała!
-//4 docz hot reload? nie dziala?
-// UKRYC PROPERTY THEME Z PROPS? TAK JSDOC HIDDEN?
+- move components to separate folders?
+- how to run yarn build when yarn install gets executed? - https://github.com/yarnpkg/yarn/issues/3911
+- track https://github.com/frenic/csstype/issues/8#issuecomment-403489436 for better intellisense of css
+- track https://github.com/prettier/prettier/pull/4975 - for prettier support in mdx files
+- add https://github.com/Andarist/babel-plugin-annotate-pure-calls - should help with tree shaking?
+- add https://www.npmjs.com/package/tinycolor2 - color manipulation helpers?
+- review https://github.com/final-form/react-final-form
+- review https://github.com/bvaughn/react-window
+- support className fallback in theme?
 
-// czwartek
-// dodac component card? - ma box shadow?
+- docs: solve issue with props table generation - https://github.com/pedronauck/docz/issues/240
+- docs: add custom props table, separate custom and themable props? (current theme separate?)
+- docs: rename docs to docs helpers? move outside src?
+- docs: review `Button` component, add more docs, add variants ('primary', secondary?), add tests
+- docs: review table component, add more docs, add tests
+- docs: review `Card` component, add more docs, add tests
+- docs: review `FlexLayout` component, add docs, add tests
+- docs: review `GridLayout` component, add docs, add tests
+- docs: review `Root` component, add docs, add tests
+- docs: review `Headings` component, add docs, add tests
+- docs: add getting started similar to https://react-google-charts.com/?
+- docs: add theming doc
+  - document theming support via `createTheme`
+  - document themable props
+  - document css prop
+  - document as prop
+  - add something like https://pricelinelabs.github.io/design-system/Color ? or https://material-ui.com/style/color/#color-tool or https://github.com/cimdalli/mui-theme-generator ?
 
-// TODO: dodac ratio do theme props? sprobowac ?
+#### Required UI building blocks ?
 
-https://github.com/prettier/prettier/pull/4975
-
-// Track https://github.com/frenic/csstype/issues/8#issuecomment-403489436
-
-///////////
-///////////
-///////////
-OTHER TODO:
-// w projekcie klienckim będzie getTheme, ktory zwraca i nadpisuje default theme, plus strona z edycją themu
-// kazda kliencka aplikacja ma stronę /\_theme ktora pokazuje jaka jest obecna definicja dla theme'a oraz dodaje mozliwosc zmiany
-Components - ogolne/generyczne
-Containers - product card, product list etc, checkout
-// dodać https://github.com/Andarist/babel-plugin-annotate-pure-calls ?
-// https://www.npmjs.com/package/tinycolor2
-// https://reactjs.org/blog/2018/03/29/react-v-16-3.html#strictmode-component
-// https://github.com/final-form/react-final-form
-// scenariusze modyfikacji
-// edycja istniejących zmiennych
-// dodanie nowej zmiennej (kolor)
-// dodanie nowego komponentu
-https://github.com/cimdalli/mui-theme-generator
-// TODO: odpalanie build przy install? jak?
-// TODO: dzialajace testy jest
-// TODO: dokumentacja
-// opisac jak mozna modyfikować theme
-// Themowalne propsy trzymam w theme, łatwo można dodawać nowe themes, osobna paczka z nowym themem,
-// - css custom prop (moze przyjmowac funkcje)
-// - as props
-// - className fallback
-// - przyjmowanie wszystkich propsow
-// falcon abstractor i dominator
+| Component                                                     | Implementation | Tests | Docs |
+| ------------------------------------------------------------- | -------------- | ----- | ---- |
+| Button                                                        | ✓              |       |      |
+| Headings (H1, H2, H3, H4)                                     | ✓              |       |      |
+| Card                                                          |                |       |      |
+| Table                                                         |                |       |      |
+| FlexLayout - column based layout with rows of the same height |                |       |      |
+| GridLayout - more complex layouts                             |                |       |      |
+| Box - generic div component with theming support              |                |       |      |
+| Paragraph                                                     |                |       |      |
+| Absolute - renders as absolutely positioned element           |                |       |      |
+| Relative - renders as relatively positioned element           |                |       |      |
+| Divider                                                       |                |       |      |
+| Image - should it support lazy loading of img src?            |                |       |      |
+| Link                                                          |                |       |      |
+| List                                                          |                |       |      |
+| Arrow                                                         |                |       |      |
+| Avatar                                                        |                |       |      |
+| Navigation                                                    |                |       |      |
+| Tabs                                                          |                |       |      |
+| Group                                                         |                |       |      |
+| BackgroundImage                                               |                |       |      |
+| TextInput                                                     |                |       |      |
+| RangeInput/Slider                                             |                |       |      |
+| Label                                                         |                |       |      |
+| Checkbox                                                      |                |       |      |
+| Radio                                                         |                |       |      |
+| Select                                                        |                |       |      |
+| Toggle                                                        |                |       |      |
+| Textarea                                                      |                |       |      |
+| Tooltip                                                       |                |       |      |
+| Menu                                                          |                |       |      |
+| Badge/Chips                                                   |                |       |      |
+| Toolbar                                                       |                |       |      |
+| Sidebar/Drawer                                                |                |       |      |
+| Overlay                                                       |                |       |      |
+| Dialog                                                        |                |       |      |
+| Accordion/Collapsible                                         |                |       |      |
+| Progress                                                      |                |       |      |
+| Banner                                                        |                |       |      |
+| Portal?                                                       |                |       |      |
+| RangeSelector?                                                |                |       |      |
+| Icon?                                                         |                |       |      |
+| Rating?                                                       |                |       |      |
+| Carousel?                                                     |                |       |      |
+| Zoom?                                                         |                |       |      |
