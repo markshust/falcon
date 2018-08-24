@@ -40,15 +40,6 @@ function makeFalconClientJsFileResolvedByWebpack(config) {
   babelLoader.include.push(paths.falconClient.appSrc);
 }
 
-function addRawLoaderToServeHtmlFiles(config) {
-  config.module.rules.push({
-    test: /\.(html)$/,
-    exclude: /node_modules/,
-    use: require.resolve('raw-loader')
-  });
-  config.resolve.extensions.push('.html');
-}
-
 function addGraphQLTagLoader(config) {
   const fileLoaderFinder = makeLoaderFinder('file-loader');
   const fileLoader = config.module.rules.find(fileLoaderFinder);
@@ -77,7 +68,6 @@ module.exports = (config, { target, dev }, webpackObject) => {
 
   setEntryToFalconClient(config, target);
   makeFalconClientJsFileResolvedByWebpack(config);
-  addRawLoaderToServeHtmlFiles(config);
   addGraphQLTagLoader(config);
 
   return config;
