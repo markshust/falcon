@@ -8,18 +8,17 @@ const defaultOptions = {
   ns: ['common'],
   defaultNS: 'common',
   fallbackNS: 'common',
-  debug: true,
   interpolation: {
     escapeValue: false // not needed for react!!
   }
 };
 
-export default options =>
+export default (options = {}) =>
   i18next.use(XHR).init({
     ...defaultOptions,
     ...options,
     backend: {
       loadPath: '/locales/{{lng}}/{{ns}}.json',
-      parse: data => data // WARNING this has to stay
+      parse: data => JSON.parse(data)
     }
   });
