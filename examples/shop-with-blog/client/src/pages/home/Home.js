@@ -15,7 +15,6 @@ const Home = props => {
       <div className="Home-header">
         <img src={logo} className="Home-logo" alt="logo" />
         <h2>{t('welcome')}</h2>
-        <h2>Welcome to @deity + Razzle + Koa </h2>
       </div>
       <pre className="Home-intro">
         To get started, edit <b>src/App.js</b> or <b>src/Home.js</b> and save to reload.
