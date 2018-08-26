@@ -12,6 +12,9 @@
   },
   "jest": {
     "coverageReporters": ["html", "text", "text-summary"],
+    "moduleNameMapper": {
+      "^@hostSrc(.*)$": "<rootDir>/src$1"
+    },
     "transform": {
       "^.+\\.(gql|graphql)$": "jest-transform-graphql",
       "^.+\\.(js|jsx|mjs)$": "razzle/config/jest/babelTransform",
