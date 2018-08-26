@@ -3,12 +3,22 @@
   "private": true,
   "license": "OSL-3.0",
   "version": "1.0.0",
+  "jest": {
+    "coverageReporters": ["html", "text", "text-summary"],
+    "transform": {
+      "^.+\\.(gql|graphql)$": "jest-transform-graphql",
+      "^.+\\.(js|jsx|mjs)$": "razzle/config/jest/babelTransform",
+      "^.+\\.css$": "razzle/config/jest/cssTransform.js",
+      "^(?!.*\\.(js|jsx|mjs|css|json)$)": "razzle/config/jest/fileTransform.js"
+    }
+  },
   "scripts": {
     "start": "falcon-client start",
     "start:dbg": "cross-env VERBOSE=true falcon-client start -- --inspect",
     "start:prod": "cross-env NODE_ENV=production node build/server.js",
     "build": "falcon-client build",
     "test": "falcon-client test --env=jsdom",
+    "test:coverage": "falcon-client test --env=jsdom --ci --coverage",
     "lint": "./node_modules/.bin/eslint ./"
   },
   "dependencies": {
@@ -24,6 +34,7 @@
   "devDependencies": {
     "@deity/eslint-config-falcon": "1.0.0",
     "cross-env": "^5.2.0",
-    "eslint": "^4.13.1"
+    "eslint": "^4.13.1",
+    "jest-transform-graphql": "^2.1.0"
   }
 }
