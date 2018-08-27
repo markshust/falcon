@@ -1,12 +1,14 @@
 import 'jest-extended';
+import React from 'react';
 import Koa from 'koa';
 import server from './server';
 
 describe('Server', () => {
   it('Should properly call eventHandlers', () => {
+    const App = () => <div>Foo</div>;
     const onServerCreatedMock = jest.fn();
     const onServerInitializedMock = jest.fn();
-    const serverConfig = {
+    const configuration = {
       config: {
         serverSideRendering: true,
         logLevel: 'error'
@@ -15,7 +17,10 @@ describe('Server', () => {
       onServerInitialized: onServerInitializedMock
     };
 
-    const serverApp = server(serverConfig);
+    const serverApp = server({
+      App,
+      configuration
+    });
 
     expect(serverApp).toBeInstanceOf(Koa);
     expect(onServerCreatedMock).toBeCalledWith(serverApp);
