@@ -1,10 +1,6 @@
+process.env.NODE_ENV = 'production';
 module.exports = {
   typescript: true,
-  src: './src',
-  wrapper: 'src/docs/Wrapper',
-  modifyBundlerConfig: config => {
-    console.log(config);
-
-    return config;
-  }
+  src: './',
+  wrapper: 'docs/Wrapper'
 };

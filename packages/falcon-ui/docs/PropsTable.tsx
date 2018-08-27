@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Fragment, SFC, ComponentType } from 'react';
 import { withMDXComponents } from '@mdx-js/tag/dist/mdx-provider';
 import { withCSSContext } from '@emotion/core';
-import { mappings } from '../theme/propsmapings';
+import { mappings } from '../src/theme/propsmapings';
 
 export interface EnumValue {
   value: string;

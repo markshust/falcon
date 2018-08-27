@@ -1,5 +1,5 @@
 import React from 'react';
-import { ThemeProvider } from '../components';
+import { ThemeProvider } from '../src';
 
 const provider = (props: any) => <ThemeProvider {...props} />;
 

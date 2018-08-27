@@ -18,7 +18,7 @@
   },
   "scripts": {
     "prebuild": "rimraf dist",
-    "build": "rollup -c & tsc & docz build",
+    "build": "rollup -c & tsc",
     "start": "docz dev",
     "test": "jest"
   },
