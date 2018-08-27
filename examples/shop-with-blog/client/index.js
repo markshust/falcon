@@ -1,5 +1,5 @@
 import App from './src/App';
-import clientState from './src/clientState';
+import clientApolloSchema from './src/clientState';
 
 export default App;
-export { clientState };
+export { clientApolloSchema };

@@ -1,6 +1,6 @@
 import { ApolloLink } from 'apollo-link';
 import ApolloClient from 'falcon-client/src/service/ApolloClient';
-import { clientState } from 'falcon-client/src/clientApp';
+import { clientApolloSchema } from 'falcon-client/src/clientApp';
 import configuration from 'falcon-client/src/clientApp/configuration';
 
 /**
@@ -37,9 +37,9 @@ export default async (ctx, next) => {
     clientState: {
       defaults: {
         ...configuration.configState.defaults,
-        ...clientState.defaults
+        ...clientApolloSchema.defaults
       },
-      resolvers: { ...clientState.resolvers }
+      resolvers: { ...clientApolloSchema.resolvers }
     },
     extraLinks: [profileMiddleware]
   });
