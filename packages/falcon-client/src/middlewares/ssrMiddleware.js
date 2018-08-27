@@ -2,7 +2,6 @@ import React from 'react';
 import { renderToString } from 'react-dom/server';
 import { StaticRouter } from 'react-router-dom';
 import { ApolloProvider, getDataFromTree } from 'react-apollo';
-import App from '@hostSrc/clientApp';
 import { AsyncComponentProvider, createAsyncContext } from 'react-async-component';
 import asyncBootstrapper from 'react-async-bootstrapper';
 
@@ -13,7 +12,7 @@ import asyncBootstrapper from 'react-async-bootstrapper';
  * @param {string} next - Koa next.
  * @returns {Promise<void>} - next middleware or redirect
  */
-export default async (ctx, next) => {
+export default ({ App }) => async (ctx, next) => {
   const { client, serverTiming } = ctx.state;
   const context = {};
   const asyncContext = createAsyncContext();

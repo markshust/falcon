@@ -10,20 +10,31 @@ import error500 from './middlewares/error500Middleware';
 import serverTiming from './middlewares/serverTimingMiddleware';
 
 /**
+ * @typedef {object} ServerAppConfig
+ * @property {function} App Root application component
+ * @property {object} configuration Initial configuration
+ * @property {object} clientState Apollo State object
+ */
+
+/**
  * Creates an instance of Koa server
- * @param {object} configuration Initial configuration
+ * @param {ServerAppConfig} params Application params
  * @return {Koa} Server instance
  */
-export default configuration => {
+export default params => {
+  const { configuration } = params;
   const { config } = configuration;
   Logger.setLogLevel(config.logLevel);
 
   const router = new Router();
+  // Defining middlewares
+  const middlewares = [apolloClientProvider(params)];
   if (config.serverSideRendering) {
-    router.get('/*', apolloClientProvider, ssr, htmlShellRenderer);
-  } else {
-    router.get('/*', apolloClientProvider, htmlShellRenderer);
+    middlewares.push(ssr(params));
   }
+  middlewares.push(htmlShellRenderer);
+
+  router.get('/*', ...middlewares);
 
   // Intialize and configure Koa application
   const server = new Koa();

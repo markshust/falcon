@@ -1,17 +1,13 @@
 import { ApolloLink } from 'apollo-link';
-import ApolloClient from '@hostSrc/service/ApolloClient';
-import { clientState } from '@hostSrc/clientApp';
-import configuration from '@hostSrc/clientApp/configuration';
+import ApolloClient from '../service/ApolloClient';
 
 /**
- * Apollo Client Provider middleware.
- * sets ApolloClinet on ctx.state.client
- * @async
- * @param {string} ctx - Koa context.
- * @param {string} next - Koa next.
- * @returns {Promise<void>} - next middleware
+ * Apollo Client Provider middleware, sets ApolloClinet on ctx.state.client
+ * @param {object} configuration App config
+ * @param {object} clientState Apollo Link state config
+ * @return {function(ctx: object, next: function): Promise<void>} Koa middleware function
  */
-export default async (ctx, next) => {
+export default ({ configuration, clientState }) => async (ctx, next) => {
   const { serverTiming } = ctx.state;
 
   const profileMiddleware = new ApolloLink((operation, forward) => {

@@ -2,7 +2,7 @@ import path from 'path';
 import fs from 'fs';
 import Logger from '@deity/falcon-logger';
 import send from 'koa-send';
-import paths from '@hostSrc/razzle/paths';
+import paths from '../razzle/paths';
 
 /**
  * Custom 500 error middleware.

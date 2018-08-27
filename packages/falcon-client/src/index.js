@@ -1,9 +1,14 @@
 import http from 'http';
 import Logger from '@deity/falcon-logger';
 import appServer from './server';
+import App, { clientState } from './clientApp';
 import configuration from './clientApp/configuration';
 
-const app = appServer(configuration);
+const app = appServer({
+  App,
+  clientState,
+  configuration
+});
 // Use `app#callback()` method here instead of directly
 // passing `app` as an argument to `createServer` (or use `app#listen()` instead)
 // @see https://github.com/koajs/koa/blob/master/docs/api/index.md#appcallback
@@ -27,7 +32,7 @@ if (module.hot) {
 
     server.removeListener('request', currentHandler);
     const newHandler = require('./server')
-      .default(configuration)
+      .default({ App, clientState, configuration })
       .callback();
     server.on('request', newHandler);
     currentHandler = newHandler;
