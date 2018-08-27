@@ -59,11 +59,13 @@ type CSSOthersObject = {
 
 export interface CSSObject extends CssProps, CSSPseudoObject, CSSOthersObject {}
 
-export type PropsWithTheme = { theme: Theme };
+export interface PropsWithTheme {
+  theme: Theme;
+}
 
 export type InlineCss = ((props: PropsWithTheme) => CSSObject) | CSSObject;
 
-export type ThemedComponentProps = {
+export type ThemedComponentPropsWithCss = {
   [ComponentProp in keyof PropsMappings]?:
     | (PropsMappings[ComponentProp] extends ThemedPropMapping
         ? Extract<keyof Theme[PropsMappings[ComponentProp]['themeProp']], string>
@@ -79,14 +81,18 @@ export type ThemedComponentProps = {
       }
 } & { css?: InlineCss };
 
-export type ThemedComponent = ThemedComponentProps & {
+export interface ThemedComponentProps extends ThemedComponentPropsWithCss {}
+
+type ThemedComponentWithVariants = ThemedComponentProps & {
   variants?: {
     [variantKey: string]: ThemedComponentProps;
   };
 };
 
+export interface ThemedComponent extends ThemedComponentWithVariants {}
+
 export interface ThemedComponents {
-  [themeKey: string]: ThemedComponent;
+  [themeKey: string]: ThemedComponentWithVariants;
 }
 
 type Colors = typeof theme.colors;
