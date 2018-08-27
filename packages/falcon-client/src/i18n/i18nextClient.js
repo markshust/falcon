@@ -2,7 +2,7 @@ import i18next from 'i18next';
 import XHR from 'i18next-xhr-backend';
 
 const defaultOptions = {
-  whitelist: ['en'], // base on extensions configuration
+  whitelist: ['en', 'pl'], // base on extensions configuration
   lng: 'en',
   fallbackLng: 'en',
   ns: ['common', 'shop'],

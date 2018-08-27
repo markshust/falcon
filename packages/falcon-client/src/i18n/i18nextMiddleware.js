@@ -4,8 +4,8 @@ import Backend from 'i18next-node-fs-backend';
 import koaI18next from 'koa-i18next';
 
 const defaultOptions = {
-  whitelist: ['en'], // base on extensions configuration
-  lng: 'en',
+  whitelist: ['en', 'pl'], // base on extensions configuration
+  lng: 'pl',
   fallbackLng: 'en',
   ns: ['common', 'shop'],
   // preload: ['en'],
