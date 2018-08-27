@@ -1,6 +1,7 @@
 const path = require('path');
 const makeLoaderFinder = require('razzle-dev-utils/makeLoaderFinder');
 const paths = require('./../paths');
+const WriteFilePlugin = require('write-file-webpack-plugin');
 
 function setEntryToFalconClient(config, target) {
   if (target === 'web') {
@@ -57,6 +58,18 @@ function addGraphQLTagLoader(config) {
 }
 
 // eslint-disable-next-line no-unused-vars
+function configureLocalesForceDevServerUpdate(config, { target, dev }) {
+  if (dev) {
+    config.plugins = [
+      ...config.plugins,
+      new WriteFilePlugin({
+        test: /locales\/(.*)\.json$/
+      })
+    ];
+  }
+}
+
+// eslint-disable-next-line no-unused-vars
 module.exports = (config, { target, dev }, webpackObject) => {
   config.resolve.alias = {
     ...(config.resolve.alias || {}),
@@ -69,6 +82,8 @@ module.exports = (config, { target, dev }, webpackObject) => {
   setEntryToFalconClient(config, target);
   makeFalconClientJsFileResolvedByWebpack(config);
   addGraphQLTagLoader(config);
+
+  configureLocalesForceDevServerUpdate(config, { target, dev });
 
   return config;
 };
