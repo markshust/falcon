@@ -62,6 +62,7 @@ module.exports = (config, { target, dev }, webpackObject) => {
     ...(config.resolve.alias || {}),
     public: path.join(paths.razzle.appPath, 'public'),
     src: paths.razzle.appSrc,
+
     'app-path': paths.razzle.appPath
   };
 
