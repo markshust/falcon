@@ -4,7 +4,7 @@ import Html from '@hostSrc/components/Html';
 import { APP_INIT } from '@hostSrc/graphql/config.gql';
 
 // eslint-disable-next-line
-const assets = require(process.env.RAZZLE_ASSETS_MANIFEST);
+const assets = process.env.RAZZLE_ASSETS_MANIFEST && require(process.env.RAZZLE_ASSETS_MANIFEST) || {};
 
 /**
  * HTML shell renderer middleware.
