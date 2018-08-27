@@ -5,7 +5,7 @@ import koaI18next from 'koa-i18next';
 
 const defaultOptions = {
   whitelist: ['en', 'pl'], // base on extensions configuration
-  lng: 'pl',
+  lng: 'en',
   fallbackLng: 'en',
   ns: ['common', 'shop'],
   // preload: ['en'],
