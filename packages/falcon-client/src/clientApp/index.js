@@ -1,4 +1,1 @@
-import App, { clientApolloSchema } from 'app-path';
-
-export default App;
-export { clientApolloSchema };
+export { default, clientApolloSchema } from 'app-path';
