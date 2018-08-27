@@ -1,7 +1,7 @@
 import React from 'react';
 import { renderToString } from 'react-dom/server';
-import Html from 'falcon-client/src/components/Html';
-import { APP_INIT } from 'falcon-client/src/graphql/config.gql';
+import Html from '../components/Html';
+import { APP_INIT } from '../graphql/config.gql';
 
 // eslint-disable-next-line
 const assets = require(process.env.RAZZLE_ASSETS_MANIFEST);
