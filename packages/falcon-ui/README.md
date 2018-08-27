@@ -2,11 +2,11 @@
 
 ## TODO
 
-- move to ThemedComponent interface? not type?
-- support top level themable hover, disabled, focus props?
+- check if tree shaking is working
+- test forwardRef
 - make `jest` tests working
-- consider separating `as` prop to `tag` and `extend` - similar to https://github.com/jxnblk/styled-system/pull/267 ?
-- separate theme to basic and featured?
+- try implementing more complex component
+- support top level themable hover, disabled, focus props?
 - solve issue with SSR rendering of styles
 
   - https://github.com/emotion-js/emotion/issues/819
@@ -17,6 +17,9 @@
 - how to run yarn build when yarn install gets executed? - https://github.com/yarnpkg/yarn/issues/3911
 - track https://github.com/frenic/csstype/issues/8#issuecomment-403489436 for better intellisense of css
 - track https://github.com/prettier/prettier/pull/4975 - for prettier support in mdx files
+- track: https://github.com/Microsoft/TypeScript/issues/26004
+- track: https://github.com/mui-org/material-ui/pull/11731
+
 - add https://github.com/Andarist/babel-plugin-annotate-pure-calls - should help with tree shaking?
 - add https://www.npmjs.com/package/tinycolor2 - color manipulation helpers?
 - review https://github.com/final-form/react-final-form
@@ -25,9 +28,9 @@
 - add https://github.com/reactjs/react-a11y ?
 - docs: solve issue with props table generation - https://github.com/pedronauck/docz/issues/240
 - docs: add custom props table, separate custom and themable props? (current theme separate?)
-- docs: rename docs to docs helpers? move outside src?
+
 - docs: review `Button` component, add more docs, add variants ('primary', secondary?), add tests
-- docs: review table component, add more docs, add tests
+- docs: review `Card` component, add more docs, add tests
 - docs: review `Card` component, add more docs, add tests
 - docs: review `FlexLayout` component, add docs, add tests
 - docs: review `GridLayout` component, add docs, add tests

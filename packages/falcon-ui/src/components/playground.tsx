@@ -4,7 +4,7 @@ import { ThemeProvider, Card, Button, Image } from './';
 import { themed, createTheme, Theme } from '../theme';
 
 const HomeLayout = themed({
-  as: 'article',
+  tag: 'article',
   themeKey: 'homelayout'
 })();
 

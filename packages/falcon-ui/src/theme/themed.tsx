@@ -26,7 +26,13 @@ const convertPropToCss = (
 };
 
 type ThemedBreakpointsKeysType = keyof Theme['breakpoints'];
-type ThemedProps = ThemedComponentProps & PropsWithTheme;
+
+type PropsWithThemeKey = {
+  themeKey?: string;
+  variant?: string;
+};
+
+type ThemedProps = ThemedComponentProps & PropsWithTheme & PropsWithThemeKey;
 
 const convertThemedPropsToCss = (props: ThemedProps): CSSObject => {
   //  if theme is not provided via theme provider do not map anything
@@ -88,7 +94,7 @@ const convertThemedPropsToCss = (props: ThemedProps): CSSObject => {
   return cssObject;
 };
 
-function getThemedCss(props: ThemedProps & BaseProps) {
+function getThemedCss(props: ThemedProps) {
   //  if theme is not provided via theme provider or inline theme prop do return any css
   if (!props.theme) {
     return;
@@ -134,51 +140,73 @@ function getThemedCss(props: ThemedProps & BaseProps) {
   return { ...cssFromThemeAndProps, ...cssFromInlineCssProps };
 }
 
-type BaseProps = {
-  as: React.ReactType;
-  themeKey?: string;
-  variant?: string;
+type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>;
+
+type BaseProps<TTag extends string | undefined, TExtend = {}> = {
+  tag?: TTag;
+  extend?: TExtend;
+} & PropsWithThemeKey &
+  (TTag extends keyof JSX.IntrinsicElements ? JSX.IntrinsicElements[TTag] : {}) &
+  (TExtend extends React.ComponentType<infer TExtendProps> ? Partial<TExtendProps> : {});
+
+const customPropsBlacklist = ['tag', 'extend', 'themeKey', 'variant'];
+
+const filterPropsToForward = (baseComponent: any, props: any, ref: any) => {
+  const filteredProps = {} as any;
+  const isThemedComponent = baseComponent.themedComponent;
+  const isHtmlTag = typeof baseComponent === 'string';
+  // eslint-disable-next-line no-restricted-syntax
+  for (const key in props) {
+    // when html tag is provided forward only valid html props to it
+    if (isHtmlTag && !isPropValid(key)) continue;
+
+    // do not forward extend prop for themed components as it would cause infinite rendering loop
+    if (isThemedComponent && key === 'extend') continue;
+
+    // if custom component is provided via `extend` prop do not forward themable props to it (bg, color, tag etc)
+    if (!isThemedComponent) {
+      const themableProp = propsMappingKeys.indexOf(key as any) !== -1 || customPropsBlacklist.indexOf(key) !== -1;
+      if (themableProp) continue;
+    }
+    filteredProps[key] = props[key];
+  }
+
+  filteredProps.ref = ref;
+
+  return filteredProps;
 };
 
-// this component handles dynamic html tag rendering via as prop as well as forwards ref to DOM element
-const Tag = React.forwardRef<{}, { color: any; as: any }>(({ as: Component, color, ...props }, ref) => (
-  <Component {...props} ref={ref} />
-));
+// this component handles dynamic html tag rendering via 'extend' and 'tag' props as well as forwards ref to DOM element
+// and forwards only allowed html tags
+const Tag = React.forwardRef<{}, { extend: any; tag: any }>((props, ref) => {
+  const Base = props.extend || props.tag || 'div';
+  const nextProps = filterPropsToForward(Base, props as any, ref);
 
-export function themed<T = {}>(defaultProps: Exclude<T, BaseProps> & BaseProps) {
-  type ComponentProps = Partial<typeof defaultProps> & Partial<ThemedProps> & { [x: string]: any };
-  type DefaultInlineCss = ((props: ComponentProps) => CSSObject) | CSSObject;
+  return React.createElement(Base, nextProps);
+});
 
+export function themed<
+  TProps extends BaseProps<TTag, TExtend>,
+  TTag extends string | undefined = undefined,
+  TExtend = {}
+>(defaultProps: BaseProps<TTag, TExtend> & TProps) {
+  type InlineCssProps = typeof defaultProps & PropsWithTheme;
+  type DefaultInlineCss = ((props: InlineCssProps) => CSSObject) | CSSObject;
   // themed returns function that accepts default css to be provided by the component
   // it accepts any number or DefaultInlineCss args
+
   return (...css: DefaultInlineCss[]) => {
-    // when custom component is provided via 'as' prop then use it for rendering
-    // otherwise render using our generic 'Tag' component
-    const shouldRenderCustomComponent = typeof defaultProps.as === 'function';
-    const tagToRender = shouldRenderCustomComponent ? defaultProps.as : Tag;
-
-    const ThemedComponent: React.SFC<ComponentProps> = styled(tagToRender, {
-      // that method ensures that no custom props are rendered in output html
-      // 1 forward props that aren't in our responsive props mapping
-      // 2 forward only valid html props or prop 'as' when there is no custom compoent provided
-      // as we need 'as' prop in our Tag component
-      shouldForwardProp: (name: string) =>
-        propsMappingKeys.indexOf(name as any) === -1 &&
-        (isPropValid(name) || (!shouldRenderCustomComponent && name === 'as')),
-
+    const styledComponentWithThemeProps = styled(Tag, {
       label: `${defaultProps.themeKey}${defaultProps.variant ? `-${defaultProps.variant}` : ''}`
     })(...css, getThemedCss);
 
-    ThemedComponent.defaultProps = defaultProps;
+    styledComponentWithThemeProps.defaultProps = defaultProps;
+    styledComponentWithThemeProps.themedComponent = true;
 
-    return ThemedComponent;
+    return styledComponentWithThemeProps as <TTagOverride extends string | undefined = TTag, TExtendOverride = TExtend>(
+      propss: BaseProps<TTagOverride, TExtendOverride> &
+        Partial<Omit<TProps, 'tag' | 'extend'>> &
+        Partial<ThemedProps> & { [x: string]: any }
+    ) => JSX.Element;
   };
 }
-
-// IMPORTANT TODO: typescript:
-// Themed factory could be smarter
-// when it comes to providing property types based on provided 'as' tag or Component, unfortunatelly it's currently
-// blocked by typescript issue: https://github.com/Microsoft/TypeScript/issues/26004
-// similar issue: https://github.com/mui-org/material-ui/pull/11731
-// partial hack that does not work for our use case
-// https://stackoverflow.com/questions/51183228/typescript-parameter-type-inference-failure

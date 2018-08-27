@@ -2,7 +2,7 @@ import { themed } from '../theme';
 
 export const Root = themed({
   themeKey: 'root',
-  as: 'div'
+  tag: 'div'
 })({
   '*': {
     boxSizing: 'border-box'

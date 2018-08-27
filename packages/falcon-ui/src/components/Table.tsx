@@ -2,7 +2,7 @@ import { themed } from '../theme';
 
 export const Table = themed({
   themeKey: 'table',
-  as: 'table'
+  tag: 'table'
 })({
   tableLayout: 'auto',
   borderSpacing: 0,
@@ -12,25 +12,25 @@ export const Table = themed({
 
 export const Thead = themed({
   themeKey: 'thead',
-  as: 'thead'
+  tag: 'thead'
 })({});
 
 export const Th = themed({
   themeKey: 'th',
-  as: 'th'
+  tag: 'th'
 })({});
 
 export const Td = themed({
   themeKey: 'td',
-  as: 'td'
+  tag: 'td'
 })({});
 
 export const Tr = themed({
   themeKey: 'tr',
-  as: 'tr'
+  tag: 'tr'
 })({});
 
 export const Tbody = themed({
   themeKey: 'tbody',
-  as: 'tbody'
+  tag: 'tbody'
 })({});

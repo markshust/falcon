@@ -2,7 +2,7 @@ import { themed } from '../theme';
 
 export const Button = themed({
   themeKey: 'button',
-  as: 'button'
+  tag: 'button'
 })({
   fontFamily: 'inherit',
   WebkitFontSmoothing: 'antialiased',

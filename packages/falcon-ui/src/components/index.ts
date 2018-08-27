@@ -1,4 +1,4 @@
-export { Button } from './Button';
+export * from './Button';
 export { GridLayout } from './GridLayout';
 export { FlexLayout } from './FlexLayout';
 export { Root } from './Root';

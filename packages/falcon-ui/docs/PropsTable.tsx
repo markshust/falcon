@@ -90,7 +90,6 @@ const BasePropsTable: SFC<PropsTableProps> = (props: any) => {
   const componentProps = info && info.props;
   const defaultProps = props.of.defaultProps;
   if (!info || !componentProps) {
-    console.log('notingf', props);
     return null;
   }
 
