@@ -3,6 +3,8 @@ import ApolloClient from '../service/ApolloClient';
 import { clientApolloSchema } from '../clientApp';
 import configuration from '../clientApp/configuration';
 
+const { configSchema } = configuration;
+
 /**
  * Apollo Client Provider middleware.
  * sets ApolloClinet on ctx.state.client
@@ -36,7 +38,7 @@ export default async (ctx, next) => {
   const client = new ApolloClient({
     clientState: {
       defaults: {
-        ...configuration.configState.defaults,
+        ...configSchema.defaults,
         ...clientApolloSchema.defaults
       },
       resolvers: { ...clientApolloSchema.resolvers }

@@ -23,7 +23,7 @@ const config = {
 
 export default {
   config,
-  configState: {
+  configSchema: {
     defaults: {
       config
     }
