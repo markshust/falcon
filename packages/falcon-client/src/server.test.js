@@ -33,6 +33,7 @@ describe('Server', () => {
       </Switch>
     );
   });
+
   it('Should properly call eventHandlers', () => {
     const onServerCreatedMock = jest.fn();
     const onServerInitializedMock = jest.fn();
@@ -47,7 +48,10 @@ describe('Server', () => {
 
     const serverApp = server({
       App: Home,
-      configuration
+      configuration,
+      clientApolloSchema: {
+        defaults: {}
+      }
     });
 
     expect(serverApp).toBeInstanceOf(Koa);
@@ -70,7 +74,7 @@ describe('Server', () => {
     };
     const configuration = {
       config,
-      configState: {
+      configSchema: {
         defaults: {
           config
         }
@@ -88,8 +92,8 @@ describe('Server', () => {
     const serverHandler = server({ App, configuration, clientApolloSchema }).callback();
     const response = await supertest(serverHandler).get('/');
 
-    expect(response.headers).toContainKey('server-timing');
     expect(response.status).toBe(200);
+    expect(response.headers).toContainKey('server-timing');
     expect(response.text).toEqual(expect.stringContaining('Foo</div>'));
   });
 });
