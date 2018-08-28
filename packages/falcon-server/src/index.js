@@ -15,10 +15,13 @@ class FalconServer {
   constructor(conf) {
     Logger.setLogLevel(conf.logLevel);
     this.config = conf;
-    this.initApp();
-    this.initApis();
-    this.initExtensions();
-    this.initApolloServer();
+  }
+
+  async init() {
+    await this.initApp();
+    await this.initApis();
+    await this.initExtensions();
+    await this.initApolloServer();
     this.registerRoutes();
   }
 
@@ -40,14 +43,7 @@ class FalconServer {
     });
   }
 
-  initExtensions() {
-    this.extensions = new ExtensionsContainer({
-      extensions: this.config.extensions,
-      getApiInstance: this.apiEngine.getApiInstance
-    });
-  }
-
-  initApis() {
+  async initApis() {
     this.apiEngine = new ApiEngine({
       apis: this.config.apis,
       app: this.app,
@@ -55,10 +51,20 @@ class FalconServer {
         logLevel: this.config.logLevel
       }
     });
+    await this.apiEngine.init();
+  }
+
+  async initExtensions() {
+    this.extensions = new ExtensionsContainer({
+      extensions: this.config.extensions,
+      // todo: try to refactor code so ExtensionContainer doesn't need apiEngine
+      apiEngine: this.apiEngine
+    });
+    await this.extensions.init();
   }
 
   // this is havy-WIP :)
-  initApolloServer() {
+  async initApolloServer() {
     const cache = this.initCacheBackend();
 
     // Construct a schema, using GraphQL schema language
@@ -82,11 +88,13 @@ class FalconServer {
       }
     };
 
-    const apolloServerConfig = this.extensions.createGraphQLConfig({
+    const apolloServerConfig = await this.extensions.createGraphQLConfig({
       schemas,
       resolvers,
       dataSources: this.apiEngine.getDataSources(),
       // inject session to graph context
+      // todo: re-think that - maybe we could avoid passing session here and instead pass just required data
+      // from session?
       context: ({ ctx }) => ({
         session: ctx.req.session
       }),
@@ -135,9 +143,19 @@ class FalconServer {
   }
 
   start() {
-    this.app.listen({ port: this.config.port }, () => {
-      Logger.info(`🚀 Server ready at http://localhost:${this.config.port}`);
-    });
+    const handleStartupError = err => {
+      Logger.error('Initialization error - cannot start the server');
+      Logger.error(err.stack);
+      process.exit(2);
+    };
+
+    this.init()
+      .then(() => {
+        this.app.listen({ port: this.config.port }, () => {
+          Logger.info(`🚀 Server ready at http://localhost:${this.config.port}`);
+        });
+      }, handleStartupError)
+      .catch(handleStartupError);
   }
 }
 

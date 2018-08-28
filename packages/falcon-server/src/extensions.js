@@ -16,10 +16,10 @@ module.exports = class ExtensionContainer extends EventEmitter {
    * @param {Object} [options] app configuration - todo rewrite to something more scoped
    * @param {ApiServer} apiServer instance
    */
-  constructor({ extensions = [], options = {}, apiServer }) {
+  constructor({ extensions = [], options = {}, apiEngine }) {
     super();
     this.config = options;
-    this.apiServer = apiServer;
+    this.apiEngine = apiEngine;
     this.extensions = [];
 
     this.registerExtensions(extensions);
@@ -47,14 +47,28 @@ module.exports = class ExtensionContainer extends EventEmitter {
       }
 
       if (ExtensionClass) {
-        const extensionInstance = new ExtensionClass(extension.options);
+        const extensionInstance = new ExtensionClass(extension.options || {}, this);
         extensionInstance.name = extension.package;
+        // set api
+        if (extension.options && extension.options.api) {
+          extensionInstance.api = this.apiEngine.get(extension.options.api);
+        }
         this.extensions.push(extensionInstance);
         addedExtensions.push(extension.package);
       }
     });
 
     Logger.info(`Loaded extensions: ${addedExtensions}`);
+  }
+
+  async init() {
+    // initialization of extensions cannot be done in parallel because race conditions would be possible
+    for (let i = 0; i < this.extensions.length; i++) {
+      const ext = this.extensions[i];
+      if (typeof ext.init === 'function') {
+        await ext.init(); // eslint-disable-line no-await-in-loop
+      }
+    }
   }
 
   /**
@@ -71,11 +85,20 @@ module.exports = class ExtensionContainer extends EventEmitter {
   }
 
   /**
+   * Returns extension instances that match passed fn filter (filter function returns true for that extension)
+   * @param {Function} fn - filter function
+   * @returns {Array} array with matching API instances
+   */
+  getExtensionsByCriteria(fn) {
+    return this.extensions.filter(fn);
+  }
+
+  /**
    * Creates final configuration for ApolloServer
    * @param {Object} defaultConfig - default configuration that should be used
    * @return {Object} resolved configuration
    */
-  createGraphQLConfig(defaultConfig) {
+  async createGraphQLConfig(defaultConfig) {
     const config = Object.assign(
       {
         resolvers: [],
@@ -88,12 +111,20 @@ module.exports = class ExtensionContainer extends EventEmitter {
     );
 
     // merge allowed configurations
-    this.extensions.forEach(ext => {
+    this.extensions.forEach(async ext => {
       if (typeof ext.getGraphQLConfig === 'function') {
-        const conf = ext.getGraphQLConfig();
-        this.mergeGraphQLConfig(config, conf, ext.name);
+        const extConfig = await ext.getGraphQLConfig();
+        this.mergeGraphQLConfig(config, extConfig, ext.name);
       }
     });
+
+    for (let i = 0; i < this.extensions.length; i++) {
+      const ext = this.extensions[i];
+      if (typeof ext.getGraphQLConfig === 'function') {
+        const conf = await ext.getGraphQLConfig(); // eslint-disable-line no-await-in-loop
+        this.mergeGraphQLConfig(config, conf, ext.name);
+      }
+    }
 
     // define context handler that invokes all context handlers delivered by extensions
     const { contextModifiers } = config;

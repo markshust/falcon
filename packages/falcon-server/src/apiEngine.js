@@ -126,6 +126,10 @@ module.exports = class ApiEngine {
     Logger.info(`Loaded APIs: ${addedApis}`);
   }
 
+  async init() {
+    return Promise.all(this.apis.filter(api => typeof api.init === 'function').map(api => api.init()));
+  }
+
   /**
    * Return dataSources map - api instances keyed by their names
    * @return {Object} map with available data sources

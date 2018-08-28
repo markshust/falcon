@@ -1,0 +1,33 @@
+type Query {
+  post(path: String!): Post
+  posts: [Post]
+}
+
+input PageQuery {
+  perPage: Int
+  page: Int
+}
+
+type PostImage {
+  url: String
+  description: String
+}
+
+type Post {
+  id: Int!
+  title: String
+  content: String
+  # list of sections with products
+  sectionWithProducts: [String]
+  # list of product skus used in content widgets
+  products: [String]
+  # short content for use on post lists
+  excerpt: String
+  slug: String
+  image: PostImage
+  related: [Post]
+}
+
+schema {
+  query: Query
+}

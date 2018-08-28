@@ -31,10 +31,10 @@
     "packages/falcon-logger",
     "packages/falcon-shop-extension",
     "packages/falcon-blog-extension",
-    "packages/falcon-magento2-extension",
     "packages/falcon-tweets-extension",
-    "packages/falcon-url-extension",
-    "packages/falcon-wordpress-extension",
+    "packages/falcon-dynamic-route-extension",
+    "packages/falcon-magento2-api",
+    "packages/falcon-wordpress-api",
     "packages/falcon-dev-tools/eslint-config-falcon",
     "examples/shop-with-blog/client",
     "examples/shop-with-blog/server"

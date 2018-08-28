@@ -3,5 +3,18 @@
   "license": "OSL-3.0",
   "main": "src/index.js",
   "version": "1.0.0",
-  "repository": "https://github.com/deity-io/falcon/tree/master/packages/falcon-wordpress-api"
+  "repository": "https://github.com/deity-io/falcon/tree/master/packages/falcon-wordpress-api",
+  "dependencies": {
+    "@deity/falcon-logger": "1.0.0",
+    "apollo-datasource-rest": "^0.1.4",
+    "apollo-server-env": "^2.0.2",
+    "cheerio": "^1.0.0-rc.2",
+    "html-entities": "^1.2.1",
+    "lodash": "^4.17.10",
+    "qs": "^6.5.2",
+    "request": "^2.88.0",
+    "request-promise-native": "^1.0.5",
+    "striptags": "^3.1.1",
+    "url": "^0.11.0"
+  }
 }

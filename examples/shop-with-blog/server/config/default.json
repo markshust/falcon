@@ -1,0 +1,70 @@
+{
+  "port": 4000,
+  "apis": [
+    {
+      "name": "api-magento2",
+      "package": "@deity/falcon-magento2-api",
+      "options": {
+        "protocol": "https",
+        "host": "snapshot.deity.io",
+        "username": "node-api",
+        "password": "3de3f3a262"
+      }
+    },
+    {
+      "name": "api-wordpress",
+      "package": "@deity/falcon-wordpress-api",
+      "options": {
+        "host": "snapshot.deity.io",
+        "protocol": "https",
+        "apiPrefix": "/blog-api",
+        "apiSuffix": "/wp/v2"
+      }
+    }
+  ],
+  "extensions": [
+    {
+      "package": "@deity/falcon-shop-extension",
+      "options": {
+        "api": "api-magento2"
+      }
+    },
+    {
+      "package": "@deity/falcon-blog-extension",
+      "options": {
+        "api": "api-wordpress"
+      }
+    },
+    {
+      "package": "@deity/falcon-dynamic-route-extension"
+    }
+  ],
+  "apis_": [
+    {
+      "name": "chirp-api",
+      "package": "./ChirpApi",
+      "options": {}
+    }
+  ],
+  "extensions_": [
+    {
+      "package": "./Chirp",
+      "options": {
+        "api": "chirp-api"
+      }
+    },
+    {
+      "package": "./User"
+    }
+  ],
+  "session": {
+    "keys": ["secret key"],
+    "key": "session-key",
+    "maxAge": 86400000,
+    "overwrite": true,
+    "httpOnly": true,
+    "signed": true,
+    "rolling": false,
+    "renew": false
+  }
+}
