@@ -13,14 +13,18 @@ const makeExternalPredicate = externalsArr => {
   return id => externalPattern.test(id);
 };
 
+const extensions = ['.ts', '.tsx', '.js', '.jsx'];
+
 export default {
   input: 'src/index.ts',
   external: makeExternalPredicate(externals),
   plugins: [
     resolve({
-      extensions: ['.ts', '.tsx', '.js', '.jsx', '.json']
+      extensions
     }),
-    babel(),
+    babel({
+      extensions
+    }),
     sizeSnapshot({ matchSnapshot: false })
   ],
   output: [{ file: pkg.main, format: 'cjs', sourcemap: true }, { file: pkg.module, format: 'esm', sourcemap: true }]
