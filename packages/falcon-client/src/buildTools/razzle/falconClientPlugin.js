@@ -1,8 +1,6 @@
 const path = require('path');
-const fs = require('fs');
-const Logger = require('@deity/falcon-logger');
 const makeLoaderFinder = require('razzle-dev-utils/makeLoaderFinder');
-const paths = require('./paths');
+const paths = require('./../paths');
 
 function setEntryToFalconClient(config, target) {
   if (target === 'web') {
@@ -43,7 +41,11 @@ function makeFalconClientJsFileResolvedByWebpack(config) {
 }
 
 function addGraphQLTagLoader(config) {
-  config.module.rules.find(conf => conf.loader && conf.loader.includes('file-loader')).exclude.push(/\.(graphql|gql)$/);
+  const fileLoaderFinder = makeLoaderFinder('file-loader');
+  const fileLoader = config.module.rules.find(fileLoaderFinder);
+  if (fileLoader) {
+    fileLoader.exclude.push(/\.(graphql|gql)$/);
+  }
 
   config.module.rules.push({
     test: /\.(graphql|gql)$/,
@@ -56,16 +58,12 @@ function addGraphQLTagLoader(config) {
 
 // eslint-disable-next-line no-unused-vars
 module.exports = (config, { target, dev }, webpackObject) => {
-  if (fs.existsSync(path.join(paths.razzle.appSrc, `index.js`)) === false) {
-    Logger.logAndThrow(`There is no 'index.js' file in '${paths.razzle.appSrc}' directory!`);
-  }
-  if (fs.existsSync(path.join(paths.razzle.appSrc, `configuration.js`)) === false) {
-    Logger.logAndThrow(`There is no 'configuration.js' file in '${paths.razzle.appSrc}' directory!`);
-  }
-
-  config.resolve.alias['@src'] = paths.razzle.appSrc;
-  config.resolve.alias['@clientSrc'] = paths.razzle.appSrc;
-  config.resolve.alias['@hostSrc'] = paths.falconClient.appSrc;
+  config.resolve.alias = {
+    ...(config.resolve.alias || {}),
+    public: path.join(paths.razzle.appPath, 'public'),
+    src: paths.razzle.appSrc,
+    'app-path': paths.razzle.appPath
+  };
 
   setEntryToFalconClient(config, target);
   makeFalconClientJsFileResolvedByWebpack(config);

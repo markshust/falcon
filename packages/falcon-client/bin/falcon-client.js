@@ -1,14 +1,15 @@
 #!/usr/bin/env node
-const fs = require('fs-extra');
-const razzle = require('./../src/razzle');
-const paths = require('./../src/razzle/paths');
+const buildTools = require('./../src/buildTools');
+const razzle = require('./../src/buildTools/razzle');
 
 const script = process.argv[2];
 const args = process.argv.slice(3);
 
+buildTools.failIfAppEntryFilesNotFound();
+
 switch (script) {
   case 'start': {
-    fs.emptyDirSync(paths.razzle.appBuild);
+    buildTools.clearAppBuildDir();
     razzle(script, args);
     break;
   }

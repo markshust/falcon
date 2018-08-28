@@ -13,7 +13,7 @@ import serverTiming from './middlewares/serverTimingMiddleware';
  * @typedef {object} ServerAppConfig
  * @property {function} App Root application component
  * @property {object} configuration Initial configuration
- * @property {object} clientState Apollo State object
+ * @property {object} clientApolloSchema Apollo State object
  */
 
 /**
@@ -41,12 +41,10 @@ export default params => {
   configuration.onServerCreated(server);
 
   server
-    .use(error500)
-    // `koa-helmet` provides security headers to help prevent common, well known attacks
-    // @see https://helmetjs.github.io/
     .use(helmet())
+    .use(error500())
     .use(serverTiming())
-    .use(serve(process.env.RAZZLE_PUBLIC_DIR || './static'))
+    .use(serve(`${process.env.RAZZLE_PUBLIC_DIR || './static'}`))
     .use(router.routes())
     .use(router.allowedMethods());
 

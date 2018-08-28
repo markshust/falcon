@@ -2,9 +2,9 @@ import { asyncComponent } from 'react-async-component';
 import React from 'react';
 import Route from 'react-router-dom/Route';
 import Switch from 'react-router-dom/Switch';
+import Home from 'src/pages/home/Home';
 import DynamicRoute from '@deity/falcon-client/src/components/DynamicRoute';
-import Home from './pages/home/Home';
-import './App.css';
+import 'src/App.css';
 
 const components = {
   shop: asyncComponent({

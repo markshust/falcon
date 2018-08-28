@@ -6,7 +6,7 @@ import configuration from './clientApp/configuration';
 
 const app = appServer({
   App,
-  clientState,
+  clientApolloSchema,
   configuration
 });
 // Use `app#callback()` method here instead of directly

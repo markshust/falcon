@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import serialize from 'serialize-javascript';
 import Helmet from 'react-helmet';
-import GoogleTagManager from '@hostSrc/google/GoogleTagManager';
+import GoogleTagManager from '../google/GoogleTagManager';
 
 /**
  * Wrapper component containing HTML metadata and boilerplate tags.
