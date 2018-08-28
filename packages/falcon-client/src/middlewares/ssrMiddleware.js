@@ -4,7 +4,6 @@ import { StaticRouter } from 'react-router-dom';
 import { ApolloProvider, getDataFromTree } from 'react-apollo';
 import { AsyncComponentProvider, createAsyncContext } from 'react-async-component';
 import asyncBootstrapper from 'react-async-bootstrapper';
-import App from '../clientApp';
 
 /**
  * Server Side Rendering middleware.

@@ -1,7 +1,7 @@
 import http from 'http';
 import Logger from '@deity/falcon-logger';
 import appServer from './server';
-import App, { clientState } from './clientApp';
+import App, { clientApolloSchema } from './clientApp';
 import configuration from './clientApp/configuration';
 
 const app = appServer({
@@ -32,7 +32,7 @@ if (module.hot) {
 
     server.removeListener('request', currentHandler);
     const newHandler = require('./server')
-      .default({ App, clientState, configuration })
+      .default({ App, clientApolloSchema, configuration })
       .callback();
     server.on('request', newHandler);
     currentHandler = newHandler;

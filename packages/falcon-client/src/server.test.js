@@ -78,14 +78,14 @@ describe('Server', () => {
       onServerCreated: () => {},
       onServerInitialized: () => {}
     };
-    const clientState = {
+    const clientApolloSchema = {
       defaults: {},
       resolvers: {
         Query: {}
       }
     };
 
-    const serverHandler = server({ App, configuration, clientState }).callback();
+    const serverHandler = server({ App, configuration, clientApolloSchema }).callback();
     const response = await supertest(serverHandler).get('/');
 
     expect(response.headers).toContainKey('server-timing');
