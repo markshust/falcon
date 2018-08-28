@@ -2,9 +2,9 @@ import React from 'react';
 import { renderToString } from 'react-dom/server';
 import { StaticRouter } from 'react-router-dom';
 import { ApolloProvider, getDataFromTree } from 'react-apollo';
-import App from '@hostSrc/clientApp';
 import { AsyncComponentProvider, createAsyncContext } from 'react-async-component';
 import asyncBootstrapper from 'react-async-bootstrapper';
+import App from '../clientApp';
 
 /**
  * Server Side Rendering middleware.

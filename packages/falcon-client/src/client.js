@@ -4,13 +4,13 @@ import BrowserRouter from 'react-router-dom/BrowserRouter';
 import { ApolloProvider } from 'react-apollo';
 import { AsyncComponentProvider } from 'react-async-component';
 import asyncBootstrapper from 'react-async-bootstrapper';
-import ApolloClient from '@hostSrc/service/ApolloClient';
-import App, { clientState } from '@hostSrc/clientApp';
+import ApolloClient from './service/ApolloClient';
+import App, { clientApolloSchema } from './clientApp';
 import { SSR } from './graphql/config.gql';
 
 const client = new ApolloClient({
   isBrowser: true,
-  clientState,
+  clientApolloSchema,
   // eslint-disable-next-line no-underscore-dangle
   initialState: window.__APOLLO_STATE__ || {}
 });

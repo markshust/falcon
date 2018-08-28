@@ -1,7 +1,7 @@
 import http from 'http';
 import Logger from '@deity/falcon-logger';
-import app from '@hostSrc/server';
-import configuration from '@hostSrc/clientApp/configuration';
+import app from './server';
+import configuration from './clientApp/configuration';
 
 // Use `app#callback()` method here instead of directly
 // passing `app` as an argument to `createServer` (or use `app#listen()` instead)

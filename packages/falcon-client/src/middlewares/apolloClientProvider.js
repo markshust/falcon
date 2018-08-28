@@ -1,7 +1,9 @@
 import { ApolloLink } from 'apollo-link';
-import ApolloClient from '@hostSrc/service/ApolloClient';
-import { clientState } from '@hostSrc/clientApp';
-import configuration from '@hostSrc/clientApp/configuration';
+import ApolloClient from '../service/ApolloClient';
+import { clientApolloSchema } from '../clientApp';
+import configuration from '../clientApp/configuration';
+
+const { configSchema } = configuration;
 
 /**
  * Apollo Client Provider middleware.
@@ -36,10 +38,10 @@ export default async (ctx, next) => {
   const client = new ApolloClient({
     clientState: {
       defaults: {
-        ...configuration.configState.defaults,
-        ...clientState.defaults
+        ...configSchema.defaults,
+        ...clientApolloSchema.defaults
       },
-      resolvers: { ...clientState.resolvers }
+      resolvers: { ...clientApolloSchema.resolvers }
     },
     extraLinks: [profileMiddleware]
   });

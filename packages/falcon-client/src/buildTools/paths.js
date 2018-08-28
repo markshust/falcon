@@ -8,6 +8,7 @@ const falconClientDir = path.dirname(require.resolve('@deity/falcon-client/packa
 
 module.exports = {
   razzle: {
+    appPath: resolveApp('.'),
     appBuild: resolveApp('build'),
     appSrc: resolveApp('src'),
     appServerIndexJs: resolveApp('src/'),
