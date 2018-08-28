@@ -40,7 +40,7 @@ describe('falcon-client', () => {
     expect(tree.children).toContain('Loading...');
     await wait(0);
 
-    const p = App.root.findByType('p');
-    expect(p.children).toContain('Bar');
+    const paragraphs = App.root.findByType('p');
+    expect(paragraphs.children).toContain('Bar');
   });
 });
