@@ -14,6 +14,18 @@ export function createTheme(themeOverride: RecursivePartial<Theme> = {}): Theme 
   return merge<Theme, RecursivePartial<Theme>>(defaultTheme, themeOverride);
 }
 
+export const rangeInputTrack = (styles: CSSObject) => ({
+  '::-webkit-slider-runnable-track': styles,
+  '::-moz-range-track': styles,
+  '::-ms-track': styles
+});
+
+export const rangeInputThumb = (styles: CSSObject) => ({
+  '::-webkit-slider-thumb ': styles,
+  '::-moz-range-thumb': styles,
+  '::-ms-thumb': styles
+});
+
 // export themed component factory
 export * from './themed';
 

@@ -1,9 +1,11 @@
 export * from './Button';
-export { GridLayout } from './GridLayout';
-export { FlexLayout } from './FlexLayout';
-export { Root } from './Root';
-export { Card } from './Card';
-export { ThemeProvider } from './ThemeProvider';
-export { Image } from './Image';
+export * from './GridLayout';
+export * from './FlexLayout';
+export * from './Root';
+export * from './Card';
+export * from './ThemeProvider';
+export * from './Image';
+export * from './RangeInput';
 export * from './Table';
 export * from './Headings';
+export * from './Swipeable';

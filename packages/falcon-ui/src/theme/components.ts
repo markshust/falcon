@@ -1,4 +1,4 @@
-import { ThemedComponents, ThemedComponent } from './';
+import { ThemedComponents, ThemedComponent, rangeInputThumb, rangeInputTrack } from './';
 
 const button: ThemedComponent = {
   color: 'secondaryText',
@@ -63,6 +63,31 @@ const table: ThemedComponent = {
     xs: 'block',
     md: 'table'
   }
+};
+
+const rangeInput: ThemedComponent = {
+  css: props => ({
+    height: props.theme.spacing.md,
+    ...rangeInputTrack({
+      borderRadius: props.theme.borderRadius.xs,
+      height: props.theme.spacing.xs,
+      background: props.theme.colors.primary
+    }),
+    ...rangeInputThumb({
+      borderRadius: props.theme.borderRadius.xl,
+      background: props.theme.colors.secondary,
+      height: props.theme.spacing.md,
+      width: props.theme.spacing.md,
+      transition: 'transform',
+      transitionTimingFunction: props.theme.easingFunctions.easeIn,
+      transitionDuration: props.theme.transitionDurations.short
+    }),
+    ':active': {
+      ...rangeInputThumb({
+        transform: 'scale(1.1)'
+      })
+    }
+  })
 };
 
 const thead: ThemedComponent = {
@@ -137,5 +162,6 @@ export const components: ThemedComponents = {
   h1,
   h2,
   h3,
-  h4
+  h4,
+  rangeInput
 };
