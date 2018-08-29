@@ -1,6 +1,6 @@
 import React from 'react';
 import Provider from '@emotion/provider';
-import { Global, css } from '@emotion/core';
+import { Global } from '@emotion/core';
 import { createTheme, PropsWithTheme } from '../theme';
 import { Root } from './Root';
 
@@ -15,12 +15,13 @@ const normalizeCssStyles = {
 
 export const ThemeProvider = (props: Partial<PropsWithTheme>) => {
   // create default theme if nothing is provided
-  const themeToUse = props.theme || defaultTheme;
+  const { theme, ...rest } = props;
+  const themeToUse = theme || defaultTheme;
 
   return (
     <Provider theme={themeToUse}>
       <Global styles={normalizeCssStyles} />
-      {<Root {...props} />}
+      {<Root {...rest} />}
     </Provider>
   );
 };
