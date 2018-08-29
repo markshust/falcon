@@ -5,9 +5,13 @@
   "version": "1.0.0",
   "jest": {
     "coverageReporters": ["html", "text", "text-summary"],
+    "moduleNameMapper": {
+      "^src(.*)$": "<rootDir>/src$1",
+      "^public(.*)$": "<rootDir>/public$1"
+    },
     "transform": {
       "^.+\\.(gql|graphql)$": "jest-transform-graphql",
-      "^.+\\.(js|jsx|mjs)$": "razzle/config/jest/babelTransform",
+      "^.+\\.(js|jsx|mjs)$": "razzle/config/jest/babelTransform.js",
       "^.+\\.css$": "razzle/config/jest/cssTransform.js",
       "^(?!.*\\.(js|jsx|mjs|css|json)$)": "razzle/config/jest/fileTransform.js"
     }
