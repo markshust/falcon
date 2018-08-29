@@ -1,0 +1,3 @@
+{
+  "extends": ["@deity/eslint-config-falcon"]
+}

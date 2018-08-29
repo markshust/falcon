@@ -1,0 +1,16 @@
+node_modules/
+coverage/
+.DS_Store
+yarn.lock
+package-lock.json
+
+.vscode/
+*/**/jsconfig.json
+
+.vimrc
+*.swp
+*.swo
+
+build/
+static/dist/
+static/manifest.json

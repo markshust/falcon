@@ -1,0 +1,29 @@
+{
+  "name": "sample-app-client",
+  "private": true,
+  "license": "OSL-3.0",
+  "version": "1.0.0",
+  "scripts": {
+    "start": "falcon-client start",
+    "start:dbg": "cross-env VERBOSE=true falcon-client start -- --inspect",
+    "start:prod": "cross-env NODE_ENV=production node build/server.js",
+    "build": "falcon-client build",
+    "test": "falcon-client test --env=jsdom",
+    "lint": "eslint ./"
+  },
+  "dependencies": {
+    "@deity/falcon-client": "1.0.0",
+    "config": "^2.0.1",
+    "graphql-tag": "^2.9.2",
+    "react": "^16.4.2",
+    "react-apollo": "^2.1.11",
+    "react-async-component": "^2.0.0",
+    "react-dom": "^16.4.2",
+    "react-router-dom": "^4.3.1"
+  },
+  "devDependencies": {
+    "@deity/eslint-config-falcon": "1.0.0",
+    "cross-env": "^5.2.0",
+    "eslint": "^4.13.1"
+  }
+}
