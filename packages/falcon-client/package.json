@@ -7,7 +7,6 @@
   "bin": {
     "falcon-client": "./bin/falcon-client.js"
   },
-  "repository": "git@github.com:deity-io/falcon.git",
   "dependencies": {
     "@deity/falcon-logger": "1.0.0",
     "apollo-cache-inmemory": "^1.2.8",

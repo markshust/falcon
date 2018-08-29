@@ -1,1 +1,29 @@
 #! /usr/bin/env node
+
+const chalk = require('chalk');
+const program = require('commander');
+const createFalconApp = require('../src');
+const pkg = require('../package.json');
+
+const availableExamples = createFalconApp
+  .getAvailableExamples()
+  .map(example => chalk.green(example))
+  .join(', ') || chalk.red('<none>');
+
+program
+  .version(pkg.version)
+  .arguments('<project-directory>')
+  .usage(`${chalk.green('<project-directory>')} [options]`)
+  .action((name, { example }) => {
+    try {
+      createFalconApp({ name, example });
+      console.log(chalk.green('Falcon App created successfully!'));
+    } catch(e) {
+      console.error(chalk.red('Failed to create app!'));
+      console.error(chalk.red(e.message));
+    }
+  })
+  .option('-e, --example <example-name>', `Create from Example app. Available options: ${ availableExamples }`)
+  .allowUnknownOption()
+  .on('--help', () => 'messages.help')
+  .parse(process.argv);
