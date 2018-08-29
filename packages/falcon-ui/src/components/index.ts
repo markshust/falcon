@@ -3,9 +3,10 @@ export * from './GridLayout';
 export * from './FlexLayout';
 export * from './Root';
 export * from './Card';
-export * from './ThemeProvider';
 export * from './Image';
 export * from './RangeInput';
 export * from './Table';
 export * from './Headings';
-export * from './Swipeable';
+export * from './Input';
+
+export * from './ThemeProvider';

@@ -113,11 +113,12 @@ const tr: ThemedComponent = {
   borderTop: 'light',
   borderColor: 'primary'
 };
+
 const tbody: ThemedComponent = {};
 
 const h1: ThemedComponent = {
   fontSize: 'xxl',
-  fontWeight: 'bold',
+  fontWeight: 'light',
   lineHeight: 'small',
   p: 'sm',
   m: 'none'
@@ -141,10 +142,23 @@ const h3: ThemedComponent = {
 
 const h4: ThemedComponent = {
   fontSize: 'md',
-  fontWeight: 'bold',
+  fontWeight: 'regular',
   lineHeight: 'small',
   p: 'sm',
   m: 'none'
+};
+
+const input: ThemedComponent = {
+  p: 'xs',
+  css: {
+    '&[type="number"]': {
+      width: '80px'
+    },
+    '&[type="color"]': {
+      width: '80px',
+      padding: 0
+    }
+  }
 };
 
 export const components: ThemedComponents = {
@@ -163,5 +177,6 @@ export const components: ThemedComponents = {
   h2,
   h3,
   h4,
-  rangeInput
+  rangeInput,
+  input
 };

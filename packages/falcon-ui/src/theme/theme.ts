@@ -76,7 +76,7 @@ export const theme = {
     sm: 8,
     md: 16,
     lg: 32,
-    xl: '100%'
+    xl: 333
   },
 
   boxShadows: {
@@ -101,7 +101,7 @@ export const theme = {
   },
 
   zIndex: {
-    modal: 1000,
-    tooltip: 1500
+    modal: 100,
+    tooltip: 150
   }
 };
