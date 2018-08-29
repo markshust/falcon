@@ -29,17 +29,12 @@ const copyTemplate = ({ targetPath, templatePath }) => {
   fs.copySync(templatePath, targetPath, {
     filter: src => !src.includes('/node_modules/')
   });
-  try {
-    fs.moveSync(path.resolve(targetPath, './gitignore'), path.resolve(targetPath, './.gitignore'));
-  } catch (e) {
-    // Do nothing, file exists in templates/default only
-  }
   stopSinner();
 };
 
 const createFalconApp = ({ name, example }) => {
   const targetPath = path.resolve(process.cwd(), name);
-  const templatePath = path.resolve(examplesPath, example || '../templates/default');
+  const templatePath = path.resolve(examplesPath, example || 'shop-with-blog');
 
   if (!fs.existsSync(templatePath)) {
     throw new Error(`"${templatePath}" template does not exist.`);
