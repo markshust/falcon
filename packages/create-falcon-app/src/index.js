@@ -26,7 +26,9 @@ const getAvailableExamples = () => {
 
 const copyTemplate = ({ targetPath, templatePath }) => {
   const stopSinner = getSpinner(`Copying template files to ${targetPath} ...`);
-  fs.copySync(templatePath, targetPath);
+  fs.copySync(templatePath, targetPath, {
+    filter: src => !src.includes('/node_modules/')
+  });
   try {
     fs.moveSync(path.resolve(targetPath, './gitignore'), path.resolve(targetPath, './.gitignore'));
   } catch (e) {
