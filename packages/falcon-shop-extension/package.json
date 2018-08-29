@@ -1,5 +1,5 @@
 {
-  "name": "@deity/falcon-shop",
+  "name": "@deity/falcon-shop-extension",
   "license": "OSL-3.0",
   "main": "src/index.js",
   "version": "1.0.0",
