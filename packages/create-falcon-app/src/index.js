@@ -27,7 +27,11 @@ const getAvailableExamples = () => {
 const copyTemplate = ({ targetPath, templatePath }) => {
   const stopSinner = getSpinner(`Copying template files to ${targetPath} ...`);
   fs.copySync(templatePath, targetPath);
-  fs.move(path.resolve(targetPath, './gitignore'), path.resolve(targetPath, './.gitignore'));
+  try {
+    fs.moveSync(path.resolve(targetPath, './gitignore'), path.resolve(targetPath, './.gitignore'));
+  } catch (e) {
+    // Do nothing, file exists in templates/default only
+  }
   stopSinner();
 };
 
