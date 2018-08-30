@@ -1,5 +1,7 @@
 module.exports = {
   typescript: true,
   src: './',
-  wrapper: 'docs/Wrapper'
+  wrapper: 'docs/Wrapper',
+  title: 'Falcon UI',
+  propsParser: false
 };
