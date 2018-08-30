@@ -1,4 +1,4 @@
-const path = require('path');
+const { resolve } = require('path');
 const fs = require('fs-extra');
 const ora = require('ora');
 const { eraseLine } = require('ansi-escapes');
@@ -14,7 +14,7 @@ const getSpinner = msg => {
   };
 };
 
-const examplesPath = path.resolve(__dirname, './../examples');
+const examplesPath = resolve(__dirname, './../examples');
 
 const getAvailableExamples = () => {
   try {
@@ -24,17 +24,21 @@ const getAvailableExamples = () => {
   }
 };
 
+const copyFolder = (source, dest) => {
+  fs.copySync(source, dest, {
+    filter: src => !src.match(/.*\/(node_modules|coverage|build).*/g)
+  });
+};
+
 const copyTemplate = ({ targetPath, templatePath }) => {
   const stopSinner = getSpinner(`Copying template files to ${targetPath} ...`);
-  fs.copySync(templatePath, targetPath, {
-    filter: src => !src.includes('/node_modules/')
-  });
+  copyFolder(templatePath, targetPath);
   stopSinner();
 };
 
 const createFalconApp = ({ name, example }) => {
-  const targetPath = path.resolve(process.cwd(), name);
-  const templatePath = path.resolve(examplesPath, example || 'shop-with-blog');
+  const targetPath = resolve(process.cwd(), name);
+  const templatePath = resolve(examplesPath, example || 'shop-with-blog');
 
   if (!fs.existsSync(templatePath)) {
     throw new Error(`"${templatePath}" template does not exist.`);
@@ -47,5 +51,6 @@ const createFalconApp = ({ name, example }) => {
 };
 
 module.exports = createFalconApp;
+module.exports.copyFolder = copyFolder;
 module.exports.examplesPath = examplesPath;
 module.exports.getAvailableExamples = getAvailableExamples;

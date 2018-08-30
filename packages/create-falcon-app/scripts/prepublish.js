@@ -1,8 +1,8 @@
-const path = require('path');
-const fs = require('fs-extra');
-const { examplesPath } = require('../src');
+const { resolve } = require('path');
+const { emptyDirSync } = require('fs-extra');
+const { copyFolder, examplesPath } = require('../src');
 
-const examplesSourcePath = path.resolve(__dirname, '../../../examples');
+const examplesSourcePath = resolve(__dirname, '../../../examples');
 
-fs.emptyDirSync(examplesPath);
-fs.copySync(examplesSourcePath, examplesPath);
+emptyDirSync(examplesPath);
+copyFolder(examplesSourcePath, examplesPath);

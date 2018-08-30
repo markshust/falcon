@@ -8,7 +8,7 @@
     "create-falcon-app": "./bin/create-falcon-app"
   },
   "scripts": {
-    "prepublish": "node scripts/prepublish.js"
+    "prepare": "node scripts/prepublish.js"
   },
   "dependencies": {
     "ansi-escapes": "^3.1.0",
