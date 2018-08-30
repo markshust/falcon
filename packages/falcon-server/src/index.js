@@ -28,12 +28,11 @@ class FalconServer {
   initApp() {
     this.app = new Koa();
     this.app.keys = this.config.session.keys;
-    delete this.config.session.keys;
 
     this.router = new Router();
 
     // todo: implement backend session store e.g. https://www.npmjs.com/package/koa-redis-session
-    this.app.use(session(this.config.session || {}, this.app));
+    this.app.use(session((this.config.session && this.config.session.options) || {}, this.app));
 
     this.app.use((ctx, next) => {
       // copy session to native Node's req object because GraphQL execution context doesn't have access to Koa's

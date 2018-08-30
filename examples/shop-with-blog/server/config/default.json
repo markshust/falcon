@@ -39,32 +39,16 @@
       "package": "@deity/falcon-dynamic-route-extension"
     }
   ],
-  "apis_": [
-    {
-      "name": "chirp-api",
-      "package": "./ChirpApi",
-      "options": {}
-    }
-  ],
-  "extensions_": [
-    {
-      "package": "./Chirp",
-      "options": {
-        "api": "chirp-api"
-      }
-    },
-    {
-      "package": "./User"
-    }
-  ],
   "session": {
     "keys": ["secret key"],
-    "key": "session-key",
-    "maxAge": 86400000,
-    "overwrite": true,
-    "httpOnly": true,
-    "signed": true,
-    "rolling": false,
-    "renew": false
+    "options": {
+      "key": "session-key",
+      "maxAge": 86400000,
+      "overwrite": true,
+      "httpOnly": true,
+      "signed": true,
+      "rolling": false,
+      "renew": false
+    }
   }
 }
