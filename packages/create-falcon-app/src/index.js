@@ -14,7 +14,7 @@ const getSpinner = msg => {
   };
 };
 
-const examplesPath = path.resolve('./examples');
+const examplesPath = path.resolve(__dirname, './../examples');
 
 const getAvailableExamples = () => {
   try {
