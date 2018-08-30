@@ -3,7 +3,7 @@ Falcon Server is the entrypoint for backend features of Falcon stack. It acts as
 
 Falcon Server is implemented with [Koa](https://koajs.com/) and [Apollo Server](https://www.apollographql.com/docs/apollo-server/).
 
-Falcon Server is just a "glue" that realises all the functionalities via [extensions](#Extensions system)
+Falcon Server is just a "glue" that realises all the functionalities via [extensions](#extensions-system)
 
 ## Installation
 With npm:
@@ -29,9 +29,9 @@ server.start();
 ## Configuration
 `config`:<`Object`>
  * `port`: <`Number`> - port number that server should be running on (default is set to 4000)
- * `apis`: <`Array`> - array of APIs configuration. See [`APIs configuration`](#APIs configuration).
- * `extensions`: <`Array`> - array of extensions configuration. See [`Extensions configuration`](#Extensions configuration)
- * `session`: <`Object`> - session configuration, [see the details](#Session configuration)
+ * `apis`: <`Array`> - array of APIs configuration. See [APIs configuration](#apis-configuration).
+ * `extensions`: <`Array`> - array of extensions configuration. See [Extensions configuration](#extensions-configuration)
+ * `session`: <`Object`> - session configuration, [see the details](#session-configuration)
 
 ### APIs configuration
 `apis` array provides list of APIs that should be used along with options that should be passed to those APIs. Additionally, if API should be available for other extensions its configuration should have `"name"` property that later can be used to get instance of particular extension.
@@ -77,7 +77,7 @@ const server = new FalconServer(config);
 server.start()
 ```
 
-If extension requires an API to work correctly the API can be either implemented inside the extension, but it can also be implemented as separate package. Then, such API can be added via [`apis`](#APIs configuration) and used by extension. 
+If extension requires an API to work correctly the API can be either implemented inside the extension, but it can also be implemented as separate package. Then, such API can be added via [`apis`](#apis-configuration) and used by extension. 
 
 This is especially handy when extension realised some piece of functionality that can use data from various 3rd party services - e.g. blog extension can use wodpress for content fetching, but also any other service that can deliver data in the format accepted by blog extension.
 
