@@ -2,29 +2,21 @@ import CSS from 'csstype';
 import merge from 'deepmerge';
 
 import { theme } from './theme';
-import { components } from './components';
+
 import { PropsMappings } from './propsmapings';
 
 const defaultTheme: Theme = {
   ...theme,
-  components
+  components: {}
 };
+
+export function addToDefaultThemeComponents(componentKey: string, defaults: ThemedComponentPropsWithVariants) {
+  defaultTheme.components[componentKey] = defaults;
+}
 
 export function createTheme(themeOverride: RecursivePartial<Theme> = {}): Theme {
   return merge<Theme, RecursivePartial<Theme>>(defaultTheme, themeOverride);
 }
-
-export const rangeInputTrack = (styles: CSSObject) => ({
-  '::-webkit-slider-runnable-track': styles,
-  '::-moz-range-track': styles,
-  '::-ms-track': styles
-});
-
-export const rangeInputThumb = (styles: CSSObject) => ({
-  '::-webkit-slider-thumb ': styles,
-  '::-moz-range-thumb': styles,
-  '::-ms-thumb': styles
-});
 
 // export themed component factory
 export * from './themed';
@@ -75,9 +67,9 @@ export interface PropsWithTheme {
   theme: Theme;
 }
 
-export type InlineCss = ((props: PropsWithTheme) => CSSObject) | CSSObject;
+export type InlineCss<T = {}> = ((props: PropsWithTheme & T) => CSSObject) | CSSObject;
 
-export type ThemedComponentPropsWithCss = {
+export type ThemedComponentPropsWithCss<T = {}> = {
   [ComponentProp in keyof PropsMappings]?:
     | (PropsMappings[ComponentProp] extends ThemedPropMapping
         ? Extract<keyof Theme[PropsMappings[ComponentProp]['themeProp']], string>
@@ -91,20 +83,18 @@ export type ThemedComponentPropsWithCss = {
             ? CssProps[PropsMappings[ComponentProp]['cssProp']]
             : (string | number)
       }
-} & { css?: InlineCss };
+} & { css?: InlineCss<T>; animations?: any };
 
-export interface ThemedComponentProps extends ThemedComponentPropsWithCss {}
+export interface ThemedComponentProps<T = {}> extends ThemedComponentPropsWithCss<T> {}
 
-type ThemedComponentWithVariants = ThemedComponentProps & {
+export type ThemedComponentPropsWithVariants<T = {}> = ThemedComponentProps<T> & {
   variants?: {
-    [variantKey: string]: ThemedComponentProps;
+    [variantKey: string]: ThemedComponentProps<T>;
   };
 };
 
-export interface ThemedComponent extends ThemedComponentWithVariants {}
-
 export interface ThemedComponents {
-  [themeKey: string]: ThemedComponentWithVariants;
+  [themeKey: string]: ThemedComponentPropsWithVariants;
 }
 
 type Colors = typeof theme.colors;

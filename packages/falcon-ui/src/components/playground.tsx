@@ -6,7 +6,7 @@ import { themed, createTheme, Theme } from '../theme';
 const HomeLayout = themed({
   tag: 'article',
   themeKey: 'homelayout'
-})();
+});
 
 const defaultThemeWithNewHomeLayoutComponent = createTheme({
   components: {

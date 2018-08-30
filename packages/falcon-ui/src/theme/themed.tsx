@@ -1,7 +1,15 @@
 import React from 'react';
 import styled from '@emotion/styled-base';
 import isPropValid from '@emotion/is-prop-valid';
-import { Theme, CSSObject, PropsWithTheme, ThemedComponentProps } from './';
+import {
+  Theme,
+  CSSObject,
+  PropsWithTheme,
+  ThemedComponentProps,
+  ThemedComponentPropsWithVariants,
+  addToDefaultThemeComponents
+} from './';
+
 import { mappings, PropsMappings, ResponsivePropMapping } from './propsmapings';
 
 const propsMappingKeys = Object.keys(mappings) as (keyof PropsMappings)[];
@@ -189,24 +197,26 @@ export function themed<
   TProps extends BaseProps<TTag, TExtend>,
   TTag extends string | undefined = undefined,
   TExtend = {}
->(defaultProps: BaseProps<TTag, TExtend> & TProps) {
-  type InlineCssProps = typeof defaultProps & PropsWithTheme;
-  type DefaultInlineCss = ((props: InlineCssProps) => CSSObject) | CSSObject;
-  // themed returns function that accepts default css to be provided by the component
-  // it accepts any number or DefaultInlineCss args
+>(
+  defaultProps: BaseProps<TTag, TExtend> & TProps,
+  themedProps?: ThemedComponentPropsWithVariants<Omit<TProps, 'tag' | 'extend'>>
+) {
+  // if themeKey and themedProps are specified
+  // add those to default theme components sections
+  if (defaultProps.themeKey && themedProps) {
+    addToDefaultThemeComponents(defaultProps.themeKey, themedProps as ThemedComponentPropsWithVariants);
+  }
 
-  return (...css: DefaultInlineCss[]) => {
-    const styledComponentWithThemeProps = styled(Tag, {
-      label: `${defaultProps.themeKey}${defaultProps.variant ? `-${defaultProps.variant}` : ''}`
-    })(...css, getThemedCss);
+  const styledComponentWithThemeProps = styled(Tag, {
+    label: `${defaultProps.themeKey}${defaultProps.variant ? `-${defaultProps.variant}` : ''}`
+  })(getThemedCss);
 
-    styledComponentWithThemeProps.defaultProps = defaultProps;
-    styledComponentWithThemeProps.themedComponent = true;
+  styledComponentWithThemeProps.defaultProps = defaultProps;
+  styledComponentWithThemeProps.themedComponent = true;
 
-    return styledComponentWithThemeProps as <TTagOverride extends string | undefined = TTag, TExtendOverride = TExtend>(
-      propss: BaseProps<TTagOverride, TExtendOverride> &
-        Partial<Omit<TProps, 'tag' | 'extend'>> &
-        Partial<ThemedProps> & { [x: string]: any }
-    ) => JSX.Element;
-  };
+  return styledComponentWithThemeProps as <TTagOverride extends string | undefined = TTag, TExtendOverride = TExtend>(
+    props: BaseProps<TTagOverride, TExtendOverride> &
+      Partial<Omit<TProps, 'tag' | 'extend'>> &
+      Partial<ThemedProps> & { [x: string]: any }
+  ) => JSX.Element;
 }
