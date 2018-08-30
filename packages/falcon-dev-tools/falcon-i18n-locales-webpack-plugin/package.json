@@ -5,7 +5,6 @@
   "main": "index.js",
   "repository": "git@github.com:deity-io/falcon.git",
   "dependencies": {
-    "@deity/falcon-logger": "1.0.0",
     "deepmerge": "^2.1.1",
     "fs-extra": "^7.0.0"
   }
