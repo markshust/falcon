@@ -12,8 +12,7 @@
     "@deity/falcon-server": "1.0.0",
     "@deity/falcon-blog-extension": "1.0.0",
     "@deity/falcon-wordpress-api": "1.0.0",
-    "config": "^2.0.1",
-    "koa-router": "^7.4.0"
+    "config": "^2.0.1"
   },
   "devDependencies": {
     "nodemon": "^1.18.3"
