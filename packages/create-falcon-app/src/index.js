@@ -30,9 +30,9 @@ const copyFolder = (source, dest) => {
   });
 };
 
-const copyTemplate = ({ targetPath, templatePath }) => {
+const copyTemplate = (templatePath, targetPath) => {
   const stopSinner = getSpinner(`Copying template files to ${targetPath} ...`);
-  copyFolder(templatePath, targetPath);
+  fs.copySync(templatePath, targetPath);
   stopSinner();
 };
 
@@ -47,7 +47,7 @@ const createFalconApp = ({ name, example }) => {
     throw new Error(`"${targetPath}" exists`);
   }
 
-  copyTemplate({ targetPath, templatePath });
+  copyTemplate(templatePath, targetPath);
 };
 
 module.exports = createFalconApp;
