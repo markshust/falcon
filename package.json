@@ -34,6 +34,7 @@
     "packages/falcon-wordpress-extension",
     "packages/falcon-locales",
     "packages/falcon-dev-tools/eslint-config-falcon",
+    "packages/falcon-dev-tools/falcon-i18n-locales-webpack-plugin",
     "examples/shop-with-blog/client",
     "examples/shop-with-blog/server"
   ]
