@@ -27,7 +27,9 @@ module.exports = class FalconI18nLocalesPlugin {
       return;
     }
 
-    const allLocalizationFiles = merge.all(sourceDirs.map(x => this.getLocalizationFilePaths(x)));
+    const allLocalizationFiles = merge.all(
+      sourceDirs.filter(x => fs.pathExistsSync(x)).map(x => this.getLocalizationFilePaths(x))
+    );
 
     // console.log(JSON.stringify(allLocalizationFiles, null, 2));
     // TODO filter lng / ns
