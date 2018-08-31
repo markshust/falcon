@@ -1,5 +1,5 @@
 {
-  "name": "@deity/falcon-i18n-locales-webpack-plugin",
+  "name": "@deity/falcon-i18n-webpack-plugin",
   "version": "1.0.0",
   "license": "OSL-3.0",
   "main": "index.js",

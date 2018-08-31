@@ -2,14 +2,14 @@ const path = require('path');
 const fs = require('fs-extra');
 const merge = require('deepmerge');
 
-module.exports = class FalconI18nLocalesPlugin {
+module.exports = class FalconI18nPlugin {
   /**
    * Webpack Plugin which merges localisation json files from specified directories and emit them into configurable directory.
    * Files emitting is done on compilation hook, which allows to import them and build chunks.
    * @param {{sourceDirs, outputDir }} options - options
    */
   constructor({ sourceDirs = [], outputDir = 'public/locales', filter = { lng: [], ns: [] } }) {
-    this.name = 'FalconI18nLocalesPlugin';
+    this.name = 'FalconI18nPlugin';
     this.options = {
       sourceDirs,
       outputDir,
