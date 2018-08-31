@@ -1,6 +1,6 @@
 import React from 'react';
 import { withCSSContext } from '@emotion/core';
-import { GridLayout, Card, H1, H4, RangeInput, FlexLayout, Input } from '../src';
+import { GridLayout, Card, H1, H4, RangeInput, FlexLayout, Input, Divider } from '../src';
 
 const themeMeta = {
   colors: {
@@ -77,10 +77,11 @@ class ThemeEditor extends React.Component<any> {
     const themeKeys = Object.keys(theme).filter(key => blacklist.indexOf(key) === -1);
 
     return (
-      <GridLayout gridTemplateColumns="1fr 1fr" gridGap="md">
+      <GridLayout gridTemplateColumns="1fr" gridGap="md">
         {themeKeys.map(key => (
-          <Card key={key}>
-            <H1>{key}</H1>
+          <Card key={key} boxShadow="none">
+            <H1 css={{ textTransform: 'capitalize' }}>{key}</H1>
+            <Divider />
             {Object.keys(theme[key]).map(themeProp => (
               <GridLayout
                 alignItems="center"
