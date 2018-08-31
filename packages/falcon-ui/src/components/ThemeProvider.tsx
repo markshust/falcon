@@ -21,7 +21,7 @@ export const ThemeProvider = (props: Partial<PropsWithTheme>) => {
   return (
     <Provider theme={themeToUse}>
       <Global styles={normalizeCssStyles} />
-      {<Root {...rest} />}
+      <Root {...rest} />
     </Provider>
   );
 };
