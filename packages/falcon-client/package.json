@@ -7,11 +7,30 @@
   "bin": {
     "falcon-client": "./bin/falcon-client.js"
   },
-  "repository": "git@github.com:deity-io/falcon.git",
+  "scripts": {
+    "test": "razzle test --env=jsdom",
+    "test:coverage": "razzle test --env=jsdom --ci --coverage"
+  },
+  "jest": {
+    "coverageReporters": [
+      "html",
+      "text",
+      "text-summary"
+    ],
+    "transform": {
+      "^.+\\.(gql|graphql)$": "jest-transform-graphql",
+      "^.+\\.(js|jsx|mjs)$": "razzle/config/jest/babelTransform.js",
+      "^.+\\.css$": "razzle/config/jest/cssTransform.js",
+      "^(?!.*\\.(js|jsx|mjs|css|json)$)": "razzle/config/jest/fileTransform.js"
+    },
+    "setupFiles": [
+      "../../test/setupFile"
+    ]
+  },
   "dependencies": {
     "@deity/falcon-logger": "1.0.0",
-    "apollo-cache-inmemory": "^1.2.8",
-    "apollo-client": "^2.4.0",
+    "apollo-cache-inmemory": "^1.2.9",
+    "apollo-client": "^2.4.1",
     "apollo-link": "^1.2.2",
     "apollo-link-http": "^1.5.4",
     "apollo-link-state": "^0.4.1",
@@ -38,5 +57,15 @@
     "react-router-dom": "^4.3.1",
     "resolve": "^1.8.1",
     "serialize-javascript": "^1.5.0"
+  },
+  "devDependencies": {
+    "apollo-link-schema": "^1.1.0",
+    "graphql-tools": "^3.1.1",
+    "jest-transform-graphql": "^2.1.0",
+    "jest-extended": "^0.8.1",
+    "enzyme": "^3.5.0",
+    "enzyme-adapter-react-16": "^1.3.0",
+    "react-test-renderer": "^16.4.2",
+    "supertest": "^3.1.0"
   }
 }

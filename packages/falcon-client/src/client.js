@@ -10,7 +10,7 @@ import { SSR } from './graphql/config.gql';
 
 const client = new ApolloClient({
   isBrowser: true,
-  clientApolloSchema,
+  clientState: clientApolloSchema,
   // eslint-disable-next-line no-underscore-dangle
   initialState: window.__APOLLO_STATE__ || {}
 });
