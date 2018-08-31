@@ -1,7 +1,8 @@
 const path = require('path');
-const makeLoaderFinder = require('razzle-dev-utils/makeLoaderFinder');
 const paths = require('./../paths');
-const WriteFilePlugin = require('write-file-webpack-plugin');
+// eslint-disable-next-line import/no-extraneous-dependencies
+const FalconI18nLocalesPlugin = require('@deity/falcon-i18n-webpack-plugin');
+const makeLoaderFinder = require('razzle-dev-utils/makeLoaderFinder');
 
 function setEntryToFalconClient(config, target) {
   if (target === 'web') {
@@ -57,13 +58,17 @@ function addGraphQLTagLoader(config) {
   config.resolve.extensions.push('.graphql', '.gql');
 }
 
-// eslint-disable-next-line no-unused-vars
-function configureLocalesForceDevServerUpdate(config, { target, dev }) {
-  if (dev) {
+function addFalconI18nPlugin(config, target) {
+  if (target === 'web') {
     config.plugins = [
       ...config.plugins,
-      new WriteFilePlugin({
-        test: /locales\/(.*)\.json$/
+      new FalconI18nLocalesPlugin({
+        sourceDirs: [paths.resolvePackageDir('@deity/falcon-i18n'), path.join(paths.razzle.appPath, 'i18n')],
+        outputDir: 'public/i18n',
+        filter: {
+          lng: ['en'],
+          ns: []
+        }
       })
     ];
   }
@@ -82,8 +87,7 @@ module.exports = (config, { target, dev }, webpackObject) => {
   setEntryToFalconClient(config, target);
   makeFalconClientJsFileResolvedByWebpack(config);
   addGraphQLTagLoader(config);
-
-  configureLocalesForceDevServerUpdate(config, { target, dev });
+  addFalconI18nPlugin(config, target);
 
   return config;
 };
