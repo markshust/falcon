@@ -58,23 +58,36 @@ function addGraphQLTagLoader(config) {
   config.resolve.extensions.push('.graphql', '.gql');
 }
 
-function addFalconI18nPlugin(config, dev) {
+/**
+ * @typedef {object} i18nPluginConfig
+ * @property {string[]} resourcePackages npm modules with localization resources
+ * @property {object{ lng, ns }} filter Initial configuration
+ */
+
+/**
+ * Adds FalconI18nPlugin into webpack configuration
+ * @param {i18nPluginConfig} param configuration
+ * @param {{}} config webpack config
+ * @param {{}} dev is dev?
+ */
+function addFalconI18nPlugin({ resourcePackages = [], filter }, config, dev) {
   config.plugins = [
     ...config.plugins,
     new FalconI18nLocalesPlugin({
       mainSource: path.join(paths.razzle.appPath, 'i18n'),
-      defaultSources: [paths.resolvePackageDir('@deity/falcon-i18n')],
+      defaultSources: resourcePackages.map(x => paths.resolvePackageDir(x)),
       output: dev ? 'public/i18n' : 'build/public/i18n',
-      filter: {
-        // lng: ['en'],
-        // ns: ['common', 'shop']
-      }
+      filter
     })
   ];
 }
 
-// eslint-disable-next-line no-unused-vars
-module.exports = (config, { target, dev }, webpackObject) => {
+/**
+ * falcon-client and razzle integration plugin
+ * @param {{i18n: i18nPluginConfig }} appConfig webpack config
+ * @returns {{}} razzle plugin
+ */
+module.exports = appConfig => (config, { target, dev } /* ,  webpackObject */) => {
   config.resolve.alias = {
     ...(config.resolve.alias || {}),
     public: path.join(paths.razzle.appPath, 'public'),
@@ -86,7 +99,7 @@ module.exports = (config, { target, dev }, webpackObject) => {
   setEntryToFalconClient(config, target);
   makeFalconClientJsFileResolvedByWebpack(config);
   addGraphQLTagLoader(config);
-  addFalconI18nPlugin(config, dev);
+  addFalconI18nPlugin(appConfig.i18n, config, dev);
 
   return config;
 };
