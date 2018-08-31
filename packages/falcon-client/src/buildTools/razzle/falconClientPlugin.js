@@ -58,20 +58,18 @@ function addGraphQLTagLoader(config) {
   config.resolve.extensions.push('.graphql', '.gql');
 }
 
-function addFalconI18nPlugin(config, target) {
-  if (target === 'web') {
-    config.plugins = [
-      ...config.plugins,
-      new FalconI18nLocalesPlugin({
-        sourceDirs: [paths.resolvePackageDir('@deity/falcon-i18n'), path.join(paths.razzle.appPath, 'i18n')],
-        outputDir: 'public/i18n',
-        filter: {
-          lng: ['en'],
-          ns: []
-        }
-      })
-    ];
-  }
+function addFalconI18nPlugin(config, dev) {
+  config.plugins = [
+    ...config.plugins,
+    new FalconI18nLocalesPlugin({
+      sourceDirs: [paths.resolvePackageDir('@deity/falcon-i18n'), path.join(paths.razzle.appPath, 'i18n')],
+      outputDir: dev ? 'public/i18n' : 'build/public/i18n',
+      filter: {
+        lng: ['en'],
+        ns: []
+      }
+    })
+  ];
 }
 
 // eslint-disable-next-line no-unused-vars
@@ -87,7 +85,7 @@ module.exports = (config, { target, dev }, webpackObject) => {
   setEntryToFalconClient(config, target);
   makeFalconClientJsFileResolvedByWebpack(config);
   addGraphQLTagLoader(config);
-  addFalconI18nPlugin(config, target);
+  addFalconI18nPlugin(config, dev);
 
   return config;
 };
