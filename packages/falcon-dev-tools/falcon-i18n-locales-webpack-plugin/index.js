@@ -35,13 +35,7 @@ module.exports = class FalconI18nLocalesPlugin {
 
     compiler.hooks.entryOption.tap(this.name, () => fs.emptyDirSync(path.join(compiler.context, outputDir)));
     compiler.hooks.compile.tap(this.name, () => this.openMergeAndWrite(this.localeFileDefinitions, compiler.context));
-    compiler.hooks.afterEmit.tap(this.name, compilation => {
-      this.localeFileDefinitions.forEach(definition =>
-        definition.sources.forEach(file => {
-          compilation.fileDependencies.add(file);
-        })
-      );
-    });
+    compiler.hooks.afterEmit.tap(this.name, compilation => this.watchSourceLocaleFiles(compilation));
   }
 
   /**
@@ -108,5 +102,13 @@ module.exports = class FalconI18nLocalesPlugin {
       const mergedContent = merge.all(filesToMerge);
       fs.writeJsonSync(outputFileFullName, mergedContent, { spaces: 2 });
     });
+  }
+
+  watchSourceLocaleFiles(compilation) {
+    this.localeFileDefinitions.forEach(definition =>
+      definition.sources.forEach(file => {
+        compilation.fileDependencies.add(file);
+      })
+    );
   }
 };
