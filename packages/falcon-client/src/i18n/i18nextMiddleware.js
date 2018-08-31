@@ -21,7 +21,7 @@ const i18nextServer = (options = {}) =>
     ...defaultOptions,
     ...options,
     backend: {
-      loadPath: path.resolve(path.join(process.env.RAZZLE_PUBLIC_DIR, '/locales/{{lng}}/{{ns}}.json')),
+      loadPath: path.resolve(path.join(process.env.RAZZLE_PUBLIC_DIR, 'i18n/{{lng}}/{{ns}}.json')),
       jsonIndent: 2
     }
   });
