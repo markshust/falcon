@@ -1,9 +1,8 @@
 import React from 'react';
 import renderer from 'react-test-renderer';
 import { MockedProvider } from 'react-apollo/test-utils';
-import MemoryRouter from 'react-router-dom/MemoryRouter';
-import Switch from 'react-router-dom/Switch';
-import wait from 'waait';
+import { MemoryRouter, Switch } from 'react-router-dom';
+import { wait } from '../../../test/helpers';
 import DynamicRoute from './components/DynamicRoute';
 import { GET_URL } from './graphql/url.gql';
 
