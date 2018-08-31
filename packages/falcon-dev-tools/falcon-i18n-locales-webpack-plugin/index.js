@@ -27,12 +27,14 @@ module.exports = class FalconI18nLocalesPlugin {
       return;
     }
 
-    const allLocalizationFiles = merge.all(
-      sourceDirs.filter(x => fs.pathExistsSync(x)).map(x => this.getLocalizationFilePaths(x))
-    );
+    const allLocalizationFiles = sourceDirs
+      .filter(x => fs.pathExistsSync(x))
+      .map(x => this.getLocalizationFilePaths(x))
+      // TODO filter lng / ns
+      .reduce((result, x) => merge(result, x), {});
 
     // console.log(JSON.stringify(allLocalizationFiles, null, 2));
-    // TODO filter lng / ns
+
     this.localeFileDefinitions = this.getLngNsDictionaryFilePaths(allLocalizationFiles, outputDir, compiler.context);
 
     compiler.hooks.entryOption.tap(this.name, () => fs.emptyDirSync(path.join(compiler.context, outputDir)));
