@@ -1,5 +1,5 @@
 {
-  "name": "@deity/falcon-locales",
+  "name": "@deity/falcon-i18n",
   "version": "1.0.0",
   "license": "OSL-3.0",
   "main": "./index.js",

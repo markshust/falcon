@@ -27,7 +27,7 @@
   },
   "dependencies": {
     "@deity/falcon-client": "1.0.0",
-    "@deity/falcon-locales": "1.0.0",
+    "@deity/falcon-i18n": "1.0.0",
     "config": "^2.0.1",
     "graphql-tag": "^2.9.2",
     "prop-types": "15.6.2",
