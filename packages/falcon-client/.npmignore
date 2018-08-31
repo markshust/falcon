@@ -1,0 +1,9 @@
+node_modules/
+coverage/
+src/**/*.test.js
+src/**/__mocks__/*
+
+.DS_Store
+yarn.lock
+yarn-error.log
+package-lock.json

@@ -2,6 +2,7 @@ node_modules/
 coverage/
 .DS_Store
 yarn.lock
+yarn-error.log
 package-lock.json
 
 .vscode/

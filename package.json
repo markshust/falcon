@@ -1,22 +1,24 @@
 {
-  "name": "falcon",
+  "name": "@deity/falcon",
   "private": true,
+  "version": "1.0.0",
   "license": "OSL-3.0",
   "repository": "git@github.com:deity-io/falcon.git",
   "scripts": {
     "precommit": "lint-staged",
-    "test": "jest",
-    "lint": "./node_modules/.bin/eslint ./"
+    "test": "lerna run test:coverage",
+    "lint": "eslint ./"
   },
   "devDependencies": {
     "@deity/eslint-config-falcon": "1.0.0",
     "eslint": "4.13.1",
+    "eslint-plugin-prettier": "^2.6.2",
     "husky": "^0.14.3",
     "identity-obj-proxy": "^3.0.0",
     "jest": "^23.5.0",
-    "lerna": "^3.0.0-rc.0",
-    "lint-staged": "^7.2.0",
-    "prettier": "^1.14.0"
+    "lerna": "^3.1.4",
+    "lint-staged": "^7.2.2",
+    "prettier": "^1.14.2"
   },
   "workspaces": [
     "packages/create-falcon-app",
@@ -33,6 +35,5 @@
     "packages/falcon-dev-tools/eslint-config-falcon",
     "examples/shop-with-blog/client",
     "examples/shop-with-blog/server"
-  ],
-  "version": "1.0.0"
+  ]
 }

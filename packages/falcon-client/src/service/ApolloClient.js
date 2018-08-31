@@ -25,6 +25,7 @@ import fetch from 'node-fetch';
  * @return {ApolloClient} ApolloClient instance
  */
 export default (config = {}) => {
+  const addTypename = process.env.NODE_ENV !== 'test';
   const {
     extraLinks = [],
     isBrowser = false,
@@ -33,7 +34,7 @@ export default (config = {}) => {
     serverUri = 'http://localhost:4000/graphql'
   } = config;
 
-  const cache = new InMemoryCache().restore(initialState || {});
+  const cache = new InMemoryCache({ addTypename }).restore(initialState || {});
   const linkState = withClientState({
     cache,
     ...clientState
@@ -48,6 +49,7 @@ export default (config = {}) => {
     cache,
     connectToDevTools: isBrowser && process.env.NODE_ENV !== 'production',
     ssrMode: !isBrowser,
+    addTypename,
     link: from([...extraLinks, linkState, httpLink])
   });
 };
