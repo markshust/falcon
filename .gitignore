@@ -13,6 +13,9 @@ package-lock.json
 *.swo
 
 examples/**/build/
+examples/**/public/i18n/
+
+#sandbox:
 examples/**/static/dist/
 examples/**/static/manifest.json
 examples/**/webpack-assets.json
