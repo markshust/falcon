@@ -62,11 +62,12 @@ function addFalconI18nPlugin(config, dev) {
   config.plugins = [
     ...config.plugins,
     new FalconI18nLocalesPlugin({
-      sourceDirs: [paths.resolvePackageDir('@deity/falcon-i18n'), path.join(paths.razzle.appPath, 'i18n')],
-      outputDir: dev ? 'public/i18n' : 'build/public/i18n',
+      mainSource: path.join(paths.razzle.appPath, 'i18n'),
+      defaultSources: [paths.resolvePackageDir('@deity/falcon-i18n')],
+      output: dev ? 'public/i18n' : 'build/public/i18n',
       filter: {
-        lng: ['en'],
-        ns: []
+        // lng: ['en'],
+        // ns: ['common', 'shop']
       }
     })
   ];
