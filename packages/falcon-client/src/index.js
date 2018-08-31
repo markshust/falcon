@@ -1,8 +1,14 @@
 import http from 'http';
 import Logger from '@deity/falcon-logger';
-import app from './server';
+import appServer from './server';
+import App, { clientApolloSchema } from './clientApp';
 import configuration from './clientApp/configuration';
 
+const app = appServer({
+  App,
+  clientApolloSchema,
+  configuration
+});
 // Use `app#callback()` method here instead of directly
 // passing `app` as an argument to `createServer` (or use `app#listen()` instead)
 // @see https://github.com/koajs/koa/blob/master/docs/api/index.md#appcallback
@@ -25,7 +31,9 @@ if (module.hot) {
     Logger.log('🔁  HMR Reloading `./server`...');
 
     server.removeListener('request', currentHandler);
-    const newHandler = require('./server').default.callback();
+    const newHandler = require('./server')
+      .default({ App, clientApolloSchema, configuration })
+      .callback();
     server.on('request', newHandler);
     currentHandler = newHandler;
   });
