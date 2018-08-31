@@ -8,5 +8,8 @@ export * from './RangeInput';
 export * from './Table';
 export * from './Headings';
 export * from './Input';
+export * from './Text';
+export * from './Divider';
+export * from './Swipeable';
 
 export * from './ThemeProvider';
