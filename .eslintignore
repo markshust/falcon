@@ -2,5 +2,4 @@ coverage/
 node_modules/
 examples/**/build/
 examples/**/static/
-/packages/create-falcon-app/templates/
-/packages/create-falcon-app/examples/
+packages/create-falcon-app/examples/
