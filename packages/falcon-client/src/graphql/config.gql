@@ -5,7 +5,6 @@ query SSR {
       lng
       fallbackLng
       whitelist
-      ns
     }
   }
 }
