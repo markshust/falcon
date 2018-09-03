@@ -1,13 +1,14 @@
 import React from 'react';
 import styled from '@emotion/styled-base';
 import isPropValid from '@emotion/is-prop-valid';
+
 import {
   Theme,
   CSSObject,
   PropsWithTheme,
   ThemedComponentProps,
   ThemedComponentPropsWithVariants,
-  addToDefaultThemeComponents
+  InlineCss
 } from './';
 
 import { mappings, PropsMappings, ResponsivePropMapping } from './propsmapings';
@@ -15,7 +16,7 @@ import { mappings, PropsMappings, ResponsivePropMapping } from './propsmapings';
 const propsMappingKeys = Object.keys(mappings) as (keyof PropsMappings)[];
 
 const convertPropToCss = (
-  mappingKey: keyof PropsMappings,
+  mappingKey: string,
   propMapping: ResponsivePropMapping,
   matchingProp: string | number,
   theme: Theme
@@ -40,47 +41,47 @@ type PropsWithThemeKey = {
   variant?: string;
 };
 
-type ThemedProps = ThemedComponentProps & PropsWithTheme & PropsWithThemeKey;
+type PropsWithDefaultTheme = {
+  defaultTheme?: ThemedComponentPropsWithVariants;
+};
 
-const convertThemedPropsToCss = (props: ThemedProps): CSSObject => {
+type ThemedProps = ThemedComponentProps & PropsWithTheme & PropsWithThemeKey & PropsWithDefaultTheme;
+
+const convertThemedPropsToCss = (props: ThemedComponentProps, theme: Theme): CSSObject => {
   //  if theme is not provided via theme provider do not map anything
-  if (!props.theme) {
+  if (!theme) {
     return {};
   }
-  const responsiveBreakpoints = Object.keys(props.theme.breakpoints) as (ThemedBreakpointsKeysType)[];
   // TODO: typescript: can typings be improved for that object?
   const cssObject = {} as any;
-  // iterate over all possible responsive props keys and check if passed props have matching prop
-  // this is hot path function called potentially many times
-  for (let i = 0; i < propsMappingKeys.length; i++) {
-    const mappingKey = propsMappingKeys[i];
-    const matchingProp = props[mappingKey];
-    const propMapping: ResponsivePropMapping = mappings[mappingKey];
 
-    // move along if there is no matching prop for given key found
-    if (!matchingProp) {
+  // eslint-disable-next-line no-restricted-syntax, guard-for-in
+  for (const mappingKey in props) {
+    const propMapping = mappings[mappingKey as keyof PropsMappings];
+    const matchingProp = props[mappingKey as keyof ThemedComponentProps];
+
+    // move along if there is no matching prop in mappings for given key found
+    if (!propMapping) {
       continue;
     }
-
     // if matching prop is typeof string it means it's not responsive
     if (typeof matchingProp === 'string' || typeof matchingProp === 'number') {
-      const cssPair = convertPropToCss(mappingKey, propMapping, matchingProp, props.theme);
+      const cssPair = convertPropToCss(mappingKey, propMapping, matchingProp, theme);
       cssObject[cssPair.cssPropName] = cssPair.cssPropValue;
     } else {
       // if it's not string it needs to be object that has responsive breakpoints keys
-      for (let j = 0; j < responsiveBreakpoints.length; j++) {
-        const breakpointKey = responsiveBreakpoints[j];
-        // if matching prop has no matching breakpoint key move along
+      // eslint-disable-next-line no-restricted-syntax, guard-for-in
+      for (const breakpointKey in matchingProp) {
+        const breakpointValue = (theme.breakpoints as any)[breakpointKey];
         const matchingResponsiveProp = matchingProp[breakpointKey];
-        if (!matchingResponsiveProp) {
+        if (breakpointValue === undefined) {
           continue;
         }
 
-        const breakpointValue = props.theme.breakpoints[breakpointKey];
         // if specified breakpoint has value 0 (usually default breakpoint)
         // then do not create media query for it, just pass the props straight to the object
         if (breakpointValue === 0) {
-          const cssPair = convertPropToCss(mappingKey, propMapping, matchingResponsiveProp, props.theme);
+          const cssPair = convertPropToCss(mappingKey, propMapping, matchingResponsiveProp, theme);
           cssObject[cssPair.cssPropName] = cssPair.cssPropValue;
         } else {
           // if breakpoint value is different than 0 all css props needs to be inside '@media' object
@@ -91,7 +92,7 @@ const convertThemedPropsToCss = (props: ThemedProps): CSSObject => {
           if (!cssObject[mediaQueryKey]) {
             cssObject[mediaQueryKey] = {};
           }
-          const cssPair = convertPropToCss(mappingKey, propMapping, matchingResponsiveProp, props.theme);
+          const cssPair = convertPropToCss(mappingKey, propMapping, matchingResponsiveProp, theme);
 
           cssObject[mediaQueryKey][cssPair.cssPropName] = cssPair.cssPropValue;
         }
@@ -102,60 +103,97 @@ const convertThemedPropsToCss = (props: ThemedProps): CSSObject => {
   return cssObject;
 };
 
+function extractThemableProps(props: any) {
+  const target: any = {};
+  // eslint-disable-next-line no-restricted-syntax
+  for (const key in props) {
+    if (propsMappingKeys.indexOf(key as any) !== -1) {
+      target[key] = props[key];
+    }
+  }
+
+  return target;
+}
+
+function getCss(css: InlineCss, props: ThemedProps) {
+  return typeof css === 'function' ? css(props) : css;
+}
+
+// this function responsibility is to extract css object from
+// both themed props (that use props values from theme) and css object/function props
+
+// TODO: perhaps this function could be written in prettier way?
 function getThemedCss(props: ThemedProps) {
   //  if theme is not provided via theme provider or inline theme prop do return any css
-  if (!props.theme) {
+  if (!props.theme || !props.theme.components) {
     return;
   }
 
-  const componentPropsDefinedInTheme = (props.themeKey && props.theme.components[props.themeKey]) || {};
-  const componentVariantPropsDefinedInTheme =
-    (props.themeKey &&
-      props.variant &&
-      props.theme.components[props.themeKey] &&
-      props.theme.components[props.themeKey]['variants'] &&
-      (props.theme.components[props.themeKey]['variants'] as any)[props.variant]) ||
-    {};
-  // responsive props  get merged together and then converted to Css object here
-  // order or merging is important
-  const cssFromThemeAndProps = convertThemedPropsToCss({
-    ...componentPropsDefinedInTheme, // we start with component props defined with theme
-    ...componentVariantPropsDefinedInTheme, // then merge those with props defined in variant if variant is specified
-    ...props // finally merge any defined props directly on component
-  } as ThemedProps);
+  const { defaultTheme, themeKey, theme, variant, ...remainingProps } = props;
+  // first we need to check where themed props and css props are defined and merge them
+  // // css props need to merged separately as those do not need to be processed to extract css
+  // Merging order
+  // 1 -  props defined in defaultTheme props  as those are defaults
+  // 2 -  props defined in theme.components for given themeKey  as those are defaults
+  // 3 -  props defined in defaultTheme variant prop if props.variant is defined
+  // 4 -  props defined in theme.components[]variants if props.variant is defined
+  // 5 -  props defined directly on component
+  const themedPropsToMerge: any[] = [];
+  const cssPropsToMerge: any[] = [];
 
-  // css props defined via css prop are merged as well
-  // each of css props no matter if defined as prop on component or in theme or in theme variant
-  // can be a function so we need to execute it using props we have here
-  const cssPropDefinedInTheme =
-    typeof componentPropsDefinedInTheme.css === 'function'
-      ? componentPropsDefinedInTheme.css(props)
-      : componentPropsDefinedInTheme.css || {};
-
-  const cssPropDefinedInThemeVariant =
-    typeof componentVariantPropsDefinedInTheme.css === 'function'
-      ? componentVariantPropsDefinedInTheme.css(props)
-      : componentVariantPropsDefinedInTheme.css || {};
-
-  const cssPropDefinedInlineOnComponent = typeof props.css === 'function' ? props.css(props) : props.css || {};
-
-  const cssFromInlineCssProps = {
-    ...cssPropDefinedInTheme, // start with css prop defined in theme
-    ...cssPropDefinedInThemeVariant, // then merge it with css prop defined in theme variant
-    ...cssPropDefinedInlineOnComponent // and finally merge it with css prop defined directly on component
+  const addPropsToMerge = (propsToMerge: ThemedComponentProps) => {
+    const { css, ...rest } = propsToMerge;
+    if (css) {
+      cssPropsToMerge.push(getCss(css, props));
+    }
+    themedPropsToMerge.push(rest);
   };
 
-  return { ...cssFromThemeAndProps, ...cssFromInlineCssProps };
+  //  start with props defined in defaultTheme prop as base
+  if (defaultTheme !== undefined) {
+    addPropsToMerge(defaultTheme);
+  }
+
+  // if props are defined in theme object for themeKey merge them with default ones
+  if (themeKey) {
+    const areComponentPropsDefinedInTheme = themeKey && theme.components[themeKey] !== undefined;
+    if (areComponentPropsDefinedInTheme) {
+      addPropsToMerge(theme.components[themeKey]);
+    }
+
+    // themed props can also be defined for component variant
+    if (variant) {
+      // check for variant props defined in defaultTheme
+      const defaultThemeVariants = defaultTheme && defaultTheme.variants;
+
+      if (defaultThemeVariants && defaultThemeVariants[variant]) {
+        addPropsToMerge(defaultThemeVariants[variant]);
+      }
+      // check for variant props defined in theme object
+      const themeVariants = areComponentPropsDefinedInTheme && theme.components[themeKey].variants;
+      if (themeVariants && themeVariants[variant]) {
+        addPropsToMerge(themeVariants[variant]);
+      }
+    }
+  }
+
+  // as last step add for merging those props which defined directly on component
+  const { css: inlineCss, ...remainingThemedProps } = remainingProps;
+  if (inlineCss) {
+    cssPropsToMerge.push(getCss(inlineCss, props));
+  }
+
+  // out of all component props extract themable ones and add them to merge
+  themedPropsToMerge.push(extractThemableProps(remainingThemedProps));
+
+  const cssFromInlineCssProps = Object.assign({}, ...cssPropsToMerge);
+  const mergedThemableProps = Object.assign({}, ...themedPropsToMerge);
+  // merged themable props need to be converted to css before returning
+  const cssFromThemedProps = convertThemedPropsToCss(mergedThemableProps, theme);
+
+  // finally merge css from themed props with css from css props
+  return { ...cssFromThemedProps, ...cssFromInlineCssProps };
 }
-
-type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>;
-
-type BaseProps<TTag extends string | undefined, TExtend = {}> = {
-  tag?: TTag;
-  extend?: TExtend;
-} & PropsWithThemeKey &
-  (TTag extends keyof JSX.IntrinsicElements ? JSX.IntrinsicElements[TTag] : {}) &
-  (TExtend extends React.ComponentType<infer TExtendProps> ? Partial<TExtendProps> : {});
 
 const customPropsBlacklist = ['tag', 'extend', 'themeKey', 'variant'];
 
@@ -193,6 +231,15 @@ const Tag = React.forwardRef<{}, { extend: any; tag: any }>((props, ref) => {
   return React.createElement(Base, nextProps);
 });
 
+type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>;
+
+type BaseProps<TTag extends string | undefined, TExtend = {}> = {
+  tag?: TTag;
+  extend?: TExtend;
+} & PropsWithThemeKey &
+  (TTag extends keyof JSX.IntrinsicElements ? JSX.IntrinsicElements[TTag] : {}) &
+  (TExtend extends React.ComponentType<infer TExtendProps> ? Partial<TExtendProps> : {});
+
 export function themed<
   TProps extends BaseProps<TTag, TExtend>,
   TTag extends string | undefined = undefined,
@@ -201,17 +248,12 @@ export function themed<
   defaultProps: BaseProps<TTag, TExtend> & TProps,
   themedProps?: ThemedComponentPropsWithVariants<Omit<TProps, 'tag' | 'extend'>>
 ) {
-  // if themeKey and themedProps are specified
-  // add those to default theme components sections
-  if (defaultProps.themeKey && themedProps) {
-    addToDefaultThemeComponents(defaultProps.themeKey, themedProps as ThemedComponentPropsWithVariants);
-  }
-
   const styledComponentWithThemeProps = styled(Tag, {
     label: `${defaultProps.themeKey}${defaultProps.variant ? `-${defaultProps.variant}` : ''}`
   })(getThemedCss);
 
-  styledComponentWithThemeProps.defaultProps = defaultProps;
+  styledComponentWithThemeProps.defaultProps = { ...(defaultProps as any), defaultTheme: themedProps };
+
   styledComponentWithThemeProps.themedComponent = true;
 
   return styledComponentWithThemeProps as <TTagOverride extends string | undefined = TTag, TExtendOverride = TExtend>(

@@ -5,6 +5,7 @@
     "allowSyntheticDefaultImports": true,
     "module": "esnext",
     "moduleResolution": "node",
+    "target": "esnext",
     "jsx": "react",
     "pretty": true,
     "strict": true,

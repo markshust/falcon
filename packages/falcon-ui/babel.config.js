@@ -19,7 +19,7 @@ module.exports = {
   ],
   plugins: [
     '@babel/plugin-proposal-class-properties',
-    '@babel/plugin-proposal-object-rest-spread',
+    ['@babel/proposal-object-rest-spread', { loose: true, useBuiltIns: true }],
     'annotate-pure-calls',
     cjs && 'transform-es2015-modules-commonjs'
   ].filter(Boolean)

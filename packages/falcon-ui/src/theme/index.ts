@@ -10,10 +10,6 @@ const defaultTheme: Theme = {
   components: {}
 };
 
-export function addToDefaultThemeComponents(componentKey: string, defaults: ThemedComponentPropsWithVariants) {
-  defaultTheme.components[componentKey] = defaults;
-}
-
 export function createTheme(themeOverride: RecursivePartial<Theme> = {}): Theme {
   return merge<Theme, RecursivePartial<Theme>>(defaultTheme, themeOverride);
 }
