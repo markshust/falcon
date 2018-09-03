@@ -3,6 +3,7 @@ const requireGraphQLFile = require('require-graphql-file');
 const Logger = require('@deity/falcon-logger');
 
 const typeDefs = requireGraphQLFile('./schema');
+const DEFAULT_FETCH_URL_PRIORITY = 10;
 
 /**
  * Simple blog extension.
@@ -42,7 +43,7 @@ module.exports = class Blog {
   }
 
   getFetchUrlPriority() {
-    return this.config.fetchUrlPriority || 10;
+    return this.api.getFetchUrlPriority() || DEFAULT_FETCH_URL_PRIORITY;
   }
 
   async fetchUrl(root, { path }, { dataSources, session = {} }) {
