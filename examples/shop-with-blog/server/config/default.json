@@ -2,16 +2,6 @@
   "port": 4000,
   "apis": [
     {
-      "name": "api-magento2",
-      "package": "@deity/falcon-magento2-api",
-      "options": {
-        "protocol": "https",
-        "host": "snapshot.deity.io",
-        "username": "node-api",
-        "password": "3de3f3a262"
-      }
-    },
-    {
       "name": "api-wordpress",
       "package": "@deity/falcon-wordpress-api",
       "options": {
@@ -24,19 +14,10 @@
   ],
   "extensions": [
     {
-      "package": "@deity/falcon-shop-extension",
-      "options": {
-        "api": "api-magento2"
-      }
-    },
-    {
       "package": "@deity/falcon-blog-extension",
       "options": {
         "api": "api-wordpress"
       }
-    },
-    {
-      "package": "@deity/falcon-dynamic-route-extension"
     }
   ],
   "session": {
