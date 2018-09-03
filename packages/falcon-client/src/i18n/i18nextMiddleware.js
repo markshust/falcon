@@ -10,6 +10,7 @@ const i18nextServer = ({ lng = 'en', ns = ['common'], fallbackLng = 'en', whitel
     fallbackLng,
     whitelist,
     defaultNS: 'common',
+    fallbackNS: 'common',
     interpolation: {
       escapeValue: false
     },
