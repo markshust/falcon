@@ -63,19 +63,28 @@ This is the same as --inspect, but will also break before user code starts. (to 
 ### `rs`
 If your application is running, and you need to manually restart your server, you do not need to completely kill and rebundle your application. Instead you can just type `rs` and press enter in terminal.
 
-## API contract [TODO]
+## API contract
+Application needs to have three files `index.js`, `falcon-client.config.js` and `razzle.config.js`. Each of them should be placed in application root directory.
+
+### `index.js`
+It is application entry point, and needs to export 
 File `./src/index.js` needs to export:
-* `component: React.ReactElement<any>` - valid React element
-* `config: Object` - configuration object, with possible settings listed below
+* `default: React.ReactElement<any>` - valid React element
+* `clientApolloSchema` - Apollo Schema (TODO should not be required!)
+
+### `falcon-client.config.js`
+* (TODO) `config: Object` - configuration object, with possible settings listed below
   * `serverSideRendering` - switch to control whether the Server Side Rendering is enabled, default is `true`
   * `usePwaManifest` - default is `true`
   * `gtmCode` - Google Tag Manager code
-
 
 optionally you can export following configuration to inject your customisations
 * `onServerCreated(server: Koa)` - handler invoked immediately after koa server creation
 * `onServerInitialized(server: Koa)` - handler invoked immediately after koa server setup (when middlewares like handling errors, serving static files and routes were seted up)
 * `onServerStarted(server: Koa)` - handler invoked when koa server started with no errors
+
+### `razzle.config.js`
+TODO
 
 ## Environment Variables
 ### Build-time Variables
@@ -83,6 +92,9 @@ optionally you can export following configuration to inject your customisations
 * `process.env.VERBOSE`- default is `false`, setting this to true will not clear the console when you make edits in development (useful for debugging).
 * `process.env.PORT`- default is `3000`, unless changed
 * `process.env.HOST`- default is `0.0.0.0`
+
+## Internationalization
+
 
 ## Internal Server Error page
 `falcon-client` provide default error page for http 500 error. You can override it and provide your own by placing `500.http` file in `src/views/errors/` directory.
