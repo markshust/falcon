@@ -3,23 +3,16 @@ import i18next from 'i18next';
 import Backend from 'i18next-node-fs-backend';
 import koaI18next from 'koa-i18next';
 
-const defaultOptions = {
-  whitelist: ['en', 'pl'], // base on extensions configuration
-  lng: 'en',
-  fallbackLng: 'en',
-  ns: ['common', 'shop'],
-  // preload: ['en'],
-  defaultNS: 'common',
-  fallbackNS: 'common',
-  interpolation: {
-    escapeValue: false // not needed for react!!
-  }
-};
-
-const i18nextServer = (options = {}) =>
+const i18nextServer = ({ lng = 'en', ns = ['common'], fallbackLng = 'en', whitelist = ['en'] } = {}) =>
   i18next.use(Backend).init({
-    ...defaultOptions,
-    ...options,
+    lng,
+    ns,
+    fallbackLng,
+    whitelist,
+    defaultNS: 'common',
+    interpolation: {
+      escapeValue: false
+    },
     backend: {
       loadPath: path.resolve(path.join(process.env.RAZZLE_PUBLIC_DIR, 'i18n/{{lng}}/{{ns}}.json')),
       jsonIndent: 2
