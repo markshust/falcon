@@ -4,7 +4,7 @@ import XHR from 'i18next-xhr-backend';
 export default ({ lng = 'en', ns = ['common'], fallbackLng = 'en', whitelist = ['en'] } = {}) =>
   i18next.use(XHR).init({
     lng,
-    ns,
+    ns: ['common'], // on client side we need only 'common' ns, other will be fetched on demand
     fallbackLng,
     whitelist,
     defaultNS: 'common',

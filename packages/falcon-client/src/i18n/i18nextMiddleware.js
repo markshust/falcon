@@ -11,6 +11,9 @@ const i18nextServer = ({ lng = 'en', ns = ['common'], fallbackLng = 'en', whitel
     whitelist,
     defaultNS: 'common',
     fallbackNS: 'common',
+    react: {
+      nsMode: 'fallback'
+    },
     interpolation: {
       escapeValue: false
     },
