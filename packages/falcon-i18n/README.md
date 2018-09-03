@@ -1,6 +1,6 @@
 # Falcon i18n
 
-This is a `falcon-i18n`, it provide default internationalization resources.
+This is a `@deity/falcon-i18n`, it provide default internationalization resources.
 
 Resources are organised according to pattern `{{lng}}/{{ns.json}}`. Then for English it looks like this:
 
