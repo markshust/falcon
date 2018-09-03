@@ -66,28 +66,8 @@ module.exports = class Blog {
       Logger.warn('Seems that your wordpress has no languages defined.');
     }
 
-    this.wpConfig = data;
+    this.apiConfig = data;
   }
-
-  // onServerStarted() {
-  //   Logger.info(`==> Blog extension with Wordpress backend at ${config.get('wpApiHost')} is connected`);
-  // }
-
-  // onStoreCreated(req, res, store) {
-  //   const { language } = req.session;
-
-  //   if (language) {
-  //     store.dispatch(setActiveLanguage(language));
-  //   }
-
-  //   store.dispatch(setWpConfig(this.wpConfig));
-  // }
-
-  // getSitemapPath() {
-  //   const { wpApiProtocol, wpApiHost } = config;
-
-  //   return `${wpApiProtocol}://${wpApiHost}/sitemap_index.xml`;
-  // }
 
   isLanguageSupported(language) {
     return this.languages && this.languages.find(item => item.code === language);
