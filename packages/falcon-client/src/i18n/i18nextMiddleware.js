@@ -26,3 +26,20 @@ export default options =>
     order: ['cookie'],
     next: true // if koa is version 2
   });
+
+export function filterResourceStoreByNs(storeData, namespaces) {
+  const i18nResourceStore = {};
+  Object.keys(storeData).forEach(lng => {
+    i18nResourceStore[lng] = Object.keys(storeData[lng])
+      .filter(ns => namespaces.has(ns))
+      .reduce(
+        (result, ns) => ({
+          ...result,
+          [ns]: storeData[lng][ns]
+        }),
+        {}
+      );
+  });
+
+  return i18nResourceStore;
+}
