@@ -23,7 +23,11 @@ const i18nextState = window.I18NEXT_STATE || {};
 const markup = (
   <ApolloProvider client={client}>
     <AsyncComponentProvider rehydrateState={window.ASYNC_COMPONENTS_STATE}>
-      <I18nextProvider i18n={i18next()} initialLanguage={i18nextState.language} initialI18nStore={i18nextState.data}>
+      <I18nextProvider
+        i18n={i18next(config.i18n)}
+        initialLanguage={i18nextState.language}
+        initialI18nStore={i18nextState.data}
+      >
         <BrowserRouter>
           <App />
         </BrowserRouter>

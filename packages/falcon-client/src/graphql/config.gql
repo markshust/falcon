@@ -1,6 +1,12 @@
 query SSR {
   config @client {
     serverSideRendering
+    i18n {
+      lng
+      fallbackLng
+      whitelist
+      ns
+    }
   }
 }
 
