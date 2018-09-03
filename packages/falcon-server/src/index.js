@@ -1,4 +1,3 @@
-const { basename } = require('path');
 const Koa = require('koa');
 const Router = require('koa-router');
 const session = require('koa-session');
@@ -29,7 +28,9 @@ class FalconServer {
     this.app = new Koa();
     this.app.keys = this.config.session.keys;
 
-    this.router = new Router();
+    this.router = new Router({
+      prefix: '/api/'
+    });
 
     // todo: implement backend session store e.g. https://www.npmjs.com/package/koa-redis-session
     this.app.use(session((this.config.session && this.config.session.options) || {}, this.app));
@@ -78,14 +79,7 @@ class FalconServer {
     ];
 
     // Provide resolver functions for your schema fields
-    const resolvers = {
-      Query: {
-        getUrl: async (_, { url }) => ({
-          url,
-          type: basename(url)
-        })
-      }
-    };
+    const resolvers = [];
 
     const apolloServerConfig = await this.extensions.createGraphQLConfig({
       schemas,
@@ -101,7 +95,7 @@ class FalconServer {
       tracing: isDevelopment,
       playground: isDevelopment && {
         settings: {
-          'request.credentials': 'include'
+          'request.credentials': 'include' // include to keep the session between requests
         }
       }
     });
