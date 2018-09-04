@@ -2,7 +2,7 @@
 
 This is a `@deity/falcon-i18n`, it provide default internationalization resources.
 
-Resources are organised according to pattern `{{lng}}/{{ns.json}}`. Then for English it looks like this:
+Resources are organised according to `{{lng}}/{{ns}}.json` pattern. Then for English it looks like this:
 
 ```
 -en

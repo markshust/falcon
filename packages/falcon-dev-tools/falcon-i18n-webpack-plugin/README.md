@@ -10,7 +10,7 @@ This is a `@deity/falcon-i18n-webpack-plugin`, it allows to feed custom internat
 - `filter.lng: string[]` - array of language codes to filter `defaultSources` directories, if any, then only matching will be returned, otherwise all of them
 - `filter.ns: string[]` - array of namespace codes to filter `defaultSources` directories, if any, then only matching will be returned, otherwise all of them
 
-All paths should point to directories with file structure compatible with pattern `{{lng}}/{{ns.json}}`, e.g:
+All paths should point to directories with file structure compatible with `{{lng}}/{{ns}}.json` pattern, e.g:
 
 ```
 -en
