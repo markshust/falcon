@@ -1,10 +1,15 @@
 {
   "name": "@falcon/shop-and-blog",
-  "private": true,
-  "license": "OSL-3.0",
   "version": "1.0.0",
+  "license": "OSL-3.0",
+  "repository": "https://github.com/deity-io/falcon/tree/master/examples/shop-with-blog/client",
+  "private": true,
   "jest": {
-    "coverageReporters": ["html", "text", "text-summary"],
+    "coverageReporters": [
+      "html",
+      "text",
+      "text-summary"
+    ],
     "moduleNameMapper": {
       "^src(.*)$": "<rootDir>/src$1",
       "^public(.*)$": "<rootDir>/public$1"
@@ -30,6 +35,7 @@
     "@deity/falcon-i18n": "1.0.0",
     "config": "^2.0.1",
     "graphql-tag": "^2.9.2",
+    "i18next": "^11.6.0",
     "prop-types": "15.6.2",
     "react": "^16.4.2",
     "react-apollo": "^2.1.11",
