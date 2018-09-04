@@ -1,6 +1,6 @@
 type Query {
   post(path: String!): Post
-  posts: [Post]
+  posts(query: PageQuery): PostListing
 }
 
 input PageQuery {
@@ -8,9 +8,23 @@ input PageQuery {
   page: Int
 }
 
+type PostListing {
+  items: [Post]
+  pagination: BlogPagination
+}
+
 type PostImage {
   url: String
   description: String
+}
+
+type BlogPagination {
+  totalPages: Int!
+  totalItems: Int!
+  perPage: Int!
+  currentPage: Int!
+  nextPage: Int
+  prevPage: Int
 }
 
 type Post {
