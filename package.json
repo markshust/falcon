@@ -24,6 +24,7 @@
     "packages/create-falcon-app",
     "packages/falcon-client",
     "packages/falcon-server",
+    "packages/falcon-server-env",
     "packages/falcon-ui",
     "packages/falcon-logger",
     "packages/falcon-shop-extension",
