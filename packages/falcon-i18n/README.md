@@ -1,15 +1,16 @@
 # Falcon i18n
 
-This is a `@deity/falcon-i18n`, it provide default internationalization resources.
+This is a `@deity/falcon-i18n` package, which provide default internationalization resources.
 
-Resources are organised according to `{{lng}}/{{ns}}.json` pattern. Then for English it looks like this:
+Resources are located in `./i18n` directory and are organized accordingly to `{{lng}}/{{ns}}.json` pattern. Then for English it looks like this:
 
 ```
--en
- |-common.json
- |-blog.json
- |-...
--...
+i18n
+  |-en
+    |-common.json
+    |-blog.json
+    |-...
+  |-...
 ```
 
 ## Provided languages:

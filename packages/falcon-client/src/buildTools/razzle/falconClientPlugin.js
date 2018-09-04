@@ -75,7 +75,7 @@ function addFalconI18nPlugin({ resourcePackages = [], filter }, config, dev) {
     ...config.plugins,
     new FalconI18nLocalesPlugin({
       mainSource: path.join(paths.razzle.appPath, 'i18n'),
-      defaultSources: resourcePackages.map(x => paths.resolvePackageDir(x)),
+      defaultSources: resourcePackages.map(x => paths.resolvePackageDir(x)).map(x => path.join(x, 'i18n')),
       output: dev ? 'public/i18n' : 'build/public/i18n',
       filter
     })
