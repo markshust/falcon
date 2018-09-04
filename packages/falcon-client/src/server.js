@@ -37,7 +37,7 @@ export default params => {
 
   router.get('/*', ...middlewares);
 
-  // Intialize and configure Koa application
+  // Initialize and configure Koa application
   const server = new Koa();
   configuration.onServerCreated(server);
 
@@ -45,7 +45,7 @@ export default params => {
     .use(helmet())
     .use(error500())
     .use(serverTiming())
-    .use(serve(`${process.env.RAZZLE_PUBLIC_DIR || './static'}`))
+    .use(serve(process.env.RAZZLE_PUBLIC_DIR))
     .use(i18next(config.i18n))
     .use(router.routes())
     .use(router.allowedMethods());
