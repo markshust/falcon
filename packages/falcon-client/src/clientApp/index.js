@@ -1,4 +1,1 @@
-import App, { clientState } from '@clientSrc';
-
-export default App;
-export { clientState };
+export { default, clientApolloSchema } from 'app-path';

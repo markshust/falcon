@@ -2,7 +2,7 @@
   "name": "@deity/falcon-ui",
   "license": "OSL-3.0",
   "version": "1.0.0",
-  "repository": "git@github.com:deity-io/falcon.git",
+  "repository": "https://github.com/deity-io/falcon/tree/master/packages/falcon-ui",
   "main": "dist/falcon-ui.cjs.js",
   "module": "dist/falcon-ui.esm.js",
   "types": "dist/index.d.ts",

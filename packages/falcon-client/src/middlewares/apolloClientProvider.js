@@ -1,24 +1,44 @@
-import ApolloClient from '@hostSrc/service/ApolloClient';
-import { clientState } from '@hostSrc/clientApp';
-import configuration from '@hostSrc/clientApp/configuration';
+import { ApolloLink } from 'apollo-link';
+import ApolloClient from '../service/ApolloClient';
 
 /**
- * Apollo Client Provider middleware.
- * sets ApolloClinet on ctx.state.client
- * @async
- * @param {string} ctx - Koa context.
- * @param {string} next - Koa next.
- * @returns {Promise<void>} - next middleware
+ * Apollo Client Provider middleware, sets ApolloClinet on ctx.state.client
+ * @param {object} configuration App config
+ * @param {object} clientApolloSchema Apollo Link state config
+ * @return {function(ctx: object, next: function): Promise<void>} Koa middleware function
  */
-export default async (ctx, next) => {
+export default ({ configuration, clientApolloSchema }) => async (ctx, next) => {
+  const { configSchema } = configuration;
+  const { serverTiming } = ctx.state;
+
+  const profileMiddleware = new ApolloLink((operation, forward) => {
+    let name = operation.operationName;
+    try {
+      if (!name) {
+        name = operation.query.definitions[0].selectionSet.selections
+          .map(item => (item.kind === 'Field' ? item.name.value : ''))
+          .join(', ');
+      }
+    } catch (e) {
+      name = '<unknown>';
+    }
+
+    const qTimer = serverTiming.start(`> ${operation.query.definitions[0].operation}: ${name}`);
+    return forward(operation).map(result => {
+      serverTiming.stop(qTimer);
+      return result;
+    });
+  });
+
   const client = new ApolloClient({
     clientState: {
       defaults: {
-        ...configuration.config,
-        ...clientState.defaults
+        ...configSchema.defaults,
+        ...clientApolloSchema.defaults
       },
-      resolvers: { ...clientState.resolvers }
-    }
+      resolvers: { ...clientApolloSchema.resolvers }
+    },
+    extraLinks: [profileMiddleware]
   });
 
   ctx.state.client = client;
