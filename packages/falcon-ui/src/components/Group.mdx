@@ -1,0 +1,30 @@
+---
+name: Group
+menu: Components
+---
+
+import { Playground } from 'docz'
+
+
+import { Button, Group } from '../'
+
+
+# Group
+Group componet gives visual unity to elements that work together.
+It only adjusts border-radius of its children and removes box shadow from them.
+
+### Basic usage
+<Playground>
+	<Group mb="lg">
+  		<Button variant="secondary">Option 1</Button>
+   		<Button>Option 2</Button>
+		<Button variant="secondary">Option 3</Button>
+   </Group>
+
+   <Group>
+      <Button>Option 1</Button>
+      <Button variant="secondary">Option 2</Button>
+   </Group>
+</Playground>
+
+
