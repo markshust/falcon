@@ -78,9 +78,7 @@ Application needs to have three files `index.js`, `falcon-client.config.js` and 
 
 ### `index.js`
 
-It is application entry point, and needs to export
-File `./src/index.js` needs to export:
-
+This is an application entry point which needs to export the following:
 - `default: React.ReactElement<any>` - valid React element
 - `clientApolloSchema` - Apollo Schema (TODO should not be required!)
 
@@ -91,10 +89,10 @@ File `./src/index.js` needs to export:
   - `usePwaManifest` - default is `true`
   - `gtmCode` - Google Tag Manager code
 
-optionally you can export following configuration to inject your customisations
+optionally you can export following configuration to inject your customization
 
 - `onServerCreated(server: Koa)` - handler invoked immediately after koa server creation
-- `onServerInitialized(server: Koa)` - handler invoked immediately after koa server setup (when middlewares like handling errors, serving static files and routes were seted up)
+- `onServerInitialized(server: Koa)` - handler invoked immediately after koa server setup (when middlewares like handling errors, serving static files and routes were set up)
 - `onServerStarted(server: Koa)` - handler invoked when koa server started with no errors
 
 ### `razzle.config.js`
@@ -117,7 +115,7 @@ All custom i18n resources should be placed in `./i18n` directory, and folder str
 
 Default namespace is `common` and there is also fallback configured to it, in case if translation can not be found in namespaces defined in `react-i18next/translation` HOC.
 
-During application build, default resources (if configured) will be merged with custom from `./i18n` directory and stored in `public/i18n/`. Which means that you should not edit any of these files as your changes will be overriden.
+During application build, default resources (if configured) will be merged with custom from `./i18n` directory and stored in `./public/i18n/`. Which means that you should not edit any of these files as your changes will be overridden.
 
 ### Configuration
 Configuration options base on [i18next](https://www.i18next.com/overview/configuration-options) and you can change them via configuration `config.i18n` exported from `falcon-client.config.js`
@@ -135,7 +133,11 @@ To use default resources you need to install `falcon-i18n` npm module which cont
 npm install --save @deity/falcon-i18n
 ```
 
-Then you needs to open `razzle.config.js` and update `razzlePluginFalconClient` plugn configuration and set `@deity/falcon-i18n'` as `resourcePackages`. If you would like to use only one language and/or namespace then you can specify `filters`
+Then you need to open `razzle.config.js` and update `razzlePluginFalconClient` plugin configuration. Add `@deity/falcon-i18n` package name into `resourcePackages` array.
+
+You can use more than one resource packages. Please bare in mind that specified package should have directory `./i18n` with files organized according to `{{lng}}/{{{ns}}.json` pattern.
+
+If you would like to use only one language and/or namespace then you can specify `filter`
 
 ```
 razzlePluginFalconClient({
@@ -143,7 +145,7 @@ razzlePluginFalconClient({
     resourcePackages: ['@deity/falcon-i18n'],
     filter: {
       lng: ['en'],
-      ns: ['common']
+      ns: ['common', 'blog']
     }
   }
 })
