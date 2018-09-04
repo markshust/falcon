@@ -1,5 +1,5 @@
-import configuration from 'app-path/falcon-client.config.js';
 import deepMerge from 'deepmerge';
+import configuration from 'app-path/falcon-client.config.js';
 
 const config = deepMerge(
   {
