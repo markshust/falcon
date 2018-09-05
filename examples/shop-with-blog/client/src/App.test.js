@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import gql from 'graphql-tag';
-import { FalconClientMock } from '@deity/falcon-client/unitTesting';
+import { FalconClientMock } from '@deity/falcon-client/test-utils';
 
 import App from './App';
 

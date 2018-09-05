@@ -176,7 +176,7 @@ razzlePluginFalconClient({
 
 example unit test with `FalconClientMock` :
 ```
-import { FalconClientMock } from '@deity/falcon-client/unitTesting';
+import { FalconClientMock } from '@deity/falcon-client/test-utils';
 
 describe('<App />', () => {
   test('renders without exploding', () => {
