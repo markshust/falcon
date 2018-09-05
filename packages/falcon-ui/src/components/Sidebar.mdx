@@ -1,0 +1,35 @@
+---
+name: Sidebar
+menu: Components
+---
+
+import { Playground } from 'docz'
+import Component from "@reactions/component";
+import { PropsTable } from '../../docs'
+import { Button, GridLayout, Card, Sidebar, Portal, H1, Text, Backdrop } from '../';
+
+
+# Sidebar
+description
+
+### Best practices
+TODO
+
+### Basic usage
+<Playground>
+	<Component initialState={{ sidebarVisible: false }}>
+		{({ setState, state }) => (
+			<React.Fragment>
+				<Button onClick={() => setState(state => ({ sidebarVisible: !state.sidebarVisible }))}>Toggle sidebar</Button>
+				<Sidebar extend={Portal} visible={state.sidebarVisible}>
+					<H1>Hello!</H1>
+					<Text>sdfsdf</Text>
+				</Sidebar>
+				<Backdrop onClick={() => setState(state => ({ sidebarVisible: !state.sidebarVisible }))} extend={Portal} visible={state.sidebarVisible} />
+			</React.Fragment>
+		)}
+	</Component>
+</Playground>
+
+
+<PropsTable of={Sidebar} />
