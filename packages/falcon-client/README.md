@@ -51,7 +51,7 @@ The build is minified and the filenames include the hashes. Your app is ready to
 
 ### `npm run start:prod` or `yarn start:prod`
 
-Runs the compiled app in production.
+Runs the compiled app in production mode.
 
 You can again view your application at `http://localhost:3000`
 
