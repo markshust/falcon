@@ -34,8 +34,6 @@ const convertPropToCss = (
   };
 };
 
-type ThemedBreakpointsKeysType = keyof Theme['breakpoints'];
-
 type PropsWithThemeKey = {
   themeKey?: string;
   variant?: string;
@@ -195,7 +193,7 @@ function getThemedCss(props: ThemedProps) {
   return { ...cssFromThemedProps, ...cssFromInlineCssProps };
 }
 
-const customPropsBlacklist = ['tag', 'extend', 'themeKey', 'variant'];
+const customPropsBlacklist = ['extend', 'themeKey', 'variant', 'defaultTheme'];
 
 const filterPropsToForward = (baseComponent: any, props: any, ref: any) => {
   const filteredProps = {} as any;
@@ -206,14 +204,16 @@ const filterPropsToForward = (baseComponent: any, props: any, ref: any) => {
     // when html tag is provided forward only valid html props to it
     if (isHtmlTag && !isPropValid(key)) continue;
 
-    // do not forward extend prop for themed components as it would cause infinite rendering loop
-    if (isThemedComponent && key === 'extend') continue;
+    // if custom component is provided via `extend` prop do not forward themable props to it (bg, color, m, p etc)
+    // neighter forward any of the blacklisted props
+    const themableProp = propsMappingKeys.indexOf(key as any) !== -1 || customPropsBlacklist.indexOf(key) !== -1;
+    if (themableProp) continue;
 
-    // if custom component is provided via `extend` prop do not forward themable props to it (bg, color, tag etc)
-    if (!isThemedComponent) {
-      const themableProp = propsMappingKeys.indexOf(key as any) !== -1 || customPropsBlacklist.indexOf(key) !== -1;
-      if (themableProp) continue;
+    // if custom component is not a themed component do not forward tag prop to it
+    if (!isThemedComponent && key === 'tag') {
+      continue;
     }
+
     filteredProps[key] = props[key];
   }
 
@@ -233,7 +233,7 @@ const Tag = React.forwardRef<{}, { extend: any; tag: any }>((props, ref) => {
 
 type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>;
 
-type BaseProps<TTag extends string | undefined, TExtend = {}> = {
+export type BaseProps<TTag extends string | undefined, TExtend = {}> = {
   tag?: TTag;
   extend?: TExtend;
 } & PropsWithThemeKey &
