@@ -127,7 +127,7 @@ Configuration options base on [i18next](https://www.i18next.com/overview/configu
 - `fallbackLng: string` - language to use if translations in selected language are not available
 - `whitelist: string[]` - available languages, it may be be narrowed, if installed extensions does not support all of specified
 - `ns: string[]` - namespaces used by application
-
+- `debug: boolean` - `i18next` debug mode switch
 ### Using default resources
 
 To use default resources you need to install `falcon-i18n` npm module which contains default translations
@@ -178,13 +178,13 @@ example unit test with `FalconClientMock` :
 ```
 import { FalconClientMock } from '@deity/falcon-client/test-utils';
 
-describe('<App />', () => {
+describe('<Component />', () => {
   test('renders without exploding', () => {
 
     ReactDOM.render(
       <FalconClientMock>
         {
-          // your application component
+          // yours component <Component />
         }
       </FalconClientMock>,
       document.createElement('div')
