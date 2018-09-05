@@ -79,6 +79,7 @@ Application needs to have three files `index.js`, `falcon-client.config.js` and 
 ### `index.js`
 
 This is an application entry point which needs to export the following:
+
 - `default: React.ReactElement<any>` - valid React element
 - `clientApolloSchema` - Apollo Schema (TODO should not be required!)
 
@@ -109,21 +110,23 @@ TODO
 - `process.env.HOST`- default is `0.0.0.0`
 
 ## Internationalization
+
 Internationalization base on [i18next](https://www.i18next.com/).
 
 All custom i18n resources should be placed in `./i18n` directory, and folder structure should follow pattern `{{lng}}/{{ns}}.json`. Which means each language needs to have own directory with `json` file per namespace.
 
-Default namespace is `common` and there is also fallback configured to it, in case if translation can not be found in namespaces defined in `react-i18next/translation` HOC.
+Default namespace is `common` and there is also fallback configured to it, in case if translation key can not be found in namespaces defined in `translate()` HoC from `react-i18next` module.
 
 During application build, default resources (if configured) will be merged with custom from `./i18n` directory and stored in `./public/i18n/`. Which means that you should not edit any of these files as your changes will be overridden.
 
 ### Configuration
+
 Configuration options base on [i18next](https://www.i18next.com/overview/configuration-options) and you can change them via configuration `config.i18n` exported from `falcon-client.config.js`
 
-* `lng: string` - default application language
-* `fallbackLng: string` - language to use if translations in selected language are not available 
-* `whitelist: string[]` - available languages, it may be be narrowed, if installed extensions does not support all of specified
-* `ns: string[]` - namespaces used by application
+- `lng: string` - default application language
+- `fallbackLng: string` - language to use if translations in selected language are not available
+- `whitelist: string[]` - available languages, it may be be narrowed, if installed extensions does not support all of specified
+- `ns: string[]` - namespaces used by application
 
 ### Using default resources
 
@@ -155,9 +158,40 @@ razzlePluginFalconClient({
 
 `falcon-client` provide default error page for http 500 error. You can override it and provide your own by placing `500.http` file in `./views/errors/` directory.
 
-## Maintenance page
+## Maintenance page [TODO]
 
 <!-- `falcon-client` provide default maintenance page. You can override it and provide your own by placing `index.html` file in `src/views/maintenance/` directory. To switch app to maintenance mode, you need to put `maintenance.flag` file into app root directory. -->
+
+## Testing
+
+### Mocking `falcon-client`
+
+`falcon-client` exposes `FalconClientMock` component which allows you to setup application context inside unit test environment.
+`FalconClientMock` can receive props for mock version of React context provider components used by `falcon-client` internally:
+
+- `apollo: Object` - props for `MockProvider` component from `react-apollo`
+- `router: Object` props for `MemoryRouter` component from `react-router-dom`
+- `asyncComponent: Object` - props for `AsyncComponentProvider` component from `react-async-component`
+- `i18next: Object` - props for `I18nextProvider` component from `react-i18next`
+
+example unit test with `FalconClientMock` :
+```
+import { FalconClientMock } from '@deity/falcon-client/unitTesting';
+
+describe('<App />', () => {
+  test('renders without exploding', () => {
+
+    ReactDOM.render(
+      <FalconClientMock>
+        {
+          // your application component
+        }
+      </FalconClientMock>,
+      document.createElement('div')
+    );
+  });
+});
+```
 
 ## Idea behind the `falcon-server` [TODO]
 
