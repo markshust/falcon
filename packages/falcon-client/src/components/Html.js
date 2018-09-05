@@ -87,7 +87,7 @@ Html.propTypes = {
 };
 
 Html.defaultProps = {
-  assets: {},
+  assets: { client: { js: '', css: '' } },
   asyncContext: {},
   state: {},
   i18nextState: {},
