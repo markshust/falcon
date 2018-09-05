@@ -1,8 +1,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import gql from 'graphql-tag';
-import { MockedProvider } from 'react-apollo/test-utils';
-import MemoryRouter from 'react-router-dom/MemoryRouter';
+import { FalconClientMock } from '@deity/falcon-client/unitTesting';
+
 import App from './App';
 
 describe('<App />', () => {
@@ -23,12 +23,35 @@ describe('<App />', () => {
     ];
     const div = document.createElement('div');
     ReactDOM.render(
-      <MockedProvider mocks={mocks} addTypename={false}>
-        <MemoryRouter>
-          <App />
-        </MemoryRouter>
-      </MockedProvider>,
+      <FalconClientMock apollo={{ mocks }}>
+        <App />
+      </FalconClientMock>,
       div
+    );
+  });
+});
+
+describe('<App />', () => {
+  test('renders without exploding', () => {
+    const mocks = [
+      {
+        request: {
+          query: gql`
+            query Hi {
+              hi @client
+            }
+          `
+        },
+        result: {
+          data: { hi: 'Hello world!' }
+        }
+      }
+    ];
+    ReactDOM.render(
+      <FalconClientMock apollo={{ mocks }}>
+        <App />
+      </FalconClientMock>,
+      document.createElement('div')
     );
   });
 });
