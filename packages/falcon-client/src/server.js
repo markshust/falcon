@@ -29,7 +29,7 @@ export default params => {
 
   const router = new Router();
   // Defining middlewares
-  const middlewares = [apolloClientProvider(params)];
+  const middlewares = [apolloClientProvider(params), i18next(config.i18n)];
   if (config.serverSideRendering) {
     middlewares.push(ssr(params));
   }
@@ -46,7 +46,6 @@ export default params => {
     .use(error500())
     .use(serverTiming())
     .use(serve(process.env.RAZZLE_PUBLIC_DIR))
-    .use(i18next(config.i18n))
     .use(router.routes())
     .use(router.allowedMethods());
 
