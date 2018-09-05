@@ -16,8 +16,9 @@ const config = deepMerge(
       lng: 'en',
       ns: ['common'],
       fallbackLng: 'en',
-      whitelist: ['en']
-      // available: langs (should be fetch from falcon-server)
+      whitelist: ['en'],
+      // available: languages taken from falcon-server
+      debug: false
     }
   },
   configuration.config,

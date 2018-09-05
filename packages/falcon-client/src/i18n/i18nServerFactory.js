@@ -13,20 +13,30 @@ import Backend from 'i18next-sync-fs-backend';
 
 /**
  * i18next instance server side factory
- * @argument {Options} - options
+ * @argument {Options} options - options
  * @returns {object} - next middleware or redirect
  */
-export default ({ lng = 'en', ns = ['common'], fallbackLng = 'en', whitelist = ['en'], resources }) =>
-  i18next.use(Backend).init({
+export default ({
+  lng = 'en',
+  ns = ['common'],
+  fallbackLng = 'en',
+  whitelist = ['en'],
+  debug = false,
+  resources
+} = {}) => {
+  const defaultNS = 'common';
+
+  return i18next.use(Backend).init({
     lng,
     ns,
     fallbackLng,
     whitelist,
-    defaultNS: 'common',
-    fallbackNS: 'common',
+    defaultNS,
+    fallbackNS: defaultNS,
     saveMissing: false,
     initImmediate: false,
     resources,
+    debug,
     react: {
       nsMode: 'fallback'
     },
@@ -38,7 +48,7 @@ export default ({ lng = 'en', ns = ['common'], fallbackLng = 'en', whitelist = [
       jsonIndent: 2
     }
   });
-
+};
 export function filterResourceStoreByNs(storeData, namespaces) {
   const i18nResourceStore = {};
   Object.keys(storeData).forEach(lng => {
