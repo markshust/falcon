@@ -24,6 +24,7 @@
   "scripts": {
     "start": "falcon-client start",
     "start:dbg": "cross-env VERBOSE=true falcon-client start -- --inspect",
+    "start:dbg-brk": "cross-env VERBOSE=true falcon-client start -- --inspect-brk",
     "start:prod": "cross-env NODE_ENV=production node build/server.js",
     "build": "falcon-client build",
     "test": "falcon-client test --env=jsdom",
