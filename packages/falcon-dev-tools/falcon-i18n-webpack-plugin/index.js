@@ -4,7 +4,7 @@ const merge = require('deepmerge');
 
 module.exports = class FalconI18nPlugin {
   /**
-   * Webpack Plugin which merges localisation json files from specified directories and emit them into configurable directory.
+   * Webpack Plugin which merges localization json files from specified directories and emit them into configurable directory.
    * Files emitting is done on compilation hook, which allows to import them and build chunks.
    * @param {{mainSource, defaultSources, output }} options - options
    */
@@ -104,7 +104,7 @@ module.exports = class FalconI18nPlugin {
   }
 
   /**
-   * Opens all JSON files from definition, merges and wtire
+   * Opens all JSON files from definition, merges and writes
    * @param {{lng: string, ns: string, sources: string[]}[]} sourceDefinitions - array of definitions according to which merging should be performed.
    * @param {string} output - directory where localization files should be stored
    * @param {string} relativeFrom - context path (required to ensure that output dir is created)
