@@ -4,7 +4,7 @@ import { MockedProvider } from 'react-apollo/test-utils';
 import { AsyncComponentProvider } from 'react-async-component';
 import MemoryRouter from 'react-router-dom/MemoryRouter';
 import { I18nextProvider } from 'react-i18next';
-import i18nFactory from 'src/i18n/__mocks__/i18nFactory';
+import i18nFactory from './../src/i18n/__mocks__/i18nFactory';
 
 /**
  * @typedef {Object} FalconClientProps
