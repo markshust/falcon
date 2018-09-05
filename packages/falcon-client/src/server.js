@@ -8,7 +8,7 @@ import ssr from './middlewares/ssrMiddleware';
 import htmlShellRenderer from './middlewares/htmlShellRendererMiddleware';
 import error500 from './middlewares/error500Middleware';
 import serverTiming from './middlewares/serverTimingMiddleware';
-import i18next from './i18n/i18nextMiddleware';
+import i18next from './middlewares/i18nextMiddleware';
 
 /**
  * @typedef {object} ServerAppConfig

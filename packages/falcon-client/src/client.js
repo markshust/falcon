@@ -8,7 +8,7 @@ import { I18nextProvider } from 'react-i18next';
 import ApolloClient from './service/ApolloClient';
 import App, { clientApolloSchema } from './clientApp';
 import { SSR } from './graphql/config.gql';
-import i18next from './i18n/i18nextClient';
+import i18nFactory from './i18n/i18nClientFactory';
 
 const client = new ApolloClient({
   isBrowser: true,
@@ -24,7 +24,7 @@ const markup = (
   <ApolloProvider client={client}>
     <AsyncComponentProvider rehydrateState={window.ASYNC_COMPONENTS_STATE}>
       <I18nextProvider
-        i18n={i18next(config.i18n)}
+        i18n={i18nFactory(config.i18n)}
         initialLanguage={i18nextState.language}
         initialI18nStore={i18nextState.data}
       >

@@ -5,7 +5,7 @@ import { ApolloProvider, getDataFromTree } from 'react-apollo';
 import { I18nextProvider } from 'react-i18next';
 import { AsyncComponentProvider, createAsyncContext } from 'react-async-component';
 import asyncBootstrapper from 'react-async-bootstrapper';
-import { filterResourceStoreByNs } from '../i18n/i18nextMiddleware';
+import { filterResourceStoreByNs } from '../i18n/i18nServerFactory';
 
 /**
  * Server Side Rendering middleware.
