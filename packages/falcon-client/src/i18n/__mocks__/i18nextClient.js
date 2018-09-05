@@ -1,15 +1,14 @@
 import i18next from 'i18next';
 
-export default ({ lng = 'en', fallbackLng = 'en', whitelist = ['en'] } = {}) =>
+export default ({ lng = 'en', fallbackLng = 'en', defaultNS = 'common', resources = {} } = {}) =>
   i18next.init({
     lng,
-    ns: ['common'], // on client side we need only 'common' ns, other will be fetched on demand
     fallbackLng,
-    whitelist,
-    defaultNS: 'common',
-    fallbackNS: 'common',
+    defaultNS,
+    fallbackNS: defaultNS,
+    debug: false,
+    resources,
     react: {
-      wait: true,
       nsMode: 'fallback'
     },
     interpolation: {

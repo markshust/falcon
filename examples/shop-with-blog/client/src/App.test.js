@@ -23,35 +23,15 @@ describe('<App />', () => {
     ];
     const div = document.createElement('div');
     ReactDOM.render(
-      <FalconClientMock apollo={{ mocks }}>
+      <FalconClientMock
+        apollo={{ mocks }}
+        i18next={{ initialI18nStore: { en: { common: { welcome: 'Welcome sentence' } } } }}
+      >
         <App />
       </FalconClientMock>,
       div
     );
-  });
-});
 
-describe('<App />', () => {
-  test('renders without exploding', () => {
-    const mocks = [
-      {
-        request: {
-          query: gql`
-            query Hi {
-              hi @client
-            }
-          `
-        },
-        result: {
-          data: { hi: 'Hello world!' }
-        }
-      }
-    ];
-    ReactDOM.render(
-      <FalconClientMock apollo={{ mocks }}>
-        <App />
-      </FalconClientMock>,
-      document.createElement('div')
-    );
+    expect(div.innerHTML).toEqual(expect.stringContaining('<h2>Welcome sentence</h2>'));
   });
 });
