@@ -8,8 +8,8 @@
     "falcon-client": "./bin/falcon-client.js"
   },
   "scripts": {
-    "test": "razzle test --env=jsdom",
-    "test:coverage": "razzle test --env=jsdom --ci --coverage"
+    "test": "cross-env RAZZLE_PUBLIC_DIR=./test/static razzle test --env=jsdom",
+    "test:coverage": "cross-env RAZZLE_PUBLIC_DIR=./test/static razzle test --env=jsdom --ci --coverage"
   },
   "jest": {
     "coverageReporters": [
@@ -34,6 +34,7 @@
     "apollo-link": "^1.2.2",
     "apollo-link-http": "^1.5.4",
     "apollo-link-state": "^0.4.1",
+    "cross-env": "^5.2.0",
     "cross-spawn": "^6.0.5",
     "fs-extra": "^7.0.0",
     "graphql": "^0.13.2",
