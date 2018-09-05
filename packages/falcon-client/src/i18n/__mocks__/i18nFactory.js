@@ -1,11 +1,11 @@
 import i18next from 'i18next';
 
-export default ({ lng = 'en', fallbackLng = 'en' } = {}) => {
+export default ({ lng = 'en' } = {}) => {
   const defaultNS = 'common';
 
   return i18next.init({
     lng,
-    fallbackLng,
+    fallbackLng: lng,
     defaultNS,
     fallbackNS: defaultNS,
     debug: false,
