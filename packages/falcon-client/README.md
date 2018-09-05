@@ -1,6 +1,6 @@
 # Falcon Client
 
-This is a `falcon-client` host for your shop.
+This is a `@deity/falcon-client` host for your shop.
 
 ## Installation
 
@@ -111,7 +111,7 @@ TODO
 
 ## Internationalization
 
-Internationalization base on [i18next](https://www.i18next.com/).
+Internationalization is based on [i18next](https://www.i18next.com/).
 
 All custom i18n resources should be placed in `./i18n` directory, and folder structure should follow pattern `{{lng}}/{{ns}}.json`. Which means each language needs to have own directory with `json` file per namespace.
 
@@ -128,19 +128,18 @@ Configuration options base on [i18next](https://www.i18next.com/overview/configu
 - `whitelist: string[]` - available languages, it may be be narrowed, if installed extensions does not support all of specified
 - `ns: string[]` - namespaces used by application
 - `debug: boolean` - `i18next` debug mode switch
+
 ### Using default resources
 
-To use default resources you need to install `falcon-i18n` npm module which contains default translations
+To use default resources you need to install `@deity/falcon-i18n` npm module (or any other compatible) which contains default translations
 
 ```bash
 npm install --save @deity/falcon-i18n
 ```
 
-Then you need to open `razzle.config.js` and update `razzlePluginFalconClient` plugin configuration. Add `@deity/falcon-i18n` package name into `resourcePackages` array.
+Then in `razzle.config.js` file you need to update `razzlePluginFalconClient` plugin configuration. Add `@deity/falcon-i18n` package name into `resourcePackages` array.
 
-You can use more than one resource packages. Please bare in mind that specified package should have directory `./i18n` with files organized according to `{{lng}}/{{{ns}}.json` pattern.
-
-If you would like to use only one language and/or namespace then you can specify `filter`
+Imported package (like `@deity/falcon-i18n`) can contain more languages and/or namespaces than you are interested in. So if you don't want to use all of them (to save bundle size, or just not to use some namespace as it's not relevant to your project) you can filter them out by using `filter` option - that will instruct webpack to skip items not listed in the `filter` property.
 
 ```
 razzlePluginFalconClient({
@@ -153,6 +152,8 @@ razzlePluginFalconClient({
   }
 })
 ```
+
+Above example configuration will deliver to your project default `common` and `blog` namespaces from English language.
 
 ## Internal Server Error page
 
@@ -175,6 +176,7 @@ razzlePluginFalconClient({
 - `i18next: Object` - props for `I18nextProvider` component from `react-i18next`
 
 example unit test with `FalconClientMock` :
+
 ```
 import { FalconClientMock } from '@deity/falcon-client/test-utils';
 
