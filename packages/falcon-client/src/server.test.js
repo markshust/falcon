@@ -94,5 +94,6 @@ describe('Server', () => {
     expect(response.status).toBe(200);
     expect(response.headers).toContainKey('server-timing');
     expect(response.text).toEqual(expect.stringContaining('Foo</div>'));
+    expect(response.text).toEqual(expect.stringContaining('window.I18NEXT_STATE={"language":"en","data":{'));
   });
 });
