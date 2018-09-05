@@ -15,6 +15,7 @@ import i18next from './i18n/i18nextMiddleware';
  * @property {function} App Root application component
  * @property {object} configuration Initial configuration
  * @property {object} clientApolloSchema Apollo State object
+ * @property {object} i18nResources Initial internationalization resources
  */
 
 /**
@@ -29,7 +30,7 @@ export default params => {
 
   const router = new Router();
   // Defining middlewares
-  const middlewares = [apolloClientProvider(params), i18next(config.i18n)];
+  const middlewares = [apolloClientProvider(params), i18next({ ...config.i18n, resources: params.i18nResources })];
   if (config.serverSideRendering) {
     middlewares.push(ssr(params));
   }
