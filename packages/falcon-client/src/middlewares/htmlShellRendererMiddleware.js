@@ -28,7 +28,7 @@ export default async ctx => {
       state={client.extract()}
       i18nextState={{
         language: i18next.language,
-        data: i18nextFilteredStore || i18next.services.resourceStore.data
+        data: i18nextFilteredStore
       }}
       content={prerenderedApp}
       config={config}
