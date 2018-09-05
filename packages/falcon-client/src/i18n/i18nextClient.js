@@ -9,6 +9,7 @@ export default ({ lng = 'en', fallbackLng = 'en', whitelist = ['en'] } = {}) =>
     whitelist,
     defaultNS: 'common',
     fallbackNS: 'common',
+    saveMissing: false,
     react: {
       wait: true,
       nsMode: 'fallback'
