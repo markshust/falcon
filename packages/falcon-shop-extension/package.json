@@ -3,5 +3,8 @@
   "license": "OSL-3.0",
   "main": "src/index.js",
   "version": "1.0.0",
-  "repository": "https://github.com/deity-io/falcon/tree/master/packages/falcon-shop-extension"
+  "repository": "https://github.com/deity-io/falcon/tree/master/packages/falcon-shop-extension",
+  "dependencies": {
+    "@deity/falcon-server-env": "^1.0.0"
+  }
 }

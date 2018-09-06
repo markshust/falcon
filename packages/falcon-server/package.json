@@ -8,13 +8,14 @@
     "falcon-server": "bin/falcon-server"
   },
   "dependencies": {
+    "@deity/falcon-server-env": "^1.0.0",
     "@deity/falcon-logger": "1.0.0",
-    "apollo-server-koa": "^2.0.4",
+    "apollo-server-koa": "^2.0.6",
     "graphql": "^0.13.2",
     "graphql-tools": "^3.1.1",
     "koa": "^2.5.2",
     "koa-router": "^7.4.0",
-    "koa-session": "^5.8.2",
+    "koa-session": "^5.9.0",
     "lodash": "^4.17.10"
   }
 }

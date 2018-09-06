@@ -21,8 +21,7 @@ module.exports = class ApiContainer {
   constructor(apis) {
     /** @type {Array} Endpoints collected from extensions */
     this.endpoints = [];
-
-    /** @type {Map<string, ApiInstanceConfig>} Array with API instances */
+    /** @type {Map<string, ApiDataSource>} Array with API instances */
     this.dataSources = new Map();
 
     this.registerApis(apis);
@@ -36,16 +35,15 @@ module.exports = class ApiContainer {
   registerApis(apis = []) {
     apis.forEach(api => {
       const { package: pkg, name, config = {} } = api;
-      let ApiClass;
-
       try {
-        ApiClass = require(pkg); // eslint-disable-line import/no-dynamic-require
+        const ApiClass = require(pkg); // eslint-disable-line import/no-dynamic-require
         /** @type {ApiDataSource} */
         const apiInstance = new ApiClass({ config, name });
 
-        Logger.debug(`ApiContainer: Adding ${api.name} to the list of DataSources`);
+        Logger.debug(`ApiContainer: "${apiInstance.name}" API added to the list of DataSources`);
         this.dataSources.set(apiInstance.name, apiInstance);
         if (apiInstance.getEndpoints) {
+          Logger.debug(`ApiContainer: Extracting endpoints from "${apiInstance.name}" API DataSource`);
           this.endpoints.push(...apiInstance.getEndpoints());
         }
       } catch (e) {
