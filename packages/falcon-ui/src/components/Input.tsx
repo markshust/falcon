@@ -1,26 +1,40 @@
-import { themed } from '../theme';
+import { themed, CSSObject } from '../theme';
+
+function placeholder(styles: CSSObject): CSSObject {
+  return {
+    '::-webkit-input-placeholder': styles,
+    '::-moz-placeholder': styles,
+    ':-ms-input-placeholder`': styles,
+    '::-ms-input-placeholder`': styles
+  };
+}
 
 export const Input = themed(
   {
     themeKey: 'input',
     tag: 'input',
-    type: 'text'
+    type: 'text',
+    invalid: false
   },
   {
     p: 'sm',
-    border: 'light',
-    borderColor: 'primary',
-    borderRadius: 'sm',
-    css: {
-      WebkitAppearance: 'none',
-      width: '100%',
-      '&[type="number"]': {
-        width: '80px'
+    border: 'regular',
+    borderRadius: 'xs',
+
+    css: props => ({
+      ...placeholder({
+        color: props.theme.colors.primaryDark
+      }),
+      ':focus': {
+        outline: 'none',
+        borderColor: props.invalid ? props.theme.colors.error : props.theme.colors.secondary
       },
-      '&[type="color"]': {
-        width: '80px',
-        padding: 0
-      }
-    }
+      borderColor: props.invalid ? props.theme.colors.error : props.theme.colors.primaryDark,
+      fontFamily: 'inherit',
+      lineHeight: 'inherit',
+      color: 'inherit',
+      WebkitAppearance: 'none',
+      width: '100%'
+    })
   }
 );
