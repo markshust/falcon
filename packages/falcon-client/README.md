@@ -18,9 +18,6 @@ cd my-app
 npm dev
 ```
 
-Then open http://localhost:3000/ to see your app.
-
-**That's it**. Just start editing `./src/App.js` and go!
 
 ## How to use
 
@@ -47,12 +44,6 @@ The page will reload if you make edits (HMR is enabled).
 Builds the app for production to the build folder.
 
 The build is minified and the filenames include the hashes. Your app is ready to be deployed!
-
-<!-- ### `falcon-client start:prod`
-
-Runs the compiled app in production mode.
-
-You can again view your application at `http://localhost:3000` -->
 
 ### `falcon-client test`
 
