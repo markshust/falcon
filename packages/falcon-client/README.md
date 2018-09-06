@@ -34,37 +34,36 @@ yarn install
 yarn dev
 ```
 
-## Commands
+## Exposed Commands
 
-### `npm start` or `yarn start`
+### `falcon-client start`
 
-Runs the project in development mode
-You can view your application at `http://localhost:3000`
+Runs the project in development mode. You can view your application at `http://localhost:3000`.
 
-The page will reload if you make edits.
+The page will reload if you make edits (HMR is enabled).
 
-### `npm run build` or `yarn build`
+### `falcon-client build`
 
 Builds the app for production to the build folder.
 
 The build is minified and the filenames include the hashes. Your app is ready to be deployed!
 
-### `npm run start:prod` or `yarn start:prod`
+<!-- ### `falcon-client start:prod`
 
 Runs the compiled app in production mode.
 
-You can again view your application at `http://localhost:3000`
+You can again view your application at `http://localhost:3000` -->
 
-### `npm test` or `yarn test`
+### `falcon-client test`
 
 Runs the test watcher (Jest) in an interactive mode.
 By default, runs tests related to files changed since the last commit.
 
-### `npm start -- --inspect=[host:port]` or `yarn start -- --inspect=[host:port]`
+### `falcon-client start -- --inspect=[host:port]`
 
-To debug the node server, you can use `razzle start --inspect`. This will start the node server and enable the inspector agent. The `=[host:port]` is optional and defaults to `=127.0.0.1:9229`. For more information, see [this](https://nodejs.org/en/docs/guides/debugging-getting-started/).
+To debug the node server, you can use `falcon-client start --inspect`. This will start the node server and enable the inspector agent. The `=[host:port]` is optional and defaults to `=127.0.0.1:9229`. For more information, see [this](https://nodejs.org/en/docs/guides/debugging-getting-started/).
 
-### `npm start -- --inspect-brk=[host:port]` or `yarn start -- --inspect-brk=[host:port]`
+### `falcon-client start -- --inspect-brk=[host:port]`
 
 This is the same as --inspect, but will also break before user code starts. (to give a debugger time to attach before early code runs) For more information, see [this](https://nodejs.org/en/docs/guides/debugging-getting-started/).
 
