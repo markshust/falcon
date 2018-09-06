@@ -1,0 +1,490 @@
+type Query {
+  category(id: Int!): Category
+  product(id: Int!): Product
+  products(
+    categoryId: Int
+    includeSubcategories: Boolean
+    query: PageQuery
+    sortOrders: [SortOrder]
+    filters: [Filter]
+    skus: [String]
+  ): ProductList
+  cart: Cart
+  countries: Directory
+  order(id: Int!): Order
+  lastOrder: Order
+  orders(query: PageQuery): Orders
+  address(id: Int!): Address
+  customer: Customer
+  cmsPage(id: Int, identifier: String): CmsPage
+  cmsBlock(identifier: String): CmsBlock
+  validatePasswordToken(id: Int!, token: String!): Boolean
+}
+
+type Mutation {
+  addToCart(input: AddToCartInput!): CartItemPayload
+  applyCoupon(input: CouponInput!): Boolean
+  cancelCoupon: Boolean
+  removeCartItem(input: RemoveCartItemInput!): Boolean
+  signUp(input: SignUp!): Customer
+  signIn(input: SignIn!): Boolean
+  signOut: Boolean
+  updateCartItem(input: UpdateCartItemInput!): CartItemPayload
+  editCustomerData(input: CustomerInput!): Customer
+  editCustomerAddress(input: AddressInput!): Address
+  addCustomerAddress(input: AddressInput!): Address
+  estimateShippingMethods(input: EstimateShippingInput!): [ShippingMethod]
+  removeCustomerAddress(id: Int!): Boolean
+  requestCustomerPasswordResetToken(email: String!): Boolean
+  changeCustomerPassword(input: CustomerPassword!): Boolean
+  resetCustomerPassword(input: CustomerPasswordReset!): Boolean
+  # set current customer order shipping information
+  setShipping(input: ShippingInput): ShippingInformation
+  placeOrder(input: PlaceOrderInput!): PlaceOrderResult
+}
+
+input PlaceOrderInput {
+  billingAddress: AddressInput
+  email: String
+  paymentMethod: PaymentMethodInput
+}
+
+input PaymentMethodInput {
+  method: String
+}
+
+input ShippingInput {
+  billingAddress: AddressInput
+  shippingAddress: AddressInput
+  shippingCarrierCode: String
+  shippingMethodCode: String
+}
+
+input EstimateShippingInput {
+  address: AddressInput
+}
+
+input PageQuery {
+  # simple list of field to get aggregated result count
+  aggregations: [String]
+  perPage: Int
+  page: Int
+}
+
+input SortOrder {
+  field: String
+  direction: String
+}
+
+input Filter {
+  conditionType: String
+  field: String
+  value: String
+}
+
+input CustomerInput {
+  websiteId: Int!
+  firstname: String
+  lastname: String
+  email: String
+  defaultBilling: String
+  defaultShipping: String
+}
+
+input AddressInput {
+  id: Int
+  # legacy from Magento 2 for placeOrder billingAddress input field
+  terms: Boolean
+  firstname: String
+  lastname: String
+  city: String
+  customerId: Int
+  customerAddressId: Int
+  postcode: String
+  sameAsBilling: Int
+  saveInAddressBook: Int
+  email: String
+  company: String
+  countryId: String
+  defaultBilling: Boolean
+  defaultShipping: Boolean
+  region: String
+  regionId: Int
+  street: [String]
+  telephone: String
+}
+
+input CustomerPassword {
+  currentPassword: String!
+  password: String!
+  passwordConfirmation: String
+}
+
+input CustomerPasswordReset {
+  customerId: String!
+  resetToken: String!
+  password: String
+  passwordConfirmation: String
+}
+
+type Orders {
+  items: [Order]!
+  pagination: Pagination
+}
+
+type Order {
+  incrementId: String!
+  entityId: Int
+  createdAt: String
+  customerFirstname: String
+  customerLastname: String
+  status: String
+  orderCurrencyCode: String
+  baseGrandTotal: String
+  subtotal: String
+  shippingAmount: String
+  taxAmount: String
+  discountAmount: String
+  grandTotal: String
+  items: [OrderItem]
+  shippingDescription: String
+  paymentMethodName: String
+  shippingAddress: Address
+  billingAddress: Address
+  couponCode: String
+}
+
+type PlaceOrderResult {
+  # increment order id
+  orderId: Int
+  # like 0000001 - used for reference by customer
+  orderRealId: String
+}
+
+type Product {
+  id: Int!
+  sku: String!
+  name: String!
+  image: String
+  urlPath: String!
+  # Full url to resized product image
+  thumbnail: String
+  priceType: String
+  price: String
+  minPrice: String
+  maxPrice: String
+  currency: String
+  description: String
+  stock: Stock
+  type: String
+  configurableOptions: [ConfigurableProductOption]
+  bundleOptions: [BundleProductOption]
+  gallery: [GalleryEntry]
+  breadcrumbs: [Breadcrumb]
+  seo: ProductSeo
+}
+
+type ShippingMethod {
+  carrierTitle: String
+  amount: Float
+  carrierCode: String
+  methodCode: String
+  methodTitle: String
+  priceExclTax: Float
+  priceInclTax: Float
+  currency: String
+}
+
+type ShippingInformation {
+  paymentMethods: [PaymentMethod]
+  totals: [CartTotal]
+}
+
+type PaymentMethod {
+  code: String
+  title: String
+}
+
+type Category {
+  id: Int
+  name: String
+  description: String
+}
+
+type ProductList {
+  items: [Product]!
+  aggregations: [Aggregation]
+  pagination: Pagination
+}
+
+type Aggregation {
+  key: String
+  buckets: [AggregationBucket]
+}
+
+type AggregationBucket {
+  key: Int
+  count: Int
+}
+
+type Pagination {
+  total: Int
+  perPage: Int
+  currentPage: Int
+  totalPages: Int
+  nextPage: Int
+}
+
+type Stock {
+  isInStock: Boolean
+  qty: Float!
+}
+
+type ProductSeo {
+  title: String
+  description: String
+  keywords: [String]
+}
+
+type Cart {
+  active: Boolean
+  #state wheather products will be shipped or not
+  virtual: Boolean
+  items: [CartItem]
+  itemsCount: Int
+  itemsQty: Int
+  totals: [CartTotal]
+  quoteCurrency: String
+  couponCode: String
+  billingAddress: Address
+}
+
+type CartItem {
+  itemId: Int!
+  sku: String!
+  qty: Float!
+  name: String
+  availableQty: Float
+  price: Float
+  productType: String
+  priceInclTax: Float
+  rowTotal: Float
+  rowTotalInclTax: Float
+  rowTotalWithDiscount: Float
+  taxAmount: Float
+  taxPercent: Float
+  discountAmount: Float
+  discountPercent: Float
+  weeeTaxAmount: Float
+  weeeTaxApplied: Boolean
+  thumbnailUrl: String
+  urlKey: String
+  link: String
+  itemOptions: [CartItemOption]
+}
+
+type CartItemOption {
+  label: String
+  data: [CartItemOptionValue]
+}
+
+type CartItemOptionValue {
+  qty: String
+  name: String
+  price: String
+}
+
+type OrderItem {
+  itemId: Int!
+  sku: String!
+  qty: Float!
+  name: String
+  availableQty: Float
+  price: Float
+  productType: String
+  rowTotalInclTax: Float
+  basePrice: Float
+  basePriceInclTax: Float
+  thumbnailUrl: String
+  urlKey: String
+  link: String
+  parentItem: OrderItem
+}
+
+type CartTotal {
+  code: String!
+  title: String
+  value: Float
+}
+
+input AddToCartInput {
+  sku: String!
+  qty: Float!
+  configurableOptions: [configurableOptionInput]
+  bundleOptions: [bundleOptionInput]
+}
+
+input UpdateCartItemInput {
+  itemId: Int!
+  # Magento 2 legacy both itemId and sku need to be provided for rest endpoint to work
+  sku: String!
+  qty: Float!
+}
+
+input RemoveCartItemInput {
+  itemId: Int!
+}
+
+input configurableOptionInput {
+  optionId: Int!
+  value: Int!
+}
+
+input bundleOptionInput {
+  optionId: Int!
+  optionQty: Float!
+  optionSelections: [Int]
+}
+
+input CouponInput {
+  couponCode: String!
+}
+
+type CartItemPayload {
+  itemId: Int!
+  sku: String
+  qty: Float
+  name: String
+  price: Float
+  productType: String
+}
+
+type Customer {
+  id: Int
+  websiteId: Int
+  addresses: [Address]
+  defaultBilling: String
+  defaultShipping: String
+  email: String
+  firstname: String
+  lastname: String
+  newsletterSubscriber: Boolean
+}
+
+type Address {
+  id: Int
+  firstname: String
+  lastname: String
+  city: String
+  postcode: String
+  countryId: String
+  defaultBilling: Boolean
+  defaultShipping: Boolean
+  region: String
+  regionId: Int
+  street: [String]
+  telephone: String
+}
+
+input SignUp {
+  email: String
+  firstname: String
+  lastname: String
+  password: String
+  passwordConfirmation: String
+  address: AddressInput
+}
+
+input SignIn {
+  email: String
+  password: String
+}
+
+type GalleryEntry {
+  type: String!
+  full: String!
+  thumbnail: String
+  embedUrl: String
+}
+
+type Breadcrumb {
+  id: Int
+  name: String
+  urlPath: String
+  urlKey: String
+  urlQuery: String
+}
+
+type ConfigurableProductOption {
+  id: String
+  attributeId: String
+  label: String
+  position: String
+  productId: String
+  values: [ConfigurableProductOptionValue]
+}
+
+type ConfigurableProductOptionValue {
+  inStock: [String]
+  label: String
+  valueIndex: String
+}
+
+type BundleProductOption {
+  optionId: Int
+  position: Int
+  productLinks: [BundleProductOptionLink]
+  required: Boolean
+  sku: String
+  title: String
+  type: String
+}
+
+type BundleProductOptionLink {
+  canChangeQuantity: Int
+  name: String
+  catalogDisplayPrice: String
+  id: String
+  isDefault: Boolean
+  optionId: Int
+  position: Int
+  price: String
+  priceType: String
+  qty: Int
+  sku: String
+}
+
+type Region {
+  id: Int
+  name: String
+  code: String!
+}
+
+type Country {
+  englishName: String
+  localName: String
+  code: String!
+  regions: [Region]
+}
+
+type Directory {
+  items: [Country]
+}
+
+type CmsBlock {
+  id: String
+  title: String
+  content: String
+  active: Boolean
+}
+
+type CmsPage {
+  id: String
+  title: String
+  content: String
+}
+
+schema {
+  query: Query
+  mutation: Mutation
+}
