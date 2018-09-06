@@ -11,7 +11,9 @@ export const Root = themed(
     lineHeight: 'default',
     css: {
       '*': {
-        boxSizing: 'border-box'
+        boxSizing: 'border-box',
+        margin: 0,
+        padding: 0
       }
     }
   }
