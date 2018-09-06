@@ -3,5 +3,17 @@
   "license": "OSL-3.0",
   "main": "src/index.js",
   "version": "1.0.0",
-  "repository": "https://github.com/deity-io/falcon/tree/master/packages/falcon-shop-extension"
+  "repository": "https://github.com/deity-io/falcon/tree/master/packages/falcon-shop-extension",
+  "scripts": {
+    "test": "jest --watch",
+    "test:coverage": "jest --ci --coverage"
+  },
+  "dependencies": {
+    "@deity/falcon-logger": "1.0.0",
+    "graphql-tools": "^3.1.1",
+    "require-graphql-file": "^1.0.1"
+  },
+  "devDependencies": {
+    "graphql": "^0.13.2"
+  }
 }
