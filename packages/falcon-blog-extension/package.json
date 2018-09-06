@@ -4,6 +4,10 @@
   "main": "src/index.js",
   "version": "1.0.0",
   "repository": "https://github.com/deity-io/falcon/tree/master/packages/falcon-blog-extension",
+  "scripts": {
+    "test": "jest --watch",
+    "test:coverage": "jest --ci --coverage"
+  },
   "dependencies": {
     "@deity/falcon-logger": "1.0.0",
     "graphql-tools": "^3.1.1",
