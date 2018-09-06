@@ -1,116 +1,235 @@
 import React from 'react';
 import { withCSSContext } from '@emotion/core';
-import { GridLayout, Card, H1, H4, RangeInput, FlexLayout, Input, Divider } from '../src';
+import { GridLayout, Card, H4, RangeInput, FlexLayout, Input, Tabs, Tab, Swipeable, Text, SwipeableItem } from '../src';
 
-const themeMeta = {
+const categories = {
   colors: {
-    input: 'color'
-  },
-  breakpoints: {
-    input: 'number',
-    step: 1,
-    min: 0,
-    max: 2048
+    name: 'Colors',
+    description: 'Theme colors',
+    themeMappings: [
+      {
+        themeProps: 'colors',
+        input: 'color'
+      }
+    ]
   },
   spacing: {
-    input: 'number',
-    min: 0,
-    step: 1,
-    max: 100
+    name: 'Spacing',
+    description: 'Theme spacing',
+    themeMappings: [
+      {
+        themeProps: 'spacing',
+        input: 'number',
+        min: 0,
+        step: 1,
+        max: 100
+      }
+    ]
   },
   fonts: {
-    input: 'text'
+    name: 'Typography',
+    description: 'Theme fonts',
+    themeMappings: [
+      {
+        themeProps: 'fonts',
+        input: 'text'
+      },
+      {
+        themeProps: 'fontSizes',
+        input: 'number',
+        min: 0,
+        step: 1,
+        max: 80
+      },
+      {
+        themeProps: 'fontWeights',
+        input: 'text'
+      },
+      {
+        themeProps: 'lineHeights',
+        input: 'number',
+        min: 0,
+        step: 0.1,
+        max: 3
+      },
+      {
+        themeProps: 'letterSpacings',
+        input: 'text'
+      }
+    ]
   },
-  fontSizes: {
-    input: 'number',
-    min: 0,
-    step: 1,
-    max: 80
-  },
-  fontWeights: {
-    input: 'text'
-  },
-  lineHeights: {
-    input: 'number',
-    min: 0,
-    step: 0.1,
-    max: 3
-  },
-  letterSpacings: {
-    input: 'text'
+  breakpoints: {
+    name: 'Breakpoints',
+    description: 'Theme responsive breakpoints',
+    themeMappings: [
+      {
+        themeProps: 'breakpoints',
+        input: 'number',
+        step: 1,
+        min: 0,
+        max: 2048
+      }
+    ]
   },
   borders: {
-    input: 'text'
+    name: 'Borders',
+    description: 'Theme borders',
+    themeMappings: [
+      {
+        themeProps: 'borders',
+        input: 'text'
+      },
+      {
+        themeProps: 'borderRadius',
+        input: 'number',
+        min: 0,
+        step: 1,
+        max: 100
+      }
+    ]
   },
-  borderRadius: {
-    input: 'number',
-    min: 0,
-    step: 1,
-    max: 100
-  },
-  boxShadows: {
-    input: 'text'
-  },
-  easingFunctions: {
-    input: 'text'
-  },
-  transitionDurations: {
-    input: 'text'
-  },
-  zIndex: {
-    input: 'number',
-    min: 0,
-    step: 1,
-    max: 1000
+  misc: {
+    name: 'Miscellaneous',
+    description: 'Theme Miscellaneous props',
+    themeMappings: [
+      {
+        themeProps: 'boxShadows',
+        input: 'text'
+      },
+      {
+        themeProps: 'easingFunctions',
+        input: 'text'
+      },
+      {
+        themeProps: 'transitionDurations',
+        input: 'text'
+      }
+    ]
   }
 };
 
-class ThemeEditor extends React.Component<any> {
-  onChange = (themeKey, propName) => {
-    return e => {
-      this.props.theme.changeTheme(themeKey, propName, e.target.value);
-    };
+class ThemeEditor extends React.Component<any, any> {
+  state = {
+    activeCategory: 'colors',
+    activeSubCategory: categories.colors.themeMappings[0].themeProps
   };
-  render() {
+
+  onChange = (themeKey, propName) => e => {
+    this.props.theme.changeTheme(themeKey, propName, e.target.value);
+  };
+
+  changeCategory = categoryKey => () => {
+    this.setState({
+      activeCategory: categoryKey,
+      activeSubCategory: categories[categoryKey].themeMappings[0].themeProps
+    });
+  };
+  changeSubCategory = subCategoryKey => () => {
+    this.setState({
+      activeSubCategory: subCategoryKey
+    });
+  };
+
+  renderEditor(themeMapping: any) {
     const { theme } = this.props;
-    const blacklist = ['components', 'changeTheme'];
-    const themeKeys = Object.keys(theme).filter(key => blacklist.indexOf(key) === -1);
+    return (
+      <Card boxShadow="none">
+        {Object.keys(theme[themeMapping.themeProps]).map(themeProp => (
+          <GridLayout
+            alignItems="center"
+            gridGap="xs"
+            mt="md"
+            gridTemplateColumns="1fr auto 20px 1.8fr"
+            key={themeMapping.themeProps + themeProp}
+          >
+            <H4>{themeProp}</H4>
+            <FlexLayout gridColumn={!themeMapping.step ? 'span 3' : ''}>
+              <Input
+                onChange={this.onChange(themeMapping.themeProps, themeProp)}
+                type={themeMapping.input}
+                value={theme[themeMapping.themeProps][themeProp]}
+                css={() => {
+                  if (themeMapping.input === 'color') {
+                    return {
+                      padding: 0,
+                      width: 60,
+                      borderRadius: 0,
+                      border: 'none'
+                    };
+                  }
+                  if (themeMapping.input === 'number') {
+                    return {
+                      width: 70
+                    };
+                  }
+                }}
+              />
+            </FlexLayout>
+            {themeMapping.step && (
+              <React.Fragment>
+                <Text p="none">px</Text>
+                <RangeInput
+                  value={theme[themeMapping.themeProps][themeProp]}
+                  min={themeMapping.min}
+                  max={themeMapping.max}
+                  step={themeMapping.step}
+                  onChange={this.onChange(themeMapping.themeProps, themeProp)}
+                />
+              </React.Fragment>
+            )}
+          </GridLayout>
+        ))}
+      </Card>
+    );
+  }
+
+  render() {
+    const activeCategory = categories[this.state.activeCategory];
 
     return (
-      <GridLayout gridTemplateColumns="1fr" gridGap="md">
-        {themeKeys.map(key => (
-          <Card key={key} boxShadow="none">
-            <H1 css={{ textTransform: 'capitalize' }}>{key}</H1>
-            <Divider />
-            {Object.keys(theme[key]).map(themeProp => (
-              <GridLayout
-                alignItems="center"
-                gridGap="md"
-                mt="md"
-                gridTemplateColumns="1fr auto 1.8fr"
-                key={key + themeProp}
+      <GridLayout gridTemplateColumns="1fr" gridGap="sm" bg="white">
+        <Tabs extend={Swipeable}>
+          {Object.keys(categories).map(categoryKey => {
+            const category = categories[categoryKey];
+            return (
+              <Tab
+                extend={SwipeableItem}
+                key={category.name}
+                active={categoryKey === this.state.activeCategory}
+                onClick={this.changeCategory(categoryKey)}
               >
-                <H4>{themeProp}</H4>
-                <FlexLayout gridColumn={!themeMeta[key].step ? 'span 2' : ''}>
-                  <Input
-                    onChange={this.onChange(key, themeProp)}
-                    type={themeMeta[key].input}
-                    value={theme[key][themeProp]}
-                  />
-                </FlexLayout>
-                {themeMeta[key].step && (
-                  <RangeInput
-                    value={theme[key][themeProp]}
-                    min={themeMeta[key].min}
-                    max={themeMeta[key].max}
-                    step={themeMeta[key].step}
-                    onChange={this.onChange(key, themeProp)}
-                  />
-                )}
-              </GridLayout>
-            ))}
-          </Card>
-        ))}
+                {category.name}
+              </Tab>
+            );
+          })}
+        </Tabs>
+        <Text p="md">{activeCategory.description}</Text>
+
+        {activeCategory.themeMappings.length === 1 ? (
+          this.renderEditor(activeCategory.themeMappings[0])
+        ) : (
+          <React.Fragment>
+            <Tabs extend={Swipeable} variant="secondary">
+              {activeCategory.themeMappings.map(themeMapping => (
+                <Tab
+                  extend={SwipeableItem}
+                  key={this.state.activeCategory + themeMapping.themeProps}
+                  active={themeMapping.themeProps === this.state.activeSubCategory}
+                  onClick={this.changeSubCategory(themeMapping.themeProps)}
+                  variant="secondary"
+                  css={{
+                    textTransform: 'capitalize'
+                  }}
+                >
+                  {themeMapping.themeProps}
+                </Tab>
+              ))}
+            </Tabs>
+            {this.renderEditor(
+              activeCategory.themeMappings.filter(mapping => mapping.themeProps === this.state.activeSubCategory)[0]
+            )}
+          </React.Fragment>
+        )}
       </GridLayout>
     );
   }
