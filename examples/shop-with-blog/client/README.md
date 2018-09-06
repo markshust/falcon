@@ -42,7 +42,7 @@ If the server should wait till debugger will attache then run:
 yarn start:dbg-brk
 ```
 
-For more information, see [this](https://github.com/deity-io/falcon/tree/master/packages/falcon-client#exposed-commands).
+For more information, see [`falcon-client start`](https://github.com/deity-io/falcon/tree/locales/packages/falcon-client#falcon-client-start------inspecthostport) command.
 
 ## Production package
 
