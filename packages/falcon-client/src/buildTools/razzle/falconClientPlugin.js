@@ -101,7 +101,7 @@ module.exports = (config, { target, dev }, webpackObject) => {
     'apollo-link-state',
     `graphql-tag`,
     `node-fetch`,
-    // 'i18next',
+    'i18next',
     'razzle/polyfills',
     'react',
     'react-apollo',
@@ -110,7 +110,7 @@ module.exports = (config, { target, dev }, webpackObject) => {
     'react-dom',
     'react-google-tag-manager',
     `react-helmet`,
-    // 'react-i18next',
+    'react-i18next',
     'react-router-dom'
   ])(config, { target, dev });
 
