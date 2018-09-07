@@ -6,6 +6,8 @@ export const List = themed(
     tag: 'ul'
   },
   {
+    p: 'none',
+    m: 'none',
     css: {
       listStyle: 'none'
     }

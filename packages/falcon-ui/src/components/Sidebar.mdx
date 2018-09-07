@@ -23,7 +23,6 @@ TODO
 				<Button onClick={() => setState(state => ({ sidebarVisible: !state.sidebarVisible }))}>Toggle sidebar</Button>
 				<Sidebar extend={Portal} visible={state.sidebarVisible}>
 					<H1>Hello!</H1>
-					<Text>sdfsdf</Text>
 				</Sidebar>
 				<Backdrop onClick={() => setState(state => ({ sidebarVisible: !state.sidebarVisible }))} extend={Portal} visible={state.sidebarVisible} />
 			</React.Fragment>
