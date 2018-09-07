@@ -3,34 +3,34 @@ const Router = require('koa-router');
 const session = require('koa-session');
 const { ApolloServer } = require('apollo-server-koa');
 const Logger = require('@deity/falcon-logger');
-const ExtensionsContainer = require('./extensions');
-const ApiEngine = require('./apiEngine');
-const { makeExecutableSchema } = require('graphql-tools');
+const ApiContainer = require('./containers/ApiContainer');
+const ExtensionContainer = require('./containers/ExtensionContainer');
 
 const ENV = process.env.NODE_ENV || 'development';
 const isDevelopment = ENV === 'development';
 
 class FalconServer {
-  constructor(conf) {
-    Logger.setLogLevel(conf.logLevel);
-    this.config = conf;
+  constructor(config) {
+    Logger.setLogLevel(config.logLevel);
+    this.config = config;
   }
 
-  async init() {
-    await this.initApp();
-    await this.initApis();
-    await this.initExtensions();
-    await this.initApolloServer();
-    this.registerRoutes();
+  async initialize() {
+    await this.initializeServerApp();
+    await this.initializeExtensions();
+    await this.initializeApolloServer();
+    this.registerEndpoints();
   }
 
-  initApp() {
+  /**
+   * @private
+   */
+  initializeServerApp() {
     this.app = new Koa();
+    // Set signed cookie keys (https://koajs.com/#app-keys-)
     this.app.keys = this.config.session.keys;
 
-    this.router = new Router({
-      prefix: '/api/'
-    });
+    this.router = new Router({ prefix: '/api/' });
 
     // todo: implement backend session store e.g. https://www.npmjs.com/package/koa-redis-session
     this.app.use(session((this.config.session && this.config.session.options) || {}, this.app));
@@ -43,48 +43,26 @@ class FalconServer {
     });
   }
 
-  async initApis() {
-    this.apiEngine = new ApiEngine({
-      apis: this.config.apis,
-      app: this.app,
-      config: {
-        logLevel: this.config.logLevel
-      }
-    });
-    await this.apiEngine.init();
+  /**
+   * @private
+   */
+  async initializeExtensions() {
+    /** @type {ApiContainer} */
+    this.apiContainer = new ApiContainer(this.config.apis);
+
+    /** @type {ExtensionContainer} */
+    this.extensionContainer = new ExtensionContainer(this.config.extensions, this.apiContainer.dataSources);
+    await this.extensionContainer.initialize();
   }
 
-  async initExtensions() {
-    this.extensions = new ExtensionsContainer({
-      extensions: this.config.extensions,
-      // todo: try to refactor code so ExtensionContainer doesn't need apiEngine
-      apiEngine: this.apiEngine
-    });
-    await this.extensions.init();
-  }
+  /**
+   * @private
+   */
+  async initializeApolloServer() {
+    const cache = this.getCacheInstance();
 
-  // this is havy-WIP :)
-  async initApolloServer() {
-    const cache = this.initCacheBackend();
-
-    // Construct a schema, using GraphQL schema language
-    const schemas = [
-      makeExecutableSchema({
-        typeDefs: `
-        type Query {
-          hello: String
-        }
-      `
-      })
-    ];
-
-    // Provide resolver functions for your schema fields
-    const resolvers = [];
-
-    const apolloServerConfig = await this.extensions.createGraphQLConfig({
-      schemas,
-      resolvers,
-      dataSources: this.apiEngine.getDataSources(),
+    const apolloServerConfig = await this.extensionContainer.createGraphQLConfig({
+      dataSources: this.apiContainer.dataSources.values(),
       // inject session to graph context
       // todo: re-think that - maybe we could avoid passing session here and instead pass just required data
       // from session?
@@ -107,28 +85,33 @@ class FalconServer {
 
   /**
    * Create instance of cache backend based on configuration ("cache" key from config)
+   * @private
    * @return {Object} instance of cache backend
    */
-  initCacheBackend() {
-    if (this.config.cache && this.config.cache.enabled) {
+  getCacheInstance() {
+    const { enabled = false, package: pkg, options = {} } = this.config.cache || {};
+    if (enabled) {
       try {
-        const CacheBackend = require(this.config.cache.package); // eslint-disable-line import/no-dynamic-require
-        return new CacheBackend(this.config.cache.options || {});
+        // eslint-disable-next-line import/no-dynamic-require
+        const CacheBackend = require(pkg);
+        return new CacheBackend(options);
       } catch (ex) {
         Logger.error(
-          `Cannot load cache backend from package ${
+          `FalconServer: Cannot initialize cache backend using "${
             this.config.cache.package
-          } so Apollo Server will start without cache`
+          }" package, GraphQL server will operate without cache`
         );
       }
     }
   }
 
-  registerRoutes() {
-    const routes = this.apiEngine.getRoutes();
-    routes.forEach(route => {
-      (Array.isArray(route.methods) ? route.methods : [route.methods]).forEach(method => {
-        this.router[method](route.path, route.handler);
+  /**
+   * @private
+   */
+  registerEndpoints() {
+    this.apiContainer.endpoints.forEach(endpoint => {
+      (Array.isArray(endpoint.methods) ? endpoint.methods : [endpoint.methods]).forEach(method => {
+        this.router[method](endpoint.path, endpoint.handler);
       });
     });
 
@@ -142,7 +125,7 @@ class FalconServer {
       process.exit(2);
     };
 
-    this.init()
+    this.initialize()
       .then(() => {
         this.app.listen({ port: this.config.port }, () => {
           Logger.info(`🚀 Server ready at http://localhost:${this.config.port}`);

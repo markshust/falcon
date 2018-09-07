@@ -19,7 +19,7 @@ module.exports = class ApiContainer {
    * @param {ApiInstanceConfig[]} apis List of APIs configuration
    */
   constructor(apis) {
-    /** @type {Array} Endpoints collected from extensions */
+    /** @type {ApiDataSourceEndpoint[]} Endpoints collected from extensions */
     this.endpoints = [];
     /** @type {Map<string, ApiDataSource>} Array with API instances */
     this.dataSources = new Map();
