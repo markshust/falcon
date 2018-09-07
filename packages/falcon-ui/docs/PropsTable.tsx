@@ -1,9 +1,8 @@
-import * as React from 'react';
-import { Fragment, SFC, ComponentType } from 'react';
+import React, { Fragment, SFC, ComponentType } from 'react';
 import { withMDXComponents } from '@mdx-js/tag/dist/mdx-provider';
 import { withCSSContext } from '@emotion/core';
-import { mappings } from '../src/theme/propsmapings';
-
+import { Table, Tr, Th, H2, Tbody, Td, Thead } from '../src';
+/* eslint-disable */
 export interface EnumValue {
   value: string;
   computed: boolean;
@@ -84,8 +83,9 @@ const getPropType = (prop: Prop, Tooltip?: TooltipComponent) => {
   return prop.flowType ? <Tooltip text={prop.flowType}>{name}</Tooltip> : <Tooltip text={prop.type}>{name}</Tooltip>;
 };
 
-const BasePropsTable: SFC<PropsTableProps> = (props: any) => {
+const PropsTable: SFC<PropsTableProps> = (props: any) => {
   const info = props.of.__docgenInfo;
+  console.log('info', info);
   const components = props.components;
   const componentProps = info && info.props;
   const defaultProps = props.of.defaultProps;
@@ -93,61 +93,59 @@ const BasePropsTable: SFC<PropsTableProps> = (props: any) => {
     return null;
   }
 
-  const Table = components.table || 'table';
-  const Thead = components.thead || 'thead';
-  const Tr = components.tr || 'tr';
-  const Th = components.th || 'th';
-  const Tbody = components.tbody || 'tbody';
-  const Td = components.td || 'td';
   const Tooltip = components.tooltip;
+
+  // wyswietlam tylko
+  // tag
+  // theme key
+  // extend
+  // variant
+
+  // 1. usuwam responsive props - tak
+  // 2. link do responsive props?
+
+  // -- dodac info o props ktorych button uzywa a ktore są themable, jak?
+  // -- info z variantami
+
+  // wersja 1:
+  // Button's themed props defined in theme:
+
+  // | prop | value                       | css value                                    | theme key                                     |
+  // | ---- | --------------------------- | -------------------------------------------- | --------------------------------------------- |
+  // | m    | 'lg'                        | 8px (defined in theme.spacing.lg)            | spacing - on hover displays possible values ? |
+  // | css  | Css - on hover fn to string | pisze complex CssObject- on hover wyswietlam | wypisuje jakich kluczy uzywa z theme?         |
+
+  // obsluga responsive prop?
+  // ponizej tabelki pokzac przyklad jak je nadpisywać?
+
+  // Button's variants:
+  // ta sama tabelka jak powyzej
 
   return (
     <Fragment>
-      <Table className="PropsTable">
+      <H2 pb="lg">Properties</H2>
+      <Table>
         <Thead>
           <Tr>
-            <Th className="PropsTable--property">Property</Th>
-            <Th className="PropsTable--type">Type</Th>
-            <Th className="PropsTable--required">Required</Th>
-            <Th className="PropsTable--default">Default</Th>
-            <Th className="PropsTable--default">Themed</Th>
-            <Th width="40%" className="PropsTable--description">
-              Description
-            </Th>
+            <Th>Property</Th>
+            <Th>Type</Th>
+            <Th>Required</Th>
+            <Th>Default</Th>
+            <Th width="40%">Description</Th>
           </Tr>
         </Thead>
         <Tbody>
           {componentProps &&
             Object.keys(componentProps).map((name: string) => {
               const prop = componentProps[name];
-              const themeKey = defaultProps.themeKey;
-              const themedValue = props.theme.components[themeKey] ? props.theme.components[themeKey][name] : '';
-
-              // const cssValue =  props.theme[]
-              // if (props.theme.components[themeKey]) {
-
-              // }
-
               if (!prop.flowType && !prop.type) return null;
-              // TODO: uncomment
-              if (!themedValue) return null;
-              const mapping = (mappings as any)[name];
 
-              const cssValue = mapping && mapping.themeProp ? (props.theme as any)[mapping.themeProp] : '';
-              // console.log(mapping && mapping.themeProp);
-              const cssStyle =
-                mapping && mapping.themeProp === 'colors'
-                  ? { backgroundColor: cssValue[themedValue], display: 'inline-block', height: '20px', width: '20px' }
-                  : {};
               return (
                 <Tr key={name}>
                   <Td>{name}</Td>
-                  <Td>{getPropType(prop, Tooltip)}</Td>
-                  <Td>{String(prop.required)}</Td>
-                  <Td>{defaultProps[name]}</Td>
-                  <Td>
-                    {themedValue}-<span style={cssStyle} /> {cssValue[themedValue]}
-                  </Td>
+                  <Td>{prop.type.name}</Td>
+                  <Td>{prop.required ? '🗸' : '-'}</Td>
+                  <Td />
                   <Td>{prop.description && prop.description}</Td>
                 </Tr>
               );
@@ -158,9 +156,8 @@ const BasePropsTable: SFC<PropsTableProps> = (props: any) => {
   );
 };
 
-export const PropsTable = withMDXComponents(
+export default withMDXComponents(
   withCSSContext((props: any, context: any) => {
-    // console.log(props, context);
-    return <BasePropsTable {...props} theme={context.theme} />;
+    return <PropsTable {...props} theme={context.theme} />;
   })
 );
