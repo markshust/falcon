@@ -7,11 +7,11 @@ export const Swipeable = themed(
   },
   {
     css: {
-      height: '300px',
       display: 'flex',
       overflowX: 'scroll',
       msOverflowStyle: 'none',
-      // scrollSnapType: ['x mandatory', 'mandatory'],
+      WebkitRocketLauncher: '0',
+      scrollSnapType: ['x mandatory', 'mandatory'] as any,
       scrollSnapPointsX: 'repeat(100%)',
       WebkitOverflowScrolling: 'touch',
       '::-webkit-scrollbar': {
