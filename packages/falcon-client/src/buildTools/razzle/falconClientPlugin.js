@@ -40,7 +40,7 @@ function makeFalconClientJsFileResolvedByWebpack(config) {
   babelLoader.include.push(paths.falconClient.appSrc);
 }
 
-function addVendorBundle(modules = []) {
+function addVendorsBundle(modules = []) {
   const moduleFilter = new RegExp(
     `[\\\\/]node_modules[\\\\/](${modules.map(x => x.replace('/', '[\\\\/]')).join('|')})[\\\\/]`
   );
@@ -53,7 +53,7 @@ function addVendorBundle(modules = []) {
         splitChunks: {
           cacheGroups: {
             vendor: {
-              name: 'vendor',
+              name: 'vendors',
               enforce: true,
               chunks: 'initial',
               test: moduleFilter
@@ -93,7 +93,7 @@ module.exports = (config, { target, dev }, webpackObject) => {
   setEntryToFalconClient(config, target);
   makeFalconClientJsFileResolvedByWebpack(config);
 
-  addVendorBundle([
+  addVendorsBundle([
     'apollo-cache-inmemory',
     'apollo-client',
     'apollo-link',
