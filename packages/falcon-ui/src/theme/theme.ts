@@ -5,15 +5,16 @@ export const theme = {
     primaryDark: '#bcbcbc',
     primaryText: '#626262',
 
-    secondary: '#01579b',
-    secondaryLight: '#4f83cc',
-    secondaryDark: '#002f6c',
+    secondary: '#2196f3',
+    secondaryLight: '#6ec6ff',
+    secondaryDark: '#0069c0',
     secondaryText: '#ffffff',
 
     error: '#f44336',
     errorText: '#000000',
     black: '#000000',
-    white: '#ffffff'
+    white: '#ffffff',
+    transparent: 'transparent'
   },
 
   breakpoints: {
@@ -55,7 +56,7 @@ export const theme = {
   },
 
   lineHeights: {
-    small: 1.2,
+    small: 1,
     default: 1.4,
     large: 2
   },
@@ -67,7 +68,8 @@ export const theme = {
 
   borders: {
     light: '0.5px solid',
-    regular: '1px solid'
+    regular: '1px solid',
+    bold: '2px solid'
   },
 
   borderRadius: {
@@ -101,7 +103,7 @@ export const theme = {
   },
 
   zIndex: {
-    modal: 100,
-    tooltip: 150
+    backdrop: 800,
+    sidebar: 1000
   }
 };
