@@ -109,6 +109,7 @@ class FalconServer {
    * @private
    */
   registerEndpoints() {
+    Logger.debug(`FalconServer: registering API endpoints`);
     this.apiContainer.endpoints.forEach(endpoint => {
       (Array.isArray(endpoint.methods) ? endpoint.methods : [endpoint.methods]).forEach(method => {
         this.router[method](endpoint.path, endpoint.handler);
@@ -120,7 +121,7 @@ class FalconServer {
 
   start() {
     const handleStartupError = err => {
-      Logger.error('Initialization error - cannot start the server');
+      Logger.error('FalconServer: Initialization error - cannot start the server');
       Logger.error(err.stack);
       process.exit(2);
     };

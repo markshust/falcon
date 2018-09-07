@@ -14,6 +14,7 @@ yarn-error.log
 *.swp
 *.swo
 
+packages/**/dist/
 examples/**/build/
 examples/**/static/dist/
 examples/**/static/manifest.json

@@ -25,6 +25,7 @@
   },
   "devDependencies": {
     "@types/node": "^10.9.4",
+    "@types/koa-router": "^7.0.31",
     "@types/graphql": "^14.0.0",
     "@types/jest": "^23.3.1",
     "rimraf": "^2.6.2",

@@ -3,6 +3,7 @@ import ContextHTTPCache from '../cache/ContextHTTPCache';
 import { DataSourceConfig } from 'apollo-datasource';
 import {
   ApiDataSourceEndpoint,
+  ConfigurableConstructorParams,
   ContextData,
   ContextCacheOptions
 } from '../types';
@@ -13,10 +14,6 @@ import {
   URLSearchParamsInit,
 } from 'apollo-server-env';
 
-declare interface ApiDataSourceParams {
-  config: object;
-  name?: string;
-}
 
 export default abstract class ApiDataSource<TContext = any> extends RESTDataSource<TContext> {
   public name: string;
@@ -27,7 +24,7 @@ export default abstract class ApiDataSource<TContext = any> extends RESTDataSour
    * @param {object} config API DataSource config
    * @param {string} name API DataSource short-name
    */
-  constructor({ config, name }: ApiDataSourceParams) {
+  constructor({ config, name }: ConfigurableConstructorParams) {
     super();
     this.name = name || this.constructor.name;
     this.config = config as object;
