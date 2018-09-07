@@ -11,5 +11,17 @@ export * from './Input';
 export * from './Text';
 export * from './Divider';
 export * from './Swipeable';
-
+export * from './Tabs';
+export * from './Box';
+export * from './Group';
+export * from './Portal';
+export * from './Sidebar';
+export * from './Backdrop';
+export * from './Avatar';
+export * from './Link';
+export * from './BackgroundImage';
+export * from './List';
+export * from './Badge';
+export * from './Label';
+export * from './Textarea';
 export * from './ThemeProvider';
