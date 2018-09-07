@@ -98,7 +98,7 @@ module.exports = class ExtensionContainer extends EventEmitter {
    * @param {Object} defaultConfig - default configuration that should be used
    * @return {Object} resolved configuration
    */
-  async createGraphQLConfig(defaultConfig) {
+  async createGraphQLConfig(defaultConfig = {}) {
     const config = Object.assign(
       {
         resolvers: [],
@@ -111,13 +111,6 @@ module.exports = class ExtensionContainer extends EventEmitter {
     );
 
     // merge allowed configurations
-    this.extensions.forEach(async ext => {
-      if (typeof ext.getGraphQLConfig === 'function') {
-        const extConfig = await ext.getGraphQLConfig();
-        this.mergeGraphQLConfig(config, extConfig, ext.name);
-      }
-    });
-
     for (let i = 0; i < this.extensions.length; i++) {
       const ext = this.extensions[i];
       if (typeof ext.getGraphQLConfig === 'function') {
