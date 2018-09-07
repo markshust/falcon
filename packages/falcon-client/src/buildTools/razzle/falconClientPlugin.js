@@ -40,44 +40,29 @@ function makeFalconClientJsFileResolvedByWebpack(config) {
   babelLoader.include.push(paths.falconClient.appSrc);
 }
 
-function addVendorBundle(config, { target, dev }) {
-  if (target === 'web') {
-    // modify filenaming to account for multiple entry files
-    config.output.filename = dev ? 'static/js/[name].js' : 'static/js/[name].[hash:8].js';
+function addVendorBundle(modules = []) {
+  const moduleFilter = new RegExp(
+    `[\\\\/]node_modules[\\\\/](${modules.map(x => x.replace('/', '[\\\\/]')).join('|')})[\\\\/]`
+  );
 
-    config.entry.vendor = [
-      'apollo-cache-inmemory',
-      'apollo-client',
-      'apollo-link',
-      'apollo-link-http',
-      'apollo-link-state',
-      'i18next',
-      //  we need to Razzle's polyfills because
-      // vendor.js will be loaded before our other entry. Razzle looks for
-      // process.env.REACT_BUNDLE_PATH and will exclude the polyfill from our normal entry
-      'razzle/polyfills',
-      'react',
-      'react-apollo',
-      'react-dom',
-      'react-google-tag-manager',
-      'react-i18next',
-      'react-router-dom'
-    ].map(x => require.resolve(x));
+  return (config, { target, dev }) => {
+    if (target === 'web') {
+      config.output.filename = dev ? 'static/js/[name].js' : 'static/js/[name].[hash:8].js';
 
-    config.optimization = {
-      splitChunks: {
-        cacheGroups: {
-          vendor: {
-            chunks: 'initial',
-            test: 'vendor', // test: /[\\/]node_modules[\\/]/,
-            name: 'vendor',
-            enforce: true
-            // chunks: 'all'
+      config.optimization = {
+        splitChunks: {
+          cacheGroups: {
+            vendor: {
+              name: 'vendor',
+              enforce: true,
+              chunks: 'initial',
+              test: moduleFilter
+            }
           }
         }
-      }
-    };
-  }
+      };
+    }
+  };
 }
 
 function addGraphQLTagLoader(config) {
@@ -107,7 +92,23 @@ module.exports = (config, { target, dev }, webpackObject) => {
 
   setEntryToFalconClient(config, target);
   makeFalconClientJsFileResolvedByWebpack(config);
-  addVendorBundle(config, { target, dev });
+
+  addVendorBundle([
+    'apollo-cache-inmemory',
+    'apollo-client',
+    'apollo-link',
+    'apollo-link-http',
+    'apollo-link-state',
+    // 'i18next',
+    'razzle/polyfills',
+    'react',
+    'react-apollo',
+    'react-dom',
+    'react-google-tag-manager',
+    // 'react-i18next',
+    'react-router-dom'
+  ])(config, { target, dev });
+
   addGraphQLTagLoader(config);
 
   return config;
