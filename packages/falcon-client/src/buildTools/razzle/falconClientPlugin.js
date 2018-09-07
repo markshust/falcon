@@ -99,12 +99,17 @@ module.exports = (config, { target, dev }, webpackObject) => {
     'apollo-link',
     'apollo-link-http',
     'apollo-link-state',
+    `graphql-tag`,
+    `node-fetch`,
     // 'i18next',
     'razzle/polyfills',
     'react',
     'react-apollo',
+    'react-async-bootstrapper',
+    'react-async-component',
     'react-dom',
     'react-google-tag-manager',
+    `react-helmet`,
     // 'react-i18next',
     'react-router-dom'
   ])(config, { target, dev });
