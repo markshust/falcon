@@ -18,7 +18,7 @@ export const Button = themed(
         outline: 'none'
       },
       // define transform that scales on active
-      transition: 'transform',
+      transitionProperty: 'transform',
       transitionTimingFunction: props.theme.easingFunctions.easeIn,
       transitionDuration: props.theme.transitionDurations.short,
       ':active': {

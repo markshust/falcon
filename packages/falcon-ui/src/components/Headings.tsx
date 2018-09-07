@@ -9,8 +9,7 @@ export const H1 = themed(
     fontSize: 'xxl',
     fontWeight: 'light',
     lineHeight: 'small',
-    p: 'sm',
-    m: 'none'
+    p: 'sm'
   }
 );
 
@@ -21,10 +20,9 @@ export const H2 = themed(
   },
   {
     fontSize: 'xl',
-    fontWeight: 'bold',
+    fontWeight: 'regular',
     lineHeight: 'small',
-    p: 'sm',
-    m: 'none'
+    p: 'sm'
   }
 );
 
@@ -37,8 +35,7 @@ export const H3 = themed(
     fontSize: 'lg',
     fontWeight: 'bold',
     lineHeight: 'small',
-    p: 'sm',
-    m: 'none'
+    p: 'sm'
   }
 );
 
@@ -51,7 +48,6 @@ export const H4 = themed(
     fontSize: 'md',
     fontWeight: 'regular',
     lineHeight: 'small',
-    p: 'sm',
-    m: 'none'
+    p: 'sm'
   }
 );

@@ -8,6 +8,7 @@ export const Card = themed(
   {
     display: 'block',
     p: 'md',
-    boxShadow: 'xs'
+    boxShadow: 'xs',
+    bg: 'white'
   }
 );
