@@ -42,6 +42,31 @@ function makeFalconClientJsFileResolvedByWebpack(config) {
   babelLoader.include.push(paths.falconClient.appSrc);
 }
 
+function addVendorsBundle(modules = []) {
+  const moduleFilter = new RegExp(
+    `[\\\\/]node_modules[\\\\/](${modules.map(x => x.replace('/', '[\\\\/]')).join('|')})[\\\\/]`
+  );
+
+  return (config, { target, dev }) => {
+    if (target === 'web') {
+      config.output.filename = dev ? 'static/js/[name].js' : 'static/js/[name].[hash:8].js';
+
+      config.optimization = {
+        splitChunks: {
+          cacheGroups: {
+            vendor: {
+              name: 'vendors',
+              enforce: true,
+              chunks: 'initial',
+              test: moduleFilter
+            }
+          }
+        }
+      };
+    }
+  };
+}
+
 function addGraphQLTagLoader(config) {
   const fileLoaderFinder = makeLoaderFinder('file-loader');
   const fileLoader = config.module.rules.find(fileLoaderFinder);
@@ -98,6 +123,28 @@ module.exports = appConfig => (config, { target, dev } /* ,  webpackObject */) =
 
   setEntryToFalconClient(config, target);
   makeFalconClientJsFileResolvedByWebpack(config);
+
+  addVendorsBundle([
+    'apollo-cache-inmemory',
+    'apollo-client',
+    'apollo-link',
+    'apollo-link-http',
+    'apollo-link-state',
+    `graphql-tag`,
+    `node-fetch`,
+    'i18next',
+    'razzle/polyfills',
+    'react',
+    'react-apollo',
+    'react-async-bootstrapper',
+    'react-async-component',
+    'react-dom',
+    'react-google-tag-manager',
+    `react-helmet`,
+    'react-i18next',
+    'react-router-dom'
+  ])(config, { target, dev });
+
   addGraphQLTagLoader(config);
   addFalconI18nPlugin(appConfig.i18n, config, dev);
 
