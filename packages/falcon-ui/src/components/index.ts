@@ -25,4 +25,6 @@ export * from './Badge';
 export * from './Label';
 export * from './Textarea';
 export * from './Checkbox';
+export * from './Radio';
+export * from './NumberInput';
 export * from './ThemeProvider';
