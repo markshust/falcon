@@ -24,4 +24,5 @@ export * from './List';
 export * from './Badge';
 export * from './Label';
 export * from './Textarea';
+export * from './Checkbox';
 export * from './ThemeProvider';
