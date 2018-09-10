@@ -68,6 +68,11 @@ export default class Html extends Component {
             }}
           />
           {process.env.NODE_ENV === 'production' ? (
+            <script src={assets.vendors.js} charSet="UTF-8" async />
+          ) : (
+            <script src={assets.vendors.js} charSet="UTF-8" async crossOrigin="true" />
+          )}
+          {process.env.NODE_ENV === 'production' ? (
             <script src={assets.client.js} charSet="UTF-8" async />
           ) : (
             <script src={assets.client.js} charSet="UTF-8" async crossOrigin="true" />
@@ -83,6 +88,9 @@ Html.propTypes = {
     client: PropTypes.shape({
       js: PropTypes.string,
       css: PropTypes.string
+    }),
+    vendors: PropTypes.shape({
+      js: PropTypes.string
     })
   }),
   asyncContext: PropTypes.shape({}),
