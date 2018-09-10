@@ -9,6 +9,7 @@ import ApolloClient from './service/ApolloClient';
 import App, { clientApolloSchema } from './clientApp';
 import { SSR } from './graphql/config.gql';
 import i18nFactory from './i18n/i18nClientFactory';
+import registerServiceWorker from './serviceWorker/register';
 
 const client = new ApolloClient({
   isBrowser: true,
@@ -37,6 +38,10 @@ const markup = (
 );
 
 asyncBootstrapper(markup).then(() => renderApp(markup, document.getElementById('root')));
+
+if (process.env.NODE_ENV === 'production') {
+  registerServiceWorker('/sw.js');
+}
 
 if (module.hot) {
   module.hot.accept();
