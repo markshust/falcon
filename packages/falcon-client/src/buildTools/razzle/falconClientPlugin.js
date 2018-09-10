@@ -109,7 +109,7 @@ function addFalconI18nPlugin({ resourcePackages = [], filter }, config, dev) {
   ];
 }
 
-function addSwWorkbox(workboxConfig = {}) {
+function addWorkboxSw(workboxConfig = {}) {
   return (config, { target, dev }) => {
     if (target === 'web' && !dev) {
       if (!config.plugins) {
@@ -137,7 +137,7 @@ function addSwWorkbox(workboxConfig = {}) {
                 handler: 'networkFirst'
               }
             ],
-            directoryIndex: '/',
+            directoryIndex: '/app-shell.html',
             globDirectory: './build/public',
             globPatterns: [`/**/*.{js,json,html,css,ico,png,jpg,gif,svg,eot,ttf,woff,woff2}`],
             maximumFileSizeToCacheInBytes: 8 * 1024 * 1024 // 8MB,
@@ -191,7 +191,7 @@ module.exports = appConfig => (config, { target, dev } /* ,  webpackObject */) =
 
   addGraphQLTagLoader(config);
   addFalconI18nPlugin(appConfig.i18n, config, dev);
-  addSwWorkbox({
+  addWorkboxSw({
     // swSrc: './public/sw.js' -> if we use our sw.js implementation, manifest will be injected!
   })(config, { target, dev });
 
