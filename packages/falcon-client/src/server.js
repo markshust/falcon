@@ -2,6 +2,7 @@ import Koa from 'koa';
 import serve from 'koa-static';
 import helmet from 'koa-helmet';
 import Router from 'koa-router';
+import compress from 'koa-compress';
 import Logger from '@deity/falcon-logger';
 import apolloClientProvider from './middlewares/apolloClientProvider';
 import ssr from './middlewares/ssrMiddleware';
@@ -46,6 +47,7 @@ export default params => {
     .use(helmet())
     .use(error500())
     .use(serverTiming())
+    .use(compress())
     .use(serve(process.env.RAZZLE_PUBLIC_DIR))
     .use(router.routes())
     .use(router.allowedMethods());
