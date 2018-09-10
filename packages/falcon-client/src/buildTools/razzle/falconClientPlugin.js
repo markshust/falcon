@@ -127,6 +127,7 @@ function addWorkboxSw(workboxConfig = {}) {
         config.plugins.push(
           new WorkboxPlugin.GenerateSW({
             ...pluginConfiguration,
+            cacheId: '@deity',
             importWorkboxFrom: 'cdn',
             clientsClaim: true,
             skipWaiting: true,
