@@ -1,8 +1,9 @@
+/* eslint-disable import/no-extraneous-dependencies */
 const path = require('path');
-const paths = require('./../paths');
-// eslint-disable-next-line import/no-extraneous-dependencies
 const FalconI18nLocalesPlugin = require('@deity/falcon-i18n-webpack-plugin');
 const makeLoaderFinder = require('razzle-dev-utils/makeLoaderFinder');
+const WorkboxPlugin = require('workbox-webpack-plugin');
+const paths = require('./../paths');
 
 function setEntryToFalconClient(config, target) {
   if (target === 'web') {
@@ -108,11 +109,53 @@ function addFalconI18nPlugin({ resourcePackages = [], filter }, config, dev) {
   ];
 }
 
+function addSwWorkbox(workboxConfig = {}) {
+  return (config, { target, dev }) => {
+    if (target === 'web' && !dev) {
+      if (!config.plugins) {
+        config.plugins = [];
+      }
+
+      const pluginConfiguration = {
+        swDest: './sw.js',
+        ...workboxConfig
+      };
+
+      if (pluginConfiguration.swSrc) {
+        config.plugins.push(new WorkboxPlugin.InjectManifest(pluginConfiguration));
+      } else {
+        config.plugins.push(
+          new WorkboxPlugin.GenerateSW({
+            ...pluginConfiguration,
+            importWorkboxFrom: 'cdn',
+            clientsClaim: true,
+            skipWaiting: true,
+            runtimeCaching: [
+              // TODO define caching rules
+              {
+                urlPattern: '/',
+                handler: 'networkFirst'
+              }
+            ],
+            directoryIndex: '/',
+            globDirectory: './build/public',
+            globPatterns: [`/**/*.{js,json,html,css,ico,png,jpg,gif,svg,eot,ttf,woff,woff2}`],
+            maximumFileSizeToCacheInBytes: 8 * 1024 * 1024 // 8MB,
+          })
+        );
+      }
+    }
+
+    return config;
+  };
+}
+
 /**
  * falcon-client and razzle integration plugin
  * @param {{i18n: i18nPluginConfig }} appConfig webpack config
  * @returns {object} razzle plugin
  */
+// eslint-disable-next-line no-unused-vars
 module.exports = appConfig => (config, { target, dev } /* ,  webpackObject */) => {
   config.resolve.alias = {
     ...(config.resolve.alias || {}),
@@ -148,6 +191,9 @@ module.exports = appConfig => (config, { target, dev } /* ,  webpackObject */) =
 
   addGraphQLTagLoader(config);
   addFalconI18nPlugin(appConfig.i18n, config, dev);
+  addSwWorkbox({
+    // swSrc: './public/sw.js' -> if we use our sw.js implementation, manifest will be injected!
+  })(config, { target, dev });
 
   return config;
 };
