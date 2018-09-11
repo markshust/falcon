@@ -109,50 +109,46 @@ function addFalconI18nPlugin({ resourcePackages = [], filter }, config, dev) {
   ];
 }
 
-function addWorkboxSw(workboxConfig = {}) {
-  return (config, { target, dev }) => {
-    if (target === 'web' && !dev) {
-      if (!config.plugins) {
-        config.plugins = [];
-      }
-
-      const pluginConfiguration = {
-        importWorkboxFrom: 'cdn',
-        swDest: './sw.js',
-        precacheManifestFilename: 'sw-manifest.[manifestHash].js',
-        globDirectory: 'build/public',
-        globPatterns: [`**/*.{js,json,html,css,ico,png,jpg,gif,svg,eot,ttf,woff,woff2}`],
-        maximumFileSizeToCacheInBytes: 8 * 1024 * 1024, // 8MB
-        ...workboxConfig
-      };
-
-      if (pluginConfiguration.swSrc) {
-        config.plugins.push(
-          new WorkboxPlugin.InjectManifest({
-            ...pluginConfiguration
-          })
-        );
-      } else {
-        config.plugins.push(
-          new WorkboxPlugin.GenerateSW({
-            ...pluginConfiguration,
-            cacheId: '@deity',
-            clientsClaim: true,
-            skipWaiting: true,
-            runtimeCaching: [
-              // TODO define caching rules
-              {
-                urlPattern: '/',
-                handler: 'networkFirst'
-              }
-            ]
-          })
-        );
-      }
+function addWorkboxSw(config, { target, dev }) {
+  if (target === 'web' && !dev) {
+    if (!config.plugins) {
+      config.plugins = [];
     }
 
-    return config;
-  };
+    const pluginConfiguration = {
+      importWorkboxFrom: 'cdn',
+      swSrc: path.join(paths.falconClient.appSrc, 'serviceWorker/sw.js'),
+      swDest: './sw.js',
+      precacheManifestFilename: 'sw-manifest.[manifestHash].js',
+      globDirectory: 'build/public',
+      globPatterns: [`**/*.{js,json,html,css,ico,png,jpg,gif,svg,eot,ttf,woff,woff2}`],
+      maximumFileSizeToCacheInBytes: 8 * 1024 * 1024 // 8MB
+    };
+
+    if (pluginConfiguration.swSrc) {
+      config.plugins.push(
+        new WorkboxPlugin.InjectManifest({
+          ...pluginConfiguration
+        })
+      );
+    } else {
+      config.plugins.push(
+        new WorkboxPlugin.GenerateSW({
+          ...pluginConfiguration,
+          cacheId: '@deity',
+          clientsClaim: true,
+          skipWaiting: true,
+          runtimeCaching: [
+            // TODO define caching rules
+            {
+              urlPattern: '/',
+              handler: 'networkFirst'
+            }
+          ]
+        })
+      );
+    }
+  }
 }
 
 /**
@@ -196,7 +192,7 @@ module.exports = appConfig => (config, { target, dev } /* ,  webpackObject */) =
 
   addGraphQLTagLoader(config);
   addFalconI18nPlugin(appConfig.i18n, config, dev);
-  addWorkboxSw({ swSrc: './public/sw.js' })(config, { target, dev });
+  addWorkboxSw(config, { target, dev });
 
   return config;
 };
