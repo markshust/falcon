@@ -117,18 +117,26 @@ function addWorkboxSw(workboxConfig = {}) {
       }
 
       const pluginConfiguration = {
+        importWorkboxFrom: 'cdn',
         swDest: './sw.js',
+        precacheManifestFilename: 'sw-manifest.[manifestHash].js',
+        globDirectory: 'build/public',
+        globPatterns: [`**/*.{js,json,html,css,ico,png,jpg,gif,svg,eot,ttf,woff,woff2}`],
+        maximumFileSizeToCacheInBytes: 8 * 1024 * 1024, // 8MB
         ...workboxConfig
       };
 
       if (pluginConfiguration.swSrc) {
-        config.plugins.push(new WorkboxPlugin.InjectManifest(pluginConfiguration));
+        config.plugins.push(
+          new WorkboxPlugin.InjectManifest({
+            ...pluginConfiguration
+          })
+        );
       } else {
         config.plugins.push(
           new WorkboxPlugin.GenerateSW({
             ...pluginConfiguration,
             cacheId: '@deity',
-            importWorkboxFrom: 'cdn',
             clientsClaim: true,
             skipWaiting: true,
             runtimeCaching: [
@@ -137,11 +145,7 @@ function addWorkboxSw(workboxConfig = {}) {
                 urlPattern: '/',
                 handler: 'networkFirst'
               }
-            ],
-            directoryIndex: '/app-shell.html',
-            globDirectory: './build/public',
-            globPatterns: [`/**/*.{js,json,html,css,ico,png,jpg,gif,svg,eot,ttf,woff,woff2}`],
-            maximumFileSizeToCacheInBytes: 8 * 1024 * 1024 // 8MB,
+            ]
           })
         );
       }
@@ -192,9 +196,7 @@ module.exports = appConfig => (config, { target, dev } /* ,  webpackObject */) =
 
   addGraphQLTagLoader(config);
   addFalconI18nPlugin(appConfig.i18n, config, dev);
-  addWorkboxSw({
-    // swSrc: './public/sw.js' -> if we use our sw.js implementation, manifest will be injected!
-  })(config, { target, dev });
+  addWorkboxSw({ swSrc: './public/sw.js' })(config, { target, dev });
 
   return config;
 };
