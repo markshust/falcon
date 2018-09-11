@@ -115,39 +115,17 @@ function addWorkboxSw(config, { target, dev }) {
       config.plugins = [];
     }
 
-    const pluginConfiguration = {
-      importWorkboxFrom: 'cdn',
-      swSrc: path.join(paths.falconClient.appSrc, 'serviceWorker/sw.js'),
-      swDest: './sw.js',
-      precacheManifestFilename: 'sw-manifest.[manifestHash].js',
-      globDirectory: 'build/public',
-      globPatterns: [`**/*.{js,json,html,css,ico,png,jpg,gif,svg,eot,ttf,woff,woff2}`],
-      maximumFileSizeToCacheInBytes: 8 * 1024 * 1024 // 8MB
-    };
-
-    if (pluginConfiguration.swSrc) {
-      config.plugins.push(
-        new WorkboxPlugin.InjectManifest({
-          ...pluginConfiguration
-        })
-      );
-    } else {
-      config.plugins.push(
-        new WorkboxPlugin.GenerateSW({
-          ...pluginConfiguration,
-          cacheId: '@deity',
-          clientsClaim: true,
-          skipWaiting: true,
-          runtimeCaching: [
-            // TODO define caching rules
-            {
-              urlPattern: '/',
-              handler: 'networkFirst'
-            }
-          ]
-        })
-      );
-    }
+    config.plugins.push(
+      new WorkboxPlugin.InjectManifest({
+        importWorkboxFrom: 'cdn',
+        swSrc: path.join(paths.falconClient.appSrc, 'serviceWorker/sw.js'),
+        swDest: './sw.js',
+        precacheManifestFilename: 'sw-manifest.[manifestHash].js',
+        globDirectory: 'build/public',
+        globPatterns: [`**/*.{js,json,html,css,ico,png,jpg,gif,svg,eot,ttf,woff,woff2}`],
+        maximumFileSizeToCacheInBytes: 8 * 1024 * 1024 // 8MB
+      })
+    );
   }
 }
 
