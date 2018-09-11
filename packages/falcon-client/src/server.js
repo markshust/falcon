@@ -29,15 +29,27 @@ export default params => {
   const { config } = configuration;
   Logger.setLogLevel(config.logLevel);
 
-  const router = new Router();
-  // Defining middlewares
-  const middlewares = [apolloClientProvider(params), i18next({ ...config.i18n, resources: params.i18nResources })];
-  if (config.serverSideRendering) {
-    middlewares.push(ssr(params));
-  }
-  middlewares.push(htmlShellRenderer);
+  const renderApp = ({ serverSideRendering = true } = {}) => {
+    const middlewares = [];
 
-  router.get('/*', ...middlewares);
+    middlewares.push(
+      apolloClientProvider({
+        configSchema: params.configuration.configSchema,
+        clientApolloSchema: params.clientApolloSchema
+      })
+    );
+    middlewares.push(i18next({ ...config.i18n, resources: params.i18nResources }));
+    if (serverSideRendering) {
+      middlewares.push(ssr(params));
+    }
+    middlewares.push(htmlShellRenderer);
+
+    return middlewares;
+  };
+
+  const router = new Router();
+  router.get('/app-shell', ...renderApp({ serverSideRendering: false }));
+  router.get('/*', ...renderApp({ serverSideRendering: config.serverSideRendering }));
 
   // Initialize and configure Koa application
   const server = new Koa();
