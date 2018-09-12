@@ -21,13 +21,16 @@
     "apollo-server-env": "^2.0.3",
     "apollo-datasource": "^0.1.3",
     "apollo-datasource-rest": "^0.1.5",
-    "graphql": "^14.0.2"
+    "graphql": "^14.0.2",
+    "html-entities": "^1.2.1",
+    "striptags": "^3.1.1"
   },
   "devDependencies": {
     "@types/node": "^10.9.4",
     "@types/koa-router": "^7.0.31",
     "@types/graphql": "^14.0.0",
-    "@types/jest": "^23.3.1",
+    "@types/html-entities": "^1.2.16",
+    "@types/jest": "^23.3.2",
     "rimraf": "^2.6.2",
     "ts-jest": "^23.1.4"
   }

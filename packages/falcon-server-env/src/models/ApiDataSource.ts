@@ -1,6 +1,6 @@
+import { DataSourceConfig } from 'apollo-datasource';
 import { RESTDataSource } from 'apollo-datasource-rest';
 import ContextHTTPCache from '../cache/ContextHTTPCache';
-import { DataSourceConfig } from 'apollo-datasource';
 import {
   ApiDataSourceEndpoint,
   ConfigurableConstructorParams,
@@ -13,12 +13,13 @@ import {
   Response,
   URLSearchParamsInit,
 } from 'apollo-server-env';
+import helpers, { IAPIHelpers } from '../helpers';
 
-
-export default abstract class ApiDataSource<TContext = any> extends RESTDataSource<TContext> {
+export default abstract class ApiDataSource<TContext = any, THelpers = any> extends RESTDataSource<TContext> {
   public name: string;
   public config: object;
   public fetchUrlPriority: number = 1;
+  public helpers: THelpers | IAPIHelpers = helpers;
 
   /**
    * @param {object} config API DataSource config

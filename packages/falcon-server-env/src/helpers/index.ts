@@ -10,7 +10,14 @@ import stripTags = require('striptags');
 
 const entities: AllHtmlEntities = new AllHtmlEntities();
 
-export default ({
+export interface IAPIHelpers {
+  stripHtml: (html: string) => string;
+  stripHtmlEntities: (html: string) => string;
+  stripHtmlTags: (html: string) => string;
+  generateExcerpt: (html: string, length: number) => string;
+}
+
+const helpers: IAPIHelpers = {
   /**
    * Strip HTML tags and HTML entities
    * @param {string} html element containing HTML tags and HTML entities
@@ -47,4 +54,6 @@ export default ({
 
     return content;
   }
-});
+};
+
+export default helpers;
