@@ -92,8 +92,9 @@ function addGraphQLTagLoader(config) {
 /**
  * Adds FalconI18nPlugin into webpack configuration
  * @param {i18nPluginConfig} param configuration
- * @param {{}} config webpack config
- * @param {{}} dev is dev?
+ * @param {object} config webpack config
+ * @param {boolean} dev is dev?
+ * @returns {void}
  */
 function addFalconI18nPlugin({ resourcePackages = [], filter }, config, dev) {
   config.plugins = [
@@ -110,7 +111,7 @@ function addFalconI18nPlugin({ resourcePackages = [], filter }, config, dev) {
 /**
  * falcon-client and razzle integration plugin
  * @param {{i18n: i18nPluginConfig }} appConfig webpack config
- * @returns {{}} razzle plugin
+ * @returns {object} razzle plugin
  */
 module.exports = appConfig => (config, { target, dev } /* ,  webpackObject */) => {
   config.resolve.alias = {

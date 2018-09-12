@@ -22,7 +22,11 @@ npm dev
 ## How to use
 
 Download the [Shop with Blog](https://github.com/deity-io/falcon/tree/master/examples/shop-with-blog/client)
-example [or clone the whole project](https://github.com/deity-io/falcon.git):
+example or clone the whole project:
+
+```bash
+git clone https://github.com/deity-io/falcon.git
+```
 
 Install it and run:
 
@@ -64,7 +68,7 @@ If your application is running, and you need to manually restart your server, yo
 
 ## API contract
 
-Application needs to have three files `index.js`, `falcon-client.config.js` and `razzle.config.js`. Each of them should be placed in application root directory.
+Application needs to have the following three files `index.js`, `falcon-client.config.js` and `razzle.config.js`. Each of them should be placed in application root directory.
 
 ### `index.js`
 
@@ -176,7 +180,7 @@ describe('<Component />', () => {
     ReactDOM.render(
       <FalconClientMock>
         {
-          // yours component <Component />
+          // your <Component />
         }
       </FalconClientMock>,
       document.createElement('div')
