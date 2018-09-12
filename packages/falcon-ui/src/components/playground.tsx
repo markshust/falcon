@@ -1,11 +1,15 @@
 import React from 'react';
 
-import { ThemeProvider, Card, Button, Image } from './';
+import { ThemeProvider, Card, Button, Image, Swipeable, SwipeableItem, Box, H2, H3, Text, NumberInput } from './';
 import { themed, createTheme, Theme } from '../theme';
 
 const HomeLayout = themed({
   tag: 'article',
   themeKey: 'homelayout'
+});
+const ProductLayout = themed({
+  tag: 'article',
+  themeKey: 'productLayout'
 });
 
 const defaultThemeWithNewHomeLayoutComponent = createTheme({
@@ -15,6 +19,21 @@ const defaultThemeWithNewHomeLayoutComponent = createTheme({
       gridTemplateColumns: { xs: '1fr 1fr', md: '1fr 1fr 1fr' },
       gridAutoRows: '30vh',
       gridGap: 'md'
+    },
+    productLayout: {
+      display: 'grid',
+      gridTemplateColumns: { xs: '1fr 1fr', md: '2fr 1fr 1fr' },
+      gridTemplateRows: '20px 50px 50px 50px 1fr',
+      gridGap: 'md',
+      bg: 'white',
+      boxShadow: 'xs',
+      p: 'md',
+      alignItems: 'start',
+      gridTemplateAreas: {
+        xs: '"sku sku" "title title" "price price" "stepper cta" "description description" "carousel carousel"',
+        md:
+          '"carousel sku sku" "carousel title title" "carousel price price" "carousel stepper cta" "carousel description description"'
+      }
     },
     card: {
       display: 'flex',
@@ -48,6 +67,21 @@ const customizedTheme = createTheme({
       display: 'grid',
       gridGap: 'lg',
       gridTemplateColumns: { xs: '1fr 2fr', md: '1fr 1fr 1fr' }
+    },
+    productLayout: {
+      display: 'grid',
+      gridTemplateColumns: { xs: '1fr 1fr', md: '1fr 1fr 3fr' },
+      gridTemplateRows: '20px 50px 50px 50px 1fr',
+      gridGap: 'md',
+      bg: 'white',
+      boxShadow: 'xs',
+      p: 'md',
+      alignItems: 'start',
+      gridTemplateAreas: {
+        xs: '"sku sku" "title title" "price price" "stepper cta" "description description" "carousel carousel"',
+        md:
+          '"sku sku carousel" "title title carousel" "price price carousel" "cta stepper carousel" "description description carousel"'
+      }
     },
 
     card: {
@@ -135,6 +169,42 @@ export class Playground extends React.Component<{}, { currentTheme: Theme }> {
             </Card>
           ))}
         </HomeLayout>
+        <ProductLayout mt="lg">
+          <Swipeable gridArea="carousel" css={{ height: 250 }}>
+            <Image
+              extend={SwipeableItem}
+              src="https://images.unsplash.com/photo-1533359856343-b66cefc8bdd7?ixlib=rb-0.3.5&s=e6f5d8aca61ab3651463fc562d7e61f4&auto=format&fit=crop&w=1500&q=80"
+            />
+            <Image
+              extend={SwipeableItem}
+              src="https://images.unsplash.com/photo-1533796846028-7243a1adf748?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=fab1a48ac8030aee83bb5bb1a350a3c3&auto=format&fit=crop&w=668&q=80"
+            />
+            <Image
+              extend={SwipeableItem}
+              src="https://images.unsplash.com/photo-1533359856343-b66cefc8bdd7?ixlib=rb-0.3.5&s=e6f5d8aca61ab3651463fc562d7e61f4&auto=format&fit=crop&w=1500&q=80"
+            />
+          </Swipeable>
+          <Box gridArea="title">
+            <H2>Art item </H2>
+          </Box>
+          <Box gridArea="price">
+            <H3>999.99$</H3>
+          </Box>
+          <Box gridArea="sku">
+            <Text>SKU: 211771809</Text>
+          </Box>
+
+          <NumberInput gridArea="stepper" defaultValue="1" />
+          <Button gridArea="cta">Add to basket</Button>
+
+          <Box gridArea="description">
+            <Text>NEW Le Creuset Signature with advanced interior enamel, larger handles and stainless steel knob</Text>
+            <Text>
+              Le Creuset Cast Iron comes with a Lifetime Guarantee for total peace of mind. The 18cm round casserole is
+              ideal for 2 people. Capacity 1.8L
+            </Text>
+          </Box>
+        </ProductLayout>
       </ThemeProvider>
     );
   }
