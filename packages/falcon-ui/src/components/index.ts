@@ -27,4 +27,8 @@ export * from './Textarea';
 export * from './Checkbox';
 export * from './Radio';
 export * from './NumberInput';
+export * from './Select';
 export * from './ThemeProvider';
+export * from './Breadcrumbs';
+export * from './Dropdown';
+export * from './Details';
