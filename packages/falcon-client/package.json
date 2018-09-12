@@ -67,7 +67,7 @@
     "supertest": "^3.1.0"
   },
   "peerDependencies": {
-    "graphql": "~0.13.2",
+    "graphql": "^0.11.0 || ^0.12.0 || ^0.13.0 || ^14.0.0",
     "graphql-tag": "~2.9.2",
     "i18next": "~11.6.0",
     "prop-types": "~15.6.2",
