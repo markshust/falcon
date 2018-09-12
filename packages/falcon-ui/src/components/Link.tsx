@@ -6,7 +6,6 @@ export const Link = themed(
     tag: 'a'
   },
   {
-    color: 'primaryText',
     fontSize: 'md',
     css: {
       textDecoration: 'none',

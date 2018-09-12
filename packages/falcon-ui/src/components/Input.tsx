@@ -23,7 +23,7 @@ export const Input = themed(
 
     css: props => ({
       ...placeholder({
-        color: props.theme.colors.primaryDark
+        color: props.theme.colors.primaryText
       }),
       ':focus': {
         outline: 'none',

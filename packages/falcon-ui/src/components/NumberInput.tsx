@@ -108,7 +108,6 @@ export const NumberInput = themed(
   {
     css: props => ({
       display: 'inline-flex',
-      justifyContent: 'center',
       alignItems: 'center',
       input: {
         appearance: 'none',

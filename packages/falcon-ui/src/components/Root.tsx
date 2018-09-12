@@ -9,6 +9,7 @@ export const Root = themed(
     fontFamily: 'sans',
     fontSize: 'sm',
     lineHeight: 'default',
+    color: 'primaryText',
     css: {
       '*': {
         boxSizing: 'border-box'
