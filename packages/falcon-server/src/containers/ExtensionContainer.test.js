@@ -1,11 +1,5 @@
-global.__SERVER__ = true; // eslint-disable-line no-underscore-dangle
-
 const { mockServer } = require('graphql-tools');
-const Logger = require('@deity/falcon-logger');
 const ExtensionContainer = require('./ExtensionContainer');
-
-// disable logger for tests
-Logger.setLogLevel('error');
 
 const extensions = [
   {
@@ -31,7 +25,7 @@ const mocks = {
   })
 };
 
-describe('ExtensionsContainer', () => {
+describe('ExtensionContainer', () => {
   let container;
 
   beforeEach(() => {

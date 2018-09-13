@@ -175,10 +175,11 @@ class FalconServer {
 
   start() {
     const handleStartupError = err => {
-      this.eventEmitter.emit(Events.ERROR, err);
-      Logger.error('FalconServer: Initialization error - cannot start the server');
-      Logger.error(err.stack);
-      process.exit(2);
+      this.eventEmitter.emitAsync(Events.ERROR, err).then(() => {
+        Logger.error('FalconServer: Initialization error - cannot start the server');
+        Logger.error(err.stack);
+        process.exit(2);
+      });
     };
 
     this.initialize()

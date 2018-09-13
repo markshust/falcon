@@ -11,6 +11,19 @@
     "test": "jest --watch",
     "test:coverage": "jest --ci --coverage"
   },
+  "jest": {
+    "collectCoverageFrom": [
+      "src/**/*.js"
+    ],
+    "coverageReporters": [
+      "html",
+      "text",
+      "text-summary"
+    ],
+    "setupFiles": [
+      "../../test/nodeEnvSetupFile"
+    ]
+  },
   "dependencies": {
     "@deity/falcon-server-env": "^1.0.0",
     "@deity/falcon-logger": "1.0.0",
