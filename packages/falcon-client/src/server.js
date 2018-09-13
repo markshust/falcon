@@ -6,7 +6,7 @@ import compress from 'koa-compress';
 import Logger from '@deity/falcon-logger';
 import apolloClientProvider from './middlewares/apolloClientProvider';
 import ssr from './middlewares/ssrMiddleware';
-import htmlShellRenderer from './middlewares/htmlShellRendererMiddleware';
+import appShell from './middlewares/appShellMiddleware';
 import error500 from './middlewares/error500Middleware';
 import serverTiming from './middlewares/serverTimingMiddleware';
 import i18next from './middlewares/i18nextMiddleware';
@@ -35,7 +35,7 @@ export default params => {
 
   router.get(
     '/app-shell',
-    ...[apolloClientProvider({ clientStates: { configSchema: params.configuration.configSchema } }), htmlShellRenderer]
+    ...[apolloClientProvider({ clientStates: { configSchema: params.configuration.configSchema } }), appShell()]
   );
 
   const renderAppRouteMiddlewares = [];
@@ -51,7 +51,7 @@ export default params => {
   if (config.serverSideRendering) {
     renderAppRouteMiddlewares.push(ssr(params));
   }
-  renderAppRouteMiddlewares.push(htmlShellRenderer);
+  renderAppRouteMiddlewares.push(appShell());
   router.get('/*', ...renderAppRouteMiddlewares);
 
   // Initialize and configure Koa application
