@@ -10,10 +10,30 @@
     "dist",
     "src"
   ],
+  "jest": {
+    "collectCoverageFrom": [
+      "src/**/*.ts"
+    ],
+    "coverageReporters": [
+      "html",
+      "text",
+      "text-summary"
+    ],
+    "transform": {
+      "^.+\\.ts$": "ts-jest"
+    },
+    "testRegex": "(/__tests__/.*|(\\.|/)(test|spec))\\.ts$",
+    "moduleFileExtensions": [
+      "ts",
+      "js",
+      "json",
+      "node"
+    ]
+  },
   "scripts": {
     "prebuild": "rimraf dist",
     "build": "tsc",
-    "test": "jest",
+    "test": "jest --watch",
     "test:coverage": "jest --ci --coverage"
   },
   "dependencies": {
