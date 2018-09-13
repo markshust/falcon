@@ -1,7 +1,7 @@
 import { Response, Request } from 'apollo-server-env';
 import { CacheOptions } from 'apollo-datasource-rest/dist/RESTDataSource';
 import { IMiddleware } from 'koa-router';
-
+import { RequestInit } from 'apollo-server-env';
 export interface ConfigurableConstructorParams {
   config: object;
   name?: string;
@@ -14,6 +14,8 @@ export type ContextType = {
 export interface ContextData {
   context?: ContextType;
 }
+
+export type ContextRequestInit = RequestInit & ContextData;
 
 export type ContextCacheOptions = CacheOptions & ContextData;
 

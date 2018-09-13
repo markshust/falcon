@@ -1,18 +1,14 @@
 import { DataSourceConfig } from 'apollo-datasource';
 import { RESTDataSource } from 'apollo-datasource-rest';
+import { Body } from 'apollo-datasource-rest/dist/RESTDataSource';
 import ContextHTTPCache from '../cache/ContextHTTPCache';
 import {
   ApiDataSourceEndpoint,
   ConfigurableConstructorParams,
-  ContextData,
-  ContextCacheOptions
+  ContextCacheOptions,
+  ContextRequestInit
 } from '../types';
-import {
-  Request,
-  RequestInit,
-  Response,
-  URLSearchParamsInit,
-} from 'apollo-server-env';
+import { URLSearchParamsInit } from 'apollo-server-env';
 import helpers, { IAPIHelpers } from '../helpers';
 
 export default abstract class ApiDataSource<TContext = any, THelpers = any> extends RESTDataSource<TContext> {
@@ -56,8 +52,49 @@ export default abstract class ApiDataSource<TContext = any, THelpers = any> exte
   protected async get<TResult = any>(
     path: string,
     params?: URLSearchParamsInit,
-    init?: RequestInit & ContextData
+    init?: ContextRequestInit
   ): Promise<TResult> {
+    this.ensureContextPassed(init);
+    return super.get(path, params, init);
+  }
+
+  protected async post<TResult = any>(
+    path: string,
+    body?: Body,
+    init?: ContextRequestInit,
+  ): Promise<TResult> {
+    this.ensureContextPassed(init);
+    return super.post(path, body, init);
+  }
+
+  protected async patch<TResult = any>(
+    path: string,
+    body?: Body,
+    init?: ContextRequestInit,
+  ): Promise<TResult> {
+    this.ensureContextPassed(init);
+    return super.patch(path, body, init);
+  }
+
+  protected async put<TResult = any>(
+    path: string,
+    body?: Body,
+    init?: ContextRequestInit,
+  ): Promise<TResult> {
+    this.ensureContextPassed(init);
+    return super.put(path, body, init);
+  }
+
+  protected async delete<TResult = any>(
+    path: string,
+    params?: URLSearchParamsInit,
+    init?: ContextRequestInit,
+  ): Promise<TResult> {
+    this.ensureContextPassed(init);
+    return super.delete(path, params, init);
+  }
+
+  private ensureContextPassed(init?: ContextRequestInit): void {
     if (init && init.context) {
       if (!init.cacheOptions) {
         init.cacheOptions = {};
@@ -67,7 +104,5 @@ export default abstract class ApiDataSource<TContext = any, THelpers = any> exte
         (init.cacheOptions as ContextCacheOptions).context = init.context;
       }
     }
-
-    return super.get(path, params, init);
   }
 }
