@@ -35,5 +35,8 @@
     "koa-router": "^7.4.0",
     "koa-session": "^5.9.0",
     "lodash": "^4.17.11"
+  },
+  "devDependencies": {
+    "supertest": "^3.3.0"
   }
 }

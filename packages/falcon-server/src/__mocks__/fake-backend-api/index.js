@@ -6,7 +6,10 @@ module.exports = class FakeBackendApi extends ApiDataSource {
       {
         path: '/api/info',
         methods: ['get'],
-        handler: () => {}
+        handler: (ctx, next) => {
+          ctx.body = 'foo';
+          next();
+        }
       }
     ];
   }

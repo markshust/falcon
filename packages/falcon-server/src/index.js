@@ -7,9 +7,6 @@ const ApiContainer = require('./containers/ApiContainer');
 const ExtensionContainer = require('./containers/ExtensionContainer');
 const { EventEmitter2 } = require('eventemitter2');
 
-const ENV = process.env.NODE_ENV || 'development';
-const isDevelopment = ENV === 'development';
-
 const Events = {
   ERROR: 'falcon-server.error',
 
@@ -39,8 +36,10 @@ const Events = {
 class FalconServer {
   constructor(config) {
     this.config = config;
-    Logger.setLogLevel(config.logLevel);
     const { maxListeners = 20, verboseEvents = false } = this.config;
+    if (config.logLevel) {
+      Logger.setLogLevel(config.logLevel);
+    }
 
     this.eventEmitter = new EventEmitter2({
       maxListeners,
@@ -73,7 +72,7 @@ class FalconServer {
     // Set signed cookie keys (https://koajs.com/#app-keys-)
     this.app.keys = this.config.session.keys;
 
-    this.router = new Router({ prefix: '/api/' });
+    this.router = new Router();
 
     // todo: implement backend session store e.g. https://www.npmjs.com/package/koa-redis-session
     this.app.use(session((this.config.session && this.config.session.options) || {}, this.app));
@@ -120,8 +119,8 @@ class FalconServer {
         session: ctx.req.session
       }),
       cache,
-      tracing: isDevelopment,
-      playground: isDevelopment && {
+      tracing: this.config.debug,
+      playground: this.config.debug && {
         settings: {
           'request.credentials': 'include' // include to keep the session between requests
         }
@@ -183,7 +182,7 @@ class FalconServer {
     };
 
     this.initialize()
-      .then(() => this.eventEmitter.emitAsync(Event.BEFORE_STARTED, this))
+      .then(() => this.eventEmitter.emitAsync(Events.BEFORE_STARTED, this))
       .then(
         () =>
           new Promise(resolve => {

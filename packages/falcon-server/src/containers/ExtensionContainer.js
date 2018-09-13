@@ -73,15 +73,6 @@ module.exports = class ExtensionContainer extends EventEmitter {
   }
 
   /**
-   * Gets extension by its name
-   * @param {string} name Extension name
-   * @return {Extension} Extension instance
-   */
-  getExtension(name) {
-    return this.extensions.get(name);
-  }
-
-  /**
    * Creates a complete configuration for ApolloServer
    * @param {Object} defaultConfig - default configuration that should be used
    * @return {Object} resolved configuration
@@ -134,47 +125,49 @@ module.exports = class ExtensionContainer extends EventEmitter {
   mergeGraphQLConfig(dest, source, extensionName) {
     Logger.debug(`ExtensionContainer: merging "${extensionName}" extension GraphQL config`);
 
-    Object.keys(source).forEach(name => {
-      const value = source[name];
-      if (typeof value !== 'undefined') {
-        switch (name) {
-          // schema and typeDefs entries go to the same array as we'll use mergeSchemas() helper which is able to
-          // merge both types
-          case 'typeDefs':
-            dest.schemas.push({ typeDefs: value });
-            break;
-          case 'schema':
-          case 'schemas':
-            if (Array.isArray(value)) {
-              dest.schemas = dest.schemas.concat(value);
-            } else {
-              dest.schemas.push(value);
-            }
-            break;
-          case 'resolvers':
-            if (Array.isArray(value)) {
-              dest.resolvers = dest.resolvers.concat(value);
-            } else {
-              dest.resolvers.push(value);
-            }
-            break;
-          case 'context':
-            dest.contextModifiers.push(value);
-            break;
-          case 'dataSources':
-            dest.dataSources = Object.assign(dest.dataSources, value);
-            break;
-          default:
-            // todo: consider overriding the properties that we don't have custom merge logic for yet instead of
-            // skipping those
-            // that would give a possibility to override any kind of ApolloServer setting but the downside is
-            // that one extension could override setting returned by previous one
-            Logger.warn(
-              `ExtensionContainer: "${extensionName}" extension wants to use GraphQL option "${name}" which is not supported by Falcon extensions api yet - skipping that option`
-            );
-            break;
-        }
+    for (const name in source) {
+      if (!name || typeof source[name] === 'undefined') {
+        return;
       }
-    });
+      const value = source[name];
+
+      switch (name) {
+        // schema and typeDefs entries go to the same array as we'll use mergeSchemas() helper which is able to
+        // merge both types
+        case 'typeDefs':
+          dest.schemas.push({ typeDefs: value });
+          break;
+        case 'schema':
+        case 'schemas':
+          if (Array.isArray(value)) {
+            dest.schemas = dest.schemas.concat(value);
+          } else {
+            dest.schemas.push(value);
+          }
+          break;
+        case 'resolvers':
+          if (Array.isArray(value)) {
+            dest.resolvers = dest.resolvers.concat(value);
+          } else {
+            dest.resolvers.push(value);
+          }
+          break;
+        case 'context':
+          dest.contextModifiers.push(value);
+          break;
+        case 'dataSources':
+          dest.dataSources = Object.assign(dest.dataSources, value);
+          break;
+        default:
+          // todo: consider overriding the properties that we don't have custom merge logic for yet instead of
+          // skipping those
+          // that would give a possibility to override any kind of ApolloServer setting but the downside is
+          // that one extension could override setting returned by previous one
+          Logger.warn(
+            `ExtensionContainer: "${extensionName}" extension wants to use GraphQL "${name}" option which is not supported by Falcon extensions api yet - skipping that option`
+          );
+          break;
+      }
+    }
   }
 };
