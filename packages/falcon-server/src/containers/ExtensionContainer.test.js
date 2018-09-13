@@ -2,20 +2,20 @@ global.__SERVER__ = true; // eslint-disable-line no-underscore-dangle
 
 const { mockServer } = require('graphql-tools');
 const Logger = require('@deity/falcon-logger');
-const ExtensionsContainer = require('./extensions');
+const ExtensionContainer = require('./ExtensionContainer');
 
 // disable logger for tests
 Logger.setLogLevel('error');
 
 const extensions = [
   {
-    package: './__mocks__/FakeShopExtension',
-    options: {
+    package: 'fake-shop-extension',
+    config: {
       apiUrl: 'https://example.com'
     }
   },
   {
-    package: './__mocks__/FakeProductReviewsExtension'
+    package: 'fake-product-reviews-extension'
   }
 ];
 
@@ -35,15 +35,15 @@ describe('ExtensionsContainer', () => {
   let container;
 
   beforeEach(() => {
-    container = new ExtensionsContainer({ extensions });
+    container = new ExtensionContainer(extensions, {});
   });
 
   it('should correctly load extensions passed in configuration', () => {
-    expect(container.extensions.length).toEqual(2);
+    expect(container.extensions.size).toEqual(2);
   });
 
   it('should correctly pass configuration to extensions', () => {
-    expect(container.extensions[0].config.apiUrl).toEqual('https://example.com');
+    expect(container.extensions.get('fake-shop-extension').config.apiUrl).toEqual('https://example.com');
   });
 
   describe('Schema stitching', () => {

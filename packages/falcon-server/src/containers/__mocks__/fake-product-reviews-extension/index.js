@@ -1,6 +1,7 @@
 const { makeExecutableSchema } = require('graphql-tools');
+const { Extension } = require('@deity/falcon-server-env');
 
-module.exports = class FakeProductReviewsExtension {
+module.exports = class FakeProductReviewsExtension extends Extension {
   getGraphQLConfig() {
     // use promise to make sure async stuff works correctly
     return new Promise(resolve => {

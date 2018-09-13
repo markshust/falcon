@@ -1,10 +1,7 @@
 const { makeExecutableSchema } = require('graphql-tools');
+const { Extension } = require('@deity/falcon-server-env');
 
-module.exports = class FakeShopExtension {
-  constructor(config) {
-    this.config = config;
-  }
-
+module.exports = class FakeShopExtension extends Extension {
   getGraphQLConfig() {
     return {
       schema: makeExecutableSchema({

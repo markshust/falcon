@@ -40,7 +40,7 @@ module.exports = class ExtensionContainer extends EventEmitter {
         const extensionInstance = new ExtensionClass({ config: extension.config || {}, name: extension.package });
 
         Logger.debug(`ExtensionContainer: "${extensionInstance.name}" added to the list of extensions`);
-        const { api: apiName } = extension.config;
+        const { api: apiName } = extension.config || {};
         if (apiName && dataSources.has(apiName)) {
           extensionInstance.api = dataSources.get(apiName);
         } else {
@@ -86,7 +86,7 @@ module.exports = class ExtensionContainer extends EventEmitter {
    * @param {Object} defaultConfig - default configuration that should be used
    * @return {Object} resolved configuration
    */
-  async createGraphQLConfig(defaultConfig) {
+  async createGraphQLConfig(defaultConfig = {}) {
     const config = Object.assign(
       {
         resolvers: [],
