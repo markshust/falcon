@@ -7,6 +7,10 @@
   "bin": {
     "falcon-server": "bin/falcon-server"
   },
+  "scripts": {
+    "test": "jest --watch",
+    "test:coverage": "jest --ci --coverage"
+  },
   "dependencies": {
     "@deity/falcon-server-env": "^1.0.0",
     "@deity/falcon-logger": "1.0.0",
