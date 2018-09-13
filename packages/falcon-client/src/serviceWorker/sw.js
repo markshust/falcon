@@ -6,12 +6,7 @@ workbox.core.setCacheNameDetails({ prefix: '@deity' });
 workbox.skipWaiting();
 workbox.clientsClaim();
 
-self.__precacheManifest = [
-  {
-    url: 'app-shell',
-    revision: 'e180d256ac5ad56dc31ef392cefb9bc4'
-  }
-].concat(self.__precacheManifest || []);
+self.__precacheManifest = [].concat(self.__precacheManifest || []);
 
 workbox.precaching.suppressWarnings();
 workbox.precaching.precacheAndRoute(self.__precacheManifest, {});
