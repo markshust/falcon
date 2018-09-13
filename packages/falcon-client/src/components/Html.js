@@ -26,10 +26,11 @@ export default class Html extends Component {
 
   render() {
     const { assets, asyncContext, state, i18nextState, config, children } = this.props;
+    const { i18n } = config;
     const head = Helmet.rewind();
 
     return (
-      <html lang="en-US">
+      <html lang={i18nextState.language || i18n.lng}>
         <head>
           {this.renderGtm()}
           {head.base.toComponent()}
@@ -89,7 +90,10 @@ Html.propTypes = {
   }),
   asyncContext: PropTypes.shape({}),
   state: PropTypes.shape({}),
-  i18nextState: PropTypes.shape({}),
+  i18nextState: PropTypes.shape({
+    language: PropTypes.string,
+    data: PropTypes.shape({})
+  }),
   config: PropTypes.shape({
     usePwaManifest: PropTypes.bool,
     googleTagManager: PropTypes.shape({})
