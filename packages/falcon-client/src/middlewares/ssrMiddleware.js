@@ -9,10 +9,8 @@ import { filterResourceStoreByNs } from '../i18n/i18nServerFactory';
 
 /**
  * Server Side Rendering middleware.
- * @async
- * @param {string} ctx - Koa context, if ctx.state.prerenderedApp exists then prerendered app will be injected.
- * @param {string} next - Koa next.
- * @returns {Promise<void>} - next middleware or redirect
+ * @param {{App: React.Component}} App - React Component to render
+ * @return {function(ctx: object, next: function): Promise<void>} Koa middleware
  */
 export default ({ App }) => async (ctx, next) => {
   const { client, serverTiming } = ctx.state;
@@ -48,9 +46,10 @@ export default ({ App }) => async (ctx, next) => {
   await serverTiming.profile(async () => getDataFromTree(markup), 'getDataFromTree() #2');
 
   await serverTiming.profile(() => {
-    ctx.state.prerenderedApp = renderToString(markup);
+    renderToString(markup);
   }, 'SSR renderToString()');
 
+  ctx.state.App = markup;
   ctx.state.asyncContext = asyncContext.getState();
   ctx.state.i18nextFilteredStore = filterResourceStoreByNs(i18next.services.resourceStore.data, i18nextUsedNamespaces);
 

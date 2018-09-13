@@ -22,24 +22,26 @@ function extractI18nextState(ctx) {
 
 /**
  * HTML shell renderer middleware.
- * @param {string} ctx - Koa context, if ctx.state.prerenderedApp exists then prerendered app will be injected.
- * @param {string} next - Koa next.
+ * @return {function(ctx: object, next: function): Promise<void>} Koa middleware
  */
-export default async ctx => {
-  const { client, prerenderedApp, asyncContext, serverTiming } = ctx.state;
+export default () => async ctx => {
+  const { client, App, asyncContext, serverTiming } = ctx.state;
   const { config } = client.readQuery({ query: APP_INIT });
 
   const renderTimer = serverTiming.start('HTML renderToString()');
+
   const htmlDocument = renderToString(
     <Html
       assets={assets}
       asyncContext={asyncContext}
       state={client.extract()}
       i18nextState={extractI18nextState(ctx)}
-      content={prerenderedApp}
       config={config}
-    />
+    >
+      {App}
+    </Html>
   );
+
   serverTiming.stop(renderTimer);
 
   ctx.status = 200;

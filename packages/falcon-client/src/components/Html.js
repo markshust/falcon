@@ -25,7 +25,7 @@ export default class Html extends Component {
   }
 
   render() {
-    const { assets, asyncContext, state, i18nextState, content, config } = this.props;
+    const { assets, asyncContext, state, i18nextState, config, children } = this.props;
     const head = Helmet.rewind();
 
     return (
@@ -54,7 +54,9 @@ export default class Html extends Component {
         </head>
         <body>
           {this.renderGtm(true)}
-          <div id="root" dangerouslySetInnerHTML={{ __html: content }} />
+
+          <div id="root">{children}</div>
+
           <SerializeState variable="__APOLLO_STATE__" value={state} />
           <SerializeState variable="ASYNC_COMPONENTS_STATE" value={asyncContext} />
           <SerializeState variable="I18NEXT_STATE" value={i18nextState} />
@@ -75,6 +77,7 @@ export default class Html extends Component {
 }
 
 Html.propTypes = {
+  children: PropTypes.node,
   assets: PropTypes.shape({
     client: PropTypes.shape({
       js: PropTypes.string,
@@ -87,7 +90,6 @@ Html.propTypes = {
   asyncContext: PropTypes.shape({}),
   state: PropTypes.shape({}),
   i18nextState: PropTypes.shape({}),
-  content: PropTypes.string,
   config: PropTypes.shape({
     usePwaManifest: PropTypes.bool,
     googleTagManager: PropTypes.shape({})
@@ -95,10 +97,9 @@ Html.propTypes = {
 };
 
 Html.defaultProps = {
-  assets: { client: { js: '', css: '' } },
+  assets: { client: { js: '', css: '' }, vendors: { js: '' } },
   asyncContext: {},
   state: {},
   i18nextState: {},
-  content: '',
   config: {}
 };
