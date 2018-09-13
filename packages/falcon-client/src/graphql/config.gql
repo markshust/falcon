@@ -15,5 +15,8 @@ query APP_INIT {
     googleTagManager {
       id
     }
+    i18n {
+      lng
+    }
   }
 }
