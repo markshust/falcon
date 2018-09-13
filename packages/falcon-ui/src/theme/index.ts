@@ -78,9 +78,11 @@ type CSSOthersObject = {
   [propertiesName: string]: CssOtherProps | CssOtherProps[];
 };
 
-type CssResponsiveProps = { [Breakpoint in keyof Theme['breakpoints']]: CSS.PropertiesFallback<number | string> };
+type CssResponsiveProps = {
+  [key in CssPropsKeys]?: { [Breakpoint in keyof Theme['breakpoints']]?: CssProps[key] } | CssProps[key]
+};
 
-export interface CSSObject extends CssProps, CSSPseudoObject, CSSOthersObject {}
+export interface CSSObject extends CssResponsiveProps, CSSPseudoObject, CSSOthersObject {}
 
 export interface PropsWithTheme {
   theme: Theme;

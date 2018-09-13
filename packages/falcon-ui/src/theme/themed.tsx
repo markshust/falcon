@@ -8,7 +8,8 @@ import {
   PropsWithTheme,
   ThemedComponentProps,
   ThemedComponentPropsWithVariants,
-  InlineCss
+  InlineCss,
+  extractThemableProps
 } from './';
 
 import { mappings, PropsMappings, ResponsivePropMapping } from './propsmapings';
@@ -53,10 +54,10 @@ const convertThemedPropsToCss = (props: ThemedComponentProps, theme: Theme): CSS
   // TODO: typescript: can typings be improved for that object?
   const cssObject = {} as any;
 
-  // eslint-disable-next-line no-restricted-syntax, guard-for-in
-  for (const mappingKey in props) {
+  // eslint-disable-next-line
+  for (let mappingKey in props) {
     const propMapping = mappings[mappingKey as keyof PropsMappings];
-    const matchingProp = props[mappingKey as keyof ThemedComponentProps];
+    const matchingProp = (props as any)[mappingKey];
 
     // move along if there is no matching prop in mappings for given key found
     if (!propMapping) {
@@ -68,32 +69,22 @@ const convertThemedPropsToCss = (props: ThemedComponentProps, theme: Theme): CSS
       cssObject[cssPair.cssPropName] = cssPair.cssPropValue;
     } else {
       // if it's not string it needs to be object that has responsive breakpoints keys
-      // eslint-disable-next-line no-restricted-syntax, guard-for-in
-      for (const breakpointKey in matchingProp) {
+      // here we only translate all themed values to css values, we don't create media queries
+      // eslint-disable-next-line
+      for (let breakpointKey in matchingProp) {
         const breakpointValue = (theme.breakpoints as any)[breakpointKey];
         const matchingResponsiveProp = matchingProp[breakpointKey];
         if (breakpointValue === undefined) {
           continue;
         }
 
-        // if specified breakpoint has value 0 (usually default breakpoint)
-        // then do not create media query for it, just pass the props straight to the object
-        if (breakpointValue === 0) {
-          const cssPair = convertPropToCss(mappingKey, propMapping, matchingResponsiveProp, theme);
-          cssObject[cssPair.cssPropName] = cssPair.cssPropValue;
-        } else {
-          // if breakpoint value is different than 0 all css props needs to be inside '@media' object
+        const cssPair = convertPropToCss(mappingKey, propMapping, matchingResponsiveProp, theme);
 
-          const mediaQueryMinWidth = typeof breakpointValue === 'number' ? `${breakpointValue}px` : breakpointValue;
-          const mediaQueryKey = `@media screen and (min-width: ${mediaQueryMinWidth})`;
-          // add media query key to css object if it hasn't already got one
-          if (!cssObject[mediaQueryKey]) {
-            cssObject[mediaQueryKey] = {};
-          }
-          const cssPair = convertPropToCss(mappingKey, propMapping, matchingResponsiveProp, theme);
-
-          cssObject[mediaQueryKey][cssPair.cssPropName] = cssPair.cssPropValue;
+        if (!cssObject[cssPair.cssPropName]) {
+          cssObject[cssPair.cssPropName] = {};
         }
+
+        cssObject[cssPair.cssPropName][breakpointKey] = cssPair.cssPropValue;
       }
     }
   }
@@ -101,14 +92,55 @@ const convertThemedPropsToCss = (props: ThemedComponentProps, theme: Theme): CSS
   return cssObject;
 };
 
-function extractThemableProps(props: any) {
+const nestedCssObjectSelectors = [':', '&', '*', '>', '@'];
+
+function convertResponsivePropsToMediaQueries(css: CSSObject, theme: Theme) {
   const target: any = {};
-  // eslint-disable-next-line no-restricted-syntax
-  for (const key in props) {
-    if (propsMappingKeys.indexOf(key as any) !== -1) {
-      target[key] = props[key];
+  const mediaQueries: any = {};
+
+  // eslint-disable-next-line
+  for (let cssProp in css) {
+    const cssValue = css[cssProp];
+    if (!cssValue || typeof cssValue !== 'object' || Array.isArray(cssValue)) {
+      target[cssProp] = cssValue;
+    }
+    // we need to look for responsive props in nested css as well
+    // for example in :hover object
+    else if (nestedCssObjectSelectors.indexOf(cssProp[0]) !== -1) {
+      target[cssProp] = convertResponsivePropsToMediaQueries(cssValue as CSSObject, theme);
+    } else {
+      // eslint-disable-next-line
+      for (let potentialBreakpointKey in cssValue) {
+        const breakpointValue = (theme.breakpoints as any)[potentialBreakpointKey];
+        const valueForBreakpoint = (cssValue as any)[potentialBreakpointKey];
+        if (breakpointValue) {
+          // add media query key to mediaQueries object if it hasn't already got one
+          if (!mediaQueries[potentialBreakpointKey]) {
+            mediaQueries[potentialBreakpointKey] = {};
+          }
+          mediaQueries[potentialBreakpointKey][cssProp] = valueForBreakpoint;
+        } else if (breakpointValue === 0) {
+          target[cssProp] = valueForBreakpoint;
+        } else {
+          if (!target[cssProp]) {
+            target[cssProp] = {};
+          }
+
+          target[cssProp][potentialBreakpointKey] = valueForBreakpoint;
+        }
+      }
     }
   }
+
+  // media queries need to be handled in very careful way as order matters
+  // so media min-width with smaller px value always apper before media min-width with larger px value
+  // in resulting style
+  Object.keys(mediaQueries)
+    .sort((first, second) => ((theme.breakpoints as any)[first] > (theme.breakpoints as any)[second] ? 1 : -1))
+    .forEach(sortedMediaQueryKey => {
+      const mediaQueryPxValue = (theme.breakpoints as any)[sortedMediaQueryKey];
+      target[`@media screen and (min-width: ${mediaQueryPxValue}px)`] = mediaQueries[sortedMediaQueryKey];
+    });
 
   return target;
 }
@@ -182,7 +214,8 @@ function getThemedCss(props: ThemedProps) {
   }
 
   // out of all component props extract themable ones and add them to merge
-  themedPropsToMerge.push(extractThemableProps(remainingThemedProps));
+  const { themableProps } = extractThemableProps(remainingThemedProps);
+  themedPropsToMerge.push(themableProps);
 
   const cssFromInlineCssProps = Object.assign({}, ...cssPropsToMerge);
   const mergedThemableProps = Object.assign({}, ...themedPropsToMerge);
@@ -190,17 +223,22 @@ function getThemedCss(props: ThemedProps) {
   const cssFromThemedProps = convertThemedPropsToCss(mergedThemableProps, theme);
 
   // finally merge css from themed props with css from css props
-  return { ...cssFromThemedProps, ...cssFromInlineCssProps };
+  const mergedCss = { ...cssFromThemedProps, ...cssFromInlineCssProps };
+  // as a last step we need to check each css prop if it's value is responsive
+  return convertResponsivePropsToMediaQueries(mergedCss, theme);
 }
 
+// filtering which props to forward to next component is tricky
+// and behaves differently if next component is html element, custom component
+// or custom component whihch is themed component
 const customPropsBlacklist = ['extend', 'themeKey', 'variant', 'defaultTheme'];
 
 const filterPropsToForward = (baseComponent: any, props: any, ref: any) => {
   const filteredProps = {} as any;
   const isThemedComponent = baseComponent.themedComponent;
   const isHtmlTag = typeof baseComponent === 'string';
-  // eslint-disable-next-line no-restricted-syntax
-  for (const key in props) {
+  // eslint-disable-next-line
+  for (let key in props) {
     // when html tag is provided forward only valid html props to it
     if (isHtmlTag && !isPropValid(key)) continue;
 
@@ -233,20 +271,15 @@ const Tag = React.forwardRef<{}, { extend: any; tag: any }>((props, ref) => {
 
 type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>;
 
-export type BaseProps<TTag extends string | undefined, TExtend = {}> = {
+export type BaseProps<TTag extends string | {}> = {
   tag?: TTag;
-  extend?: TExtend;
 } & PropsWithThemeKey &
   (TTag extends keyof JSX.IntrinsicElements ? JSX.IntrinsicElements[TTag] : {}) &
-  (TExtend extends React.ComponentType<infer TExtendProps> ? Partial<TExtendProps> : {});
+  (TTag extends React.ComponentType<infer TExtendProps> ? Partial<TExtendProps> : {});
 
-export function themed<
-  TProps extends BaseProps<TTag, TExtend>,
-  TTag extends string | undefined = undefined,
-  TExtend = {}
->(
-  defaultProps: BaseProps<TTag, TExtend> & TProps,
-  themedProps?: ThemedComponentPropsWithVariants<Omit<TProps, 'tag' | 'extend'>>
+export function themed<TProps extends BaseProps<TTag>, TTag extends string | {}>(
+  defaultProps: BaseProps<TTag> & TProps,
+  themedProps?: ThemedComponentPropsWithVariants<Omit<TProps, 'tag'>>
 ) {
   const styledComponentWithThemeProps = styled(Tag, {
     label: `${defaultProps.themeKey}${defaultProps.variant ? `-${defaultProps.variant}` : ''}`
@@ -256,9 +289,7 @@ export function themed<
 
   styledComponentWithThemeProps.themedComponent = true;
 
-  return styledComponentWithThemeProps as <TTagOverride extends string | undefined = TTag, TExtendOverride = TExtend>(
-    props: BaseProps<TTagOverride, TExtendOverride> &
-      Partial<Omit<TProps, 'tag' | 'extend'>> &
-      Partial<ThemedProps> & { [x: string]: any }
+  return styledComponentWithThemeProps as <TTagOverride extends string | {} = TTag>(
+    props: BaseProps<TTagOverride> & Partial<Omit<TProps, 'tag'>> & Partial<ThemedProps> & { [x: string]: any }
   ) => JSX.Element;
 }
