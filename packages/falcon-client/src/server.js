@@ -8,12 +8,14 @@ import ssr from './middlewares/ssrMiddleware';
 import htmlShellRenderer from './middlewares/htmlShellRendererMiddleware';
 import error500 from './middlewares/error500Middleware';
 import serverTiming from './middlewares/serverTimingMiddleware';
+import i18next from './middlewares/i18nextMiddleware';
 
 /**
  * @typedef {object} ServerAppConfig
  * @property {function} App Root application component
  * @property {object} configuration Initial configuration
  * @property {object} clientApolloSchema Apollo State object
+ * @property {object} i18nResources Initial internationalization resources
  */
 
 /**
@@ -28,7 +30,7 @@ export default params => {
 
   const router = new Router();
   // Defining middlewares
-  const middlewares = [apolloClientProvider(params)];
+  const middlewares = [apolloClientProvider(params), i18next({ ...config.i18n, resources: params.i18nResources })];
   if (config.serverSideRendering) {
     middlewares.push(ssr(params));
   }

@@ -1,8 +1,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import gql from 'graphql-tag';
-import { MockedProvider } from 'react-apollo/test-utils';
-import MemoryRouter from 'react-router-dom/MemoryRouter';
+import { FalconClientMock } from '@deity/falcon-client/test-utils';
+
 import App from './App';
 
 describe('<App />', () => {
@@ -23,12 +23,15 @@ describe('<App />', () => {
     ];
     const div = document.createElement('div');
     ReactDOM.render(
-      <MockedProvider mocks={mocks} addTypename={false}>
-        <MemoryRouter>
-          <App />
-        </MemoryRouter>
-      </MockedProvider>,
+      <FalconClientMock
+        apollo={{ mocks }}
+        i18next={{ initialI18nStore: { en: { common: { welcome: 'Welcome sentence' } } } }}
+      >
+        <App />
+      </FalconClientMock>,
       div
     );
+
+    expect(div.innerHTML).toEqual(expect.stringContaining('<h2>Welcome sentence</h2>'));
   });
 });

@@ -4,11 +4,7 @@ import Html from '../components/Html';
 import { APP_INIT } from '../graphql/config.gql';
 
 // eslint-disable-next-line
-const assets = process.env.RAZZLE_ASSETS_MANIFEST && require(process.env.RAZZLE_ASSETS_MANIFEST) || {
-  client: {
-    js: ''
-  }
-};
+const assets = process.env.RAZZLE_ASSETS_MANIFEST && require(process.env.RAZZLE_ASSETS_MANIFEST);
 
 /**
  * HTML shell renderer middleware.
@@ -16,7 +12,8 @@ const assets = process.env.RAZZLE_ASSETS_MANIFEST && require(process.env.RAZZLE_
  * @param {string} next - Koa next.
  */
 export default async ctx => {
-  const { client, prerenderedApp, asyncContext, serverTiming } = ctx.state;
+  const { i18next } = ctx;
+  const { client, prerenderedApp, asyncContext, i18nextFilteredStore, serverTiming } = ctx.state;
   const { config } = client.readQuery({ query: APP_INIT });
 
   const renderTimer = serverTiming.start('HTML renderToString()');
@@ -25,6 +22,10 @@ export default async ctx => {
       assets={assets}
       asyncContext={asyncContext}
       state={client.extract()}
+      i18nextState={{
+        language: i18next.language,
+        data: i18nextFilteredStore
+      }}
       content={prerenderedApp}
       config={config}
     />

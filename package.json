@@ -32,7 +32,9 @@
     "packages/falcon-tweets-extension",
     "packages/falcon-url-extension",
     "packages/falcon-wordpress-extension",
+    "packages/falcon-i18n",
     "packages/falcon-dev-tools/eslint-config-falcon",
+    "packages/falcon-dev-tools/falcon-i18n-webpack-plugin",
     "examples/shop-with-blog/client",
     "examples/shop-with-blog/server"
   ]
