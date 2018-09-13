@@ -21,7 +21,7 @@ function extractI18nextState(ctx) {
 }
 
 /**
- * HTML shell renderer middleware.
+ * Application shell renderer middleware.
  * @return {function(ctx: object, next: function): Promise<void>} Koa middleware
  */
 export default () => async ctx => {
