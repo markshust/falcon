@@ -28,21 +28,17 @@ export function renderAppShell({ configuration }) {
  */
 export function renderApp({ configuration, clientApolloSchema, App }) {
   const { config, configSchema } = configuration;
+  const { i18n, serverSideRendering } = config;
 
-  const middlewares = [];
-  middlewares.push(
+  return [
     apolloClientProvider({
       clientStates: {
         configSchema,
         clientApolloSchema
       }
-    })
-  );
-  middlewares.push(i18next({ ...config.i18n }));
-  if (config.serverSideRendering) {
-    middlewares.push(ssr({ App }));
-  }
-  middlewares.push(appShell());
-
-  return middlewares;
+    }),
+    i18next({ ...i18n }),
+    serverSideRendering && ssr({ App }),
+    appShell()
+  ].filter(x => x);
 }
