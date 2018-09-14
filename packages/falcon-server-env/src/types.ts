@@ -2,8 +2,8 @@ import { Response, Request } from 'apollo-server-env';
 import { CacheOptions, RequestOptions } from 'apollo-datasource-rest/dist/RESTDataSource';
 import { IMiddleware } from 'koa-router';
 import { RequestInit } from 'apollo-server-env';
-export interface ConfigurableConstructorParams {
-  config: ApiDataSourceConfig;
+export interface ConfigurableConstructorParams<T = object> {
+  config: T;
   name?: string;
 }
 

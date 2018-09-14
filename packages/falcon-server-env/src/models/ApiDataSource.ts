@@ -24,10 +24,10 @@ export default abstract class ApiDataSource<TContext = any, THelpers = any> exte
    * @param {ApiDataSourceConfig} config API DataSource config
    * @param {string} name API DataSource short-name
    */
-  constructor({ config, name }: ConfigurableConstructorParams) {
+  constructor({ config, name }: ConfigurableConstructorParams<ApiDataSourceConfig>) {
     super();
     this.name = name || this.constructor.name;
-    this.config = config;
+    this.config = config || {};
 
     const { host, port, protocol } = this.config;
     if (host) {

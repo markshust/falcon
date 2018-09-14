@@ -19,7 +19,7 @@ export default abstract class Extension {
       throw new Error(`"${this.name}" extension: API DataSource was not defined`);
     }
 
-    await this.api.preInitialize();
+    return this.api.preInitialize();
   }
 
   /**
