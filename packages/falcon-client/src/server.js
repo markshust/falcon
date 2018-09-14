@@ -29,10 +29,7 @@ export default params => {
   const { config } = configuration;
   Logger.setLogLevel(config.logLevel);
 
-
-
-  
-
+  const router = new Router();
   router.get(
     '/app-shell',
     ...[apolloClientProvider({ clientStates: { configSchema: params.configuration.configSchema } }), appShell()]
