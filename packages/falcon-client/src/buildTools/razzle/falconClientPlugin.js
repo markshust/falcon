@@ -2,7 +2,6 @@
 const path = require('path');
 const FalconI18nLocalesPlugin = require('@deity/falcon-i18n-webpack-plugin');
 const makeLoaderFinder = require('razzle-dev-utils/makeLoaderFinder');
-const WorkboxPlugin = require('workbox-webpack-plugin');
 const paths = require('./../paths');
 
 function setEntryToFalconClient(config, target) {
@@ -109,26 +108,6 @@ function addFalconI18nPlugin({ resourcePackages = [], filter }, config, dev) {
   ];
 }
 
-function addWorkboxSw(config, { target, dev }) {
-  if (target === 'web' && !dev) {
-    if (!config.plugins) {
-      config.plugins = [];
-    }
-
-    config.plugins.push(
-      new WorkboxPlugin.InjectManifest({
-        importWorkboxFrom: 'cdn',
-        swSrc: path.join(paths.falconClient.appSrc, 'serviceWorker/sw.js'),
-        swDest: './sw.js',
-        precacheManifestFilename: 'sw-manifest.[manifestHash].js',
-        globDirectory: 'build/public',
-        globPatterns: [`**/*.{js,json,html,css,ico,png,jpg,gif,svg,eot,ttf,woff,woff2}`],
-        maximumFileSizeToCacheInBytes: 8 * 1024 * 1024 // 8MB
-      })
-    );
-  }
-}
-
 /**
  * falcon-client and razzle integration plugin
  * @param {{i18n: i18nPluginConfig }} appConfig webpack config
@@ -170,7 +149,6 @@ module.exports = appConfig => (config, { target, dev } /* ,  webpackObject */) =
 
   addGraphQLTagLoader(config);
   addFalconI18nPlugin(appConfig.i18n, config, dev);
-  addWorkboxSw(config, { target, dev });
 
   return config;
 };
