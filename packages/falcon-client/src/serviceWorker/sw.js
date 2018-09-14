@@ -1,15 +1,14 @@
-/* global workbox */
-/* global self */
+/* global workbox, self, importScripts */
+
+importScripts('https://storage.googleapis.com/workbox-cdn/releases/3.5.0/workbox-sw.js');
 
 workbox.core.setCacheNameDetails({ prefix: '@deity' });
 
 workbox.skipWaiting();
 workbox.clientsClaim();
 
-self.__precacheManifest = [].concat(self.__precacheManifest || []);
-
 workbox.precaching.suppressWarnings();
-workbox.precaching.precacheAndRoute(self.__precacheManifest, {});
+workbox.precaching.precacheAndRoute([], {});
 
 workbox.routing.registerRoute(
   ({ event }) => event.request.mode === 'navigate',
