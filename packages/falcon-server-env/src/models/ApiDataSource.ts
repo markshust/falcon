@@ -55,7 +55,7 @@ export default abstract class ApiDataSource<TContext = any, THelpers = any> exte
     init?: ContextRequestInit
   ): Promise<TResult> {
     this.ensureContextPassed(init);
-    return super.get(path, params, init);
+    return super.get<TResult>(path, params, init);
   }
 
   protected async post<TResult = any>(
@@ -64,7 +64,7 @@ export default abstract class ApiDataSource<TContext = any, THelpers = any> exte
     init?: ContextRequestInit,
   ): Promise<TResult> {
     this.ensureContextPassed(init);
-    return super.post(path, body, init);
+    return super.post<TResult>(path, body, init);
   }
 
   protected async patch<TResult = any>(
@@ -73,7 +73,7 @@ export default abstract class ApiDataSource<TContext = any, THelpers = any> exte
     init?: ContextRequestInit,
   ): Promise<TResult> {
     this.ensureContextPassed(init);
-    return super.patch(path, body, init);
+    return super.patch<TResult>(path, body, init);
   }
 
   protected async put<TResult = any>(
@@ -82,7 +82,7 @@ export default abstract class ApiDataSource<TContext = any, THelpers = any> exte
     init?: ContextRequestInit,
   ): Promise<TResult> {
     this.ensureContextPassed(init);
-    return super.put(path, body, init);
+    return super.put<TResult>(path, body, init);
   }
 
   protected async delete<TResult = any>(
@@ -91,7 +91,7 @@ export default abstract class ApiDataSource<TContext = any, THelpers = any> exte
     init?: ContextRequestInit,
   ): Promise<TResult> {
     this.ensureContextPassed(init);
-    return super.delete(path, params, init);
+    return super.delete<TResult>(path, params, init);
   }
 
   private ensureContextPassed(init?: ContextRequestInit): void {
