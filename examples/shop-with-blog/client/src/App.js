@@ -5,6 +5,7 @@ import Switch from 'react-router-dom/Switch';
 import Home from 'src/pages/home/Home';
 import LogIn from 'src/pages/login/LogIn';
 import DynamicRoute from '@deity/falcon-client/src/components/DynamicRoute';
+import OfflineOverlay from '@deity/falcon-client/src/components/OfflineOverlay';
 import 'src/App.css';
 
 const components = {
@@ -17,11 +18,13 @@ const components = {
 };
 
 const App = () => (
+  <OfflineOverlay>
     <Switch>
       <Route exact path="/" component={Home} />
       <Route exact path="/login" component={LogIn} />
       <DynamicRoute components={components} />
     </Switch>
+  </OfflineOverlay>
 );
 
 export default App;
