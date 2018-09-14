@@ -29,6 +29,10 @@ export default params => {
   const { config } = configuration;
   Logger.setLogLevel(config.logLevel);
 
+  const staticFiles = new Router();
+  staticFiles.get('/sw.js', serve(process.env.RAZZLE_PUBLIC_DIR, { maxage: 0 }));
+  staticFiles.get('/static/*', serve(process.env.RAZZLE_PUBLIC_DIR, { maxage: 60 * 60 * 24 * 7 * 30 * 12 }));
+
   const router = new Router();
   router.get(
     '/app-shell',
@@ -60,6 +64,7 @@ export default params => {
     .use(error500())
     .use(serverTiming())
     .use(compress())
+    .use(staticFiles.routes())
     .use(serve(process.env.RAZZLE_PUBLIC_DIR))
     .use(router.routes())
     .use(router.allowedMethods());
