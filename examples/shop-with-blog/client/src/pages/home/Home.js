@@ -34,13 +34,16 @@ const Home = props => {
       </Query>
       <ul className="Home-resources">
         <li>
-          <a href="https://github.com/jaredpalmer/razzle">Docs</a>
+          <Link to="/login">Log in</Link>
         </li>
         <li>
           <Link to="/post">Post (dynamic)</Link>
         </li>
         <li>
           <Link to="/shop">Shop (dynamic)</Link>
+        </li>
+        <li>
+          <a href="https://github.com/jaredpalmer/razzle">Docs</a>
         </li>
         <li>
           <a href="http://koajs.com">Koa official site</a>
