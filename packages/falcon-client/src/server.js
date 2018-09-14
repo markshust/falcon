@@ -48,7 +48,7 @@ export default params => {
       }
     })
   );
-  renderAppRouteMiddlewares.push(i18next({ ...config.i18n, resources: params.i18nResources }));
+  renderAppRouteMiddlewares.push(i18next({ ...config.i18n }));
   if (config.serverSideRendering) {
     renderAppRouteMiddlewares.push(ssr(params));
   }

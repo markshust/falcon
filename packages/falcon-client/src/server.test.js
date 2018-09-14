@@ -13,10 +13,16 @@ describe('Server', () => {
   it('Should properly call eventHandlers', () => {
     const onServerCreatedMock = jest.fn();
     const onServerInitializedMock = jest.fn();
+    const config = {
+      serverSideRendering: true,
+      logLevel: 'error'
+    };
     const configuration = {
-      config: {
-        serverSideRendering: true,
-        logLevel: 'error'
+      config,
+      configSchema: {
+        defaults: {
+          config
+        }
       },
       onServerCreated: onServerCreatedMock,
       onServerInitialized: onServerInitializedMock
@@ -68,8 +74,9 @@ describe('Server', () => {
       googleTagManager: {
         id: null
       },
-      language: {
-        default: 'en'
+      i18n: {
+        lng: 'en',
+        resources: { en: { common: { key: 'foo bar baz' } } }
       }
     };
     const configuration = {
@@ -92,8 +99,7 @@ describe('Server', () => {
     const serverHandler = server({
       App,
       configuration,
-      clientApolloSchema,
-      i18nResources: { en: { common: { key: 'foo bar baz' } } }
+      clientApolloSchema
     }).callback();
     const response = await supertest(serverHandler).get('/');
 
