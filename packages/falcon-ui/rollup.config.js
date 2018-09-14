@@ -1,7 +1,8 @@
 import babel from 'rollup-plugin-babel';
 import resolve from 'rollup-plugin-node-resolve';
-import { sizeSnapshot } from 'rollup-plugin-size-snapshot';
 import pkg from './package.json';
+
+process.env.ROLLUP = true;
 
 const externals = [...Object.keys(pkg.dependencies || {}), ...Object.keys(pkg.peerDependencies || {})];
 
@@ -23,9 +24,9 @@ export default {
       extensions
     }),
     babel({
-      extensions
-    }),
-    sizeSnapshot({ matchSnapshot: false })
+      extensions,
+      runtimeHelpers: true
+    })
   ],
-  output: [{ file: pkg.main, format: 'cjs', sourcemap: true }, { file: pkg.module, format: 'esm', sourcemap: true }]
+  output: [{ file: pkg.main, format: 'cjs', sourcemap: true }]
 };

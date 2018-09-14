@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { ThemeProvider, Card, Button, Image, Swipeable, SwipeableItem, Box, H2, H3, Text, NumberInput } from './';
+import { ThemeProvider, Card, Button, Image, Swipeable, SwipeableItem, Box, H2, H3, Text, NumberInput } from '../';
 import { themed, createTheme, Theme } from '../theme';
 
 const HomeLayout = themed({

@@ -1,6 +1,4 @@
-const { BABEL_ENV, NODE_ENV } = process.env;
-const cjs = BABEL_ENV === 'cjs' || NODE_ENV === 'test';
-
+const notARollupCjsBuild = process.env.ROLLUP === undefined;
 module.exports = {
   presets: [
     [
@@ -19,8 +17,8 @@ module.exports = {
   ],
   plugins: [
     '@babel/plugin-proposal-class-properties',
+    ['@babel/plugin-transform-runtime', { useESModules: notARollupCjsBuild }],
     ['@babel/proposal-object-rest-spread', { loose: true, useBuiltIns: true }],
-    'annotate-pure-calls',
-    cjs && 'transform-es2015-modules-commonjs'
+    'annotate-pure-calls'
   ].filter(Boolean)
 };
