@@ -49,6 +49,7 @@ export default ({
     }
   });
 };
+
 export function filterResourceStoreByNs(storeData, namespaces) {
   const i18nResourceStore = {};
   Object.keys(storeData).forEach(lng => {
@@ -64,4 +65,15 @@ export function filterResourceStoreByNs(storeData, namespaces) {
   });
 
   return i18nResourceStore;
+}
+
+export function extractI18nextState(ctx) {
+  if (ctx.i18next) {
+    return {
+      language: ctx.i18next.language,
+      data: ctx.state.i18nextFilteredStore
+    };
+  }
+
+  return {};
 }

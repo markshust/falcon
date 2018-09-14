@@ -4,19 +4,15 @@ import helmet from 'koa-helmet';
 import Router from 'koa-router';
 import compress from 'koa-compress';
 import Logger from '@deity/falcon-logger';
-import apolloClientProvider from './middlewares/apolloClientProvider';
-import ssr from './middlewares/ssrMiddleware';
-import appShell from './middlewares/appShellMiddleware';
 import error500 from './middlewares/error500Middleware';
 import serverTiming from './middlewares/serverTimingMiddleware';
-import i18next from './middlewares/i18nextMiddleware';
+import { renderAppShell, renderApp } from './routing';
 
 /**
  * @typedef {object} ServerAppConfig
  * @property {function} App Root application component
  * @property {object} configuration Initial configuration
  * @property {object} clientApolloSchema Apollo State object
- * @property {object} i18nResources Initial internationalization resources
  */
 
 /**
@@ -24,8 +20,7 @@ import i18next from './middlewares/i18nextMiddleware';
  * @param {ServerAppConfig} params Application params
  * @return {Koa} Server instance
  */
-export default params => {
-  const { configuration } = params;
+export default ({ App, clientApolloSchema, configuration }) => {
   const { config } = configuration;
   Logger.setLogLevel(config.logLevel);
 
@@ -34,26 +29,8 @@ export default params => {
   staticFiles.get('/static/*', serve(process.env.RAZZLE_PUBLIC_DIR, { maxage: 60 * 60 * 24 * 7 * 30 * 12 }));
 
   const router = new Router();
-  router.get(
-    '/app-shell',
-    ...[apolloClientProvider({ clientStates: { configSchema: params.configuration.configSchema } }), appShell()]
-  );
-
-  const renderAppRouteMiddlewares = [];
-  renderAppRouteMiddlewares.push(
-    apolloClientProvider({
-      clientStates: {
-        configSchema: params.configuration.configSchema,
-        clientApolloSchema: params.clientApolloSchema
-      }
-    })
-  );
-  renderAppRouteMiddlewares.push(i18next({ ...config.i18n }));
-  if (config.serverSideRendering) {
-    renderAppRouteMiddlewares.push(ssr(params));
-  }
-  renderAppRouteMiddlewares.push(appShell());
-  router.get('/*', ...renderAppRouteMiddlewares);
+  router.get('/app-shell', ...renderAppShell({ configuration }));
+  router.get('/*', ...renderApp({ configuration, clientApolloSchema, App }));
 
   // Initialize and configure Koa application
   const server = new Koa();
