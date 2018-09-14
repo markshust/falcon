@@ -8,9 +8,10 @@ import {
   PropsWithTheme,
   ThemedComponentProps,
   ThemedComponentPropsWithVariants,
-  InlineCss,
-  extractThemableProps
+  InlineCss
 } from './';
+
+import { extractThemableProps } from './utils';
 
 import { mappings, PropsMappings, ResponsivePropMapping } from './propsmapings';
 
@@ -35,16 +36,15 @@ const convertPropToCss = (
   };
 };
 
-type PropsWithThemeKey = {
-  themeKey?: string;
+type PropsWithVariant = {
   variant?: string;
 };
 
 type PropsWithDefaultTheme = {
-  defaultTheme?: ThemedComponentPropsWithVariants;
+  defaultTheme?: ThemedComponentPropsWithVariants | { [name: string]: ThemedComponentPropsWithVariants };
 };
 
-type ThemedProps = ThemedComponentProps & PropsWithTheme & PropsWithThemeKey & PropsWithDefaultTheme;
+type ThemedProps = ThemedComponentProps & PropsWithTheme & PropsWithVariant & PropsWithDefaultTheme;
 
 const convertThemedPropsToCss = (props: ThemedComponentProps, theme: Theme): CSSObject => {
   //  if theme is not provided via theme provider do not map anything
@@ -113,6 +113,7 @@ function convertResponsivePropsToMediaQueries(css: CSSObject, theme: Theme) {
       for (let potentialBreakpointKey in cssValue) {
         const breakpointValue = (theme.breakpoints as any)[potentialBreakpointKey];
         const valueForBreakpoint = (cssValue as any)[potentialBreakpointKey];
+
         if (breakpointValue) {
           // add media query key to mediaQueries object if it hasn't already got one
           if (!mediaQueries[potentialBreakpointKey]) {
@@ -159,7 +160,16 @@ function getThemedCss(props: ThemedProps) {
     return;
   }
 
-  const { defaultTheme, themeKey, theme, variant, ...remainingProps } = props;
+  const { defaultTheme, theme, variant, ...remainingProps } = props;
+  let themeKey, defaultThemeProps;
+  // defaultTheme specifies it's props in nested object which key is used as themeKey
+  if (defaultTheme) {
+    const potentialKey = Object.keys(defaultTheme)[0];
+
+    themeKey = typeof (defaultTheme as any)[potentialKey] === 'object' ? potentialKey : undefined;
+    defaultThemeProps = themeKey ? (defaultTheme as any)[themeKey] : undefined;
+  }
+
   // first we need to check where themed props and css props are defined and merge them
   // // css props need to merged separately as those do not need to be processed to extract css
   // Merging order
@@ -180,8 +190,8 @@ function getThemedCss(props: ThemedProps) {
   };
 
   //  start with props defined in defaultTheme prop as base
-  if (defaultTheme !== undefined) {
-    addPropsToMerge(defaultTheme);
+  if (defaultThemeProps !== undefined) {
+    addPropsToMerge(defaultThemeProps);
   }
 
   // if props are defined in theme object for themeKey merge them with default ones
@@ -194,7 +204,7 @@ function getThemedCss(props: ThemedProps) {
     // themed props can also be defined for component variant
     if (variant) {
       // check for variant props defined in defaultTheme
-      const defaultThemeVariants = defaultTheme && defaultTheme.variants;
+      const defaultThemeVariants = defaultThemeProps && defaultThemeProps.variants;
 
       if (defaultThemeVariants && defaultThemeVariants[variant]) {
         addPropsToMerge(defaultThemeVariants[variant]);
@@ -231,7 +241,7 @@ function getThemedCss(props: ThemedProps) {
 // filtering which props to forward to next component is tricky
 // and behaves differently if next component is html element, custom component
 // or custom component whihch is themed component
-const customPropsBlacklist = ['extend', 'themeKey', 'variant', 'defaultTheme'];
+const customPropsBlacklist = ['as', 'themeKey', 'variant', 'defaultTheme'];
 
 const filterPropsToForward = (baseComponent: any, props: any, ref: any) => {
   const filteredProps = {} as any;
@@ -247,7 +257,7 @@ const filterPropsToForward = (baseComponent: any, props: any, ref: any) => {
     const themableProp = propsMappingKeys.indexOf(key as any) !== -1 || customPropsBlacklist.indexOf(key) !== -1;
     if (themableProp) continue;
 
-    // if custom component is not a themed component do not forward tag prop to it
+    // if custom component is not a themed component do not forward `tag` prop to it
     if (!isThemedComponent && key === 'tag') {
       continue;
     }
@@ -260,36 +270,58 @@ const filterPropsToForward = (baseComponent: any, props: any, ref: any) => {
   return filteredProps;
 };
 
-// this component handles dynamic html tag rendering via 'extend' and 'tag' props as well as forwards ref to DOM element
+// this component handles dynamic html tag rendering via and 'as' prop as well as forwards ref to DOM element
 // and forwards only allowed html tags
-const Tag = React.forwardRef<{}, { extend: any; tag: any }>((props, ref) => {
-  const Base = props.extend || props.tag || 'div';
+const Tag = React.forwardRef<{}, { tag: any; as: any }>((props, ref) => {
+  const Base = props.as || props.tag || 'div';
   const nextProps = filterPropsToForward(Base, props as any, ref);
 
   return React.createElement(Base, nextProps);
 });
 
-type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>;
-
 export type BaseProps<TTag extends string | {}> = {
-  tag?: TTag;
-} & PropsWithThemeKey &
+  as?: TTag;
+} & PropsWithVariant &
   (TTag extends keyof JSX.IntrinsicElements ? JSX.IntrinsicElements[TTag] : {}) &
   (TTag extends React.ComponentType<infer TExtendProps> ? Partial<TExtendProps> : {});
 
-export function themed<TProps extends BaseProps<TTag>, TTag extends string | {}>(
-  defaultProps: BaseProps<TTag> & TProps,
-  themedProps?: ThemedComponentPropsWithVariants<Omit<TProps, 'tag'>>
-) {
+type DefaultProps<TTag extends string | {}> = (TTag extends keyof JSX.IntrinsicElements
+  ? JSX.IntrinsicElements[TTag]
+  : {}) &
+  (TTag extends React.ComponentType<infer TExtendProps> ? Partial<TExtendProps> : {});
+
+type ThemedOptions<TTag extends string | {}, TProps> = {
+  tag?: TTag;
+
+  defaultTheme?: { [name: string]: ThemedComponentPropsWithVariants<TProps> };
+
+  defaultProps?: DefaultProps<TTag> & TProps;
+};
+
+export function themed<TProps, TTag extends string | {}>(options: ThemedOptions<TTag, TProps>) {
+  let label = 'themed';
+
+  if (options.defaultTheme) {
+    const componentKey = Object.keys(options.defaultTheme)[0];
+    if (typeof (options.defaultTheme as any)[componentKey] === 'object') {
+      label = `${label}-${componentKey}`;
+    }
+  }
+
   const styledComponentWithThemeProps = styled(Tag, {
-    label: `${defaultProps.themeKey}${defaultProps.variant ? `-${defaultProps.variant}` : ''}`
+    label // label is transformed for displayName of styled component
   })(getThemedCss);
 
-  styledComponentWithThemeProps.defaultProps = { ...(defaultProps as any), defaultTheme: themedProps };
+  // default theme is also passed as part of default props
+  styledComponentWithThemeProps.defaultProps = {
+    ...(options.defaultProps as any),
+    defaultTheme: options.defaultTheme,
+    tag: options.tag
+  };
 
   styledComponentWithThemeProps.themedComponent = true;
 
   return styledComponentWithThemeProps as <TTagOverride extends string | {} = TTag>(
-    props: BaseProps<TTagOverride> & Partial<Omit<TProps, 'tag'>> & Partial<ThemedProps> & { [x: string]: any }
+    props: BaseProps<TTagOverride> & Partial<typeof options['defaultProps']> & ThemedComponentProps & PropsWithVariant
   ) => JSX.Element;
 }

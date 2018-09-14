@@ -1,18 +1,22 @@
 import { themed } from '../theme';
 
-export const Avatar = themed(
-  {
-    themeKey: 'avatar',
-    tag: 'img',
+export const Avatar = themed({
+  tag: 'img',
+
+  defaultProps: {
     size: 48
   },
-  {
-    borderRadius: 'xl',
-    css: props => ({
-      width: props.size,
-      height: props.size,
-      objectFit: 'contain',
-      maxWidth: '100%'
-    })
+
+  defaultTheme: {
+    avatar: {
+      borderRadius: 'xl',
+
+      css: ({ size }) => ({
+        width: size,
+        height: size,
+        objectFit: 'contain',
+        maxWidth: '100%'
+      })
+    }
   }
-);
+});

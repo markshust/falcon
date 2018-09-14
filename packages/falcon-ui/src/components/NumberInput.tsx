@@ -1,6 +1,6 @@
 import React from 'react';
 import { themed, extractThemableProps } from '../theme';
-import { Box } from './';
+import { Box } from './Box';
 
 // based on https://github.com/facebook/react/issues/10135#issuecomment-314441175
 function triggerChange(element: any, value: any) {
@@ -17,14 +17,9 @@ function triggerChange(element: any, value: any) {
   element.dispatchEvent(new Event('change', { bubbles: true }));
 }
 
-type NumberInputInnerDOMProps = {
-  min?: number | string;
-  max?: number | string;
-  step?: number | string;
-  className?: string;
-};
-
-class NumberInputInnerDOM extends React.Component<NumberInputInnerDOMProps> {
+class NumberInputInnerDOM extends React.Component<
+  React.DetailedHTMLProps<React.InputHTMLAttributes<HTMLInputElement>, HTMLInputElement>
+> {
   getStep() {
     if (this.props.step === undefined) {
       return 1;
@@ -86,12 +81,13 @@ class NumberInputInnerDOM extends React.Component<NumberInputInnerDOMProps> {
 
     return (
       <Box {...themableProps} className={className}>
-        <button aria-hidden onClick={this.stepDown}>
+        <button aria-hidden onClick={this.stepDown} className="-inner-input-step-down-element">
           −
         </button>
+
         <input ref={this.inputRef} min={5} type="number" {...rest} />
 
-        <button aria-hidden onClick={this.stepUp}>
+        <button aria-hidden onClick={this.stepUp} className="-inner-input-step-up-element">
           +
         </button>
       </Box>
@@ -99,70 +95,73 @@ class NumberInputInnerDOM extends React.Component<NumberInputInnerDOMProps> {
   }
 }
 
-export const NumberInput = themed(
-  {
-    tag: NumberInputInnerDOM,
-    themeKey: 'numberInput',
+export const NumberInput = themed({
+  tag: NumberInputInnerDOM,
+  defaultProps: {
     size: 30
   },
-  {
-    css: props => ({
-      display: 'inline-flex',
-      alignItems: 'center',
-      input: {
-        appearance: 'none',
-        MozAppearance: 'textfield',
-        pointerEvents: 'none',
-        userSelect: 'none',
-        height: props.size,
-        width: props.size,
-        fontStyle: 'inherit',
-        border: props.theme.borders.light,
-        borderColor: props.theme.colors.primaryDark,
-        borderRadius: props.theme.borderRadius.xs,
-        textAlign: 'center',
-        boxShadow: 'none',
-        fontSize: props.size * 0.45,
-        '::-webkit-outer-spin-button,::-webkit-inner-spin-button ': {
-          appearance: 'none'
-        }
-      },
 
-      button: {
-        height: props.size,
-        width: props.size,
-        transform: 'scale(0.8)',
-        border: 'none',
-        outline: 'none',
-        appearance: 'none',
-        transitionProperty: 'transform, background',
-        transitionTimingFunction: props.theme.easingFunctions.easeIn,
-        transitionDuration: props.theme.transitionDurations.short,
-        background: props.theme.colors.primaryDark,
-        color: props.theme.colors.primaryText,
-        borderRadius: props.theme.borderRadius.xl,
-        fontWeight: props.theme.fontWeights.bold,
-        fontSize: props.size * 0.7,
-        cursor: 'pointer',
-        flex: 'none',
-        paddingBottom: props.size * 0.125,
-        ':hover': {
-          background: props.theme.colors.primary
+  defaultTheme: {
+    numberInput: {
+      css: ({ size, theme }) => ({
+        display: 'inline-flex',
+        alignItems: 'center',
+
+        input: {
+          appearance: 'none',
+          MozAppearance: 'textfield',
+          pointerEvents: 'none',
+          userSelect: 'none',
+          height: size,
+          width: size,
+          fontStyle: 'inherit',
+          border: theme.borders.light,
+          borderColor: theme.colors.primaryDark,
+          borderRadius: theme.borderRadius.xs,
+          textAlign: 'center',
+          boxShadow: 'none',
+          fontSize: size * 0.45,
+          '::-webkit-outer-spin-button,::-webkit-inner-spin-button': {
+            appearance: 'none'
+          }
         },
-        ':first-child': {
-          marginRight: props.theme.spacing.sm,
+
+        '.-inner-input-step-down-element, .-inner-input-step-up-element': {
+          height: size,
+          width: size,
+          transform: 'scale(0.8)',
+          border: 'none',
+          outline: 'none',
+          appearance: 'none',
+          transitionProperty: 'transform, background',
+          transitionTimingFunction: theme.easingFunctions.easeIn,
+          transitionDuration: theme.transitionDurations.short,
+          background: theme.colors.primaryDark,
+          color: theme.colors.primaryText,
+          borderRadius: theme.borderRadius.xl,
+          fontWeight: theme.fontWeights.bold,
+          fontSize: size * 0.7,
+          cursor: 'pointer',
+          flex: 'none',
+          paddingBottom: size * 0.125,
+
+          ':hover': {
+            background: theme.colors.primary
+          }
+        },
+        '.-inner-input-step-down-element': {
+          marginRight: theme.spacing.sm,
           ':active': {
             transform: 'scale(0.6)'
           }
         },
-        ':last-child': {
-          marginLeft: props.theme.spacing.sm,
-
+        '.-inner-input-step-up-element': {
+          marginLeft: theme.spacing.sm,
           ':active': {
             transform: 'scale(1)'
           }
         }
-      }
-    })
+      })
+    }
   }
-);
+});

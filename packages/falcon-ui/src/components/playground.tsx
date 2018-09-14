@@ -5,11 +5,16 @@ import { themed, createTheme, Theme } from '../theme';
 
 const HomeLayout = themed({
   tag: 'article',
-  themeKey: 'homelayout'
+  defaultTheme: {
+    homelayout: {}
+  }
 });
+
 const ProductLayout = themed({
   tag: 'article',
-  themeKey: 'productLayout'
+  defaultTheme: {
+    productLayout: {}
+  }
 });
 
 const defaultThemeWithNewHomeLayoutComponent = createTheme({
@@ -172,15 +177,15 @@ export class Playground extends React.Component<{}, { currentTheme: Theme }> {
         <ProductLayout mt="lg">
           <Swipeable gridArea="carousel" css={{ height: 250 }}>
             <Image
-              extend={SwipeableItem}
+              as={SwipeableItem}
               src="https://images.unsplash.com/photo-1533359856343-b66cefc8bdd7?ixlib=rb-0.3.5&s=e6f5d8aca61ab3651463fc562d7e61f4&auto=format&fit=crop&w=1500&q=80"
             />
             <Image
-              extend={SwipeableItem}
+              as={SwipeableItem}
               src="https://images.unsplash.com/photo-1533796846028-7243a1adf748?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=fab1a48ac8030aee83bb5bb1a350a3c3&auto=format&fit=crop&w=668&q=80"
             />
             <Image
-              extend={SwipeableItem}
+              as={SwipeableItem}
               src="https://images.unsplash.com/photo-1533359856343-b66cefc8bdd7?ixlib=rb-0.3.5&s=e6f5d8aca61ab3651463fc562d7e61f4&auto=format&fit=crop&w=1500&q=80"
             />
           </Swipeable>

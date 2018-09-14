@@ -12,47 +12,50 @@ const rangeInputThumb = (styles: CSSObject) => ({
   '::-ms-thumb': styles
 });
 
-export const RangeInput = themed(
-  {
-    themeKey: 'rangeInput',
-    tag: 'input',
+export const RangeInput = themed({
+  tag: 'input',
+
+  defaultProps: {
     type: 'range'
   },
-  {
-    css: props => ({
-      width: '100%',
-      WebkitAppearance: 'none',
-      height: props.theme.spacing.md,
-      ':focus': {
-        outline: 'none'
-      },
-      ...rangeInputTrack({
+
+  defaultTheme: {
+    rangeInput: {
+      css: ({ theme }) => ({
         width: '100%',
-        cursor: 'pointer',
-        display: 'flex',
-        alignItems: 'center',
-        border: 'none',
-        borderRadius: props.theme.borderRadius.xs,
-        height: props.theme.spacing.xs,
-        background: props.theme.colors.primary
-      }),
-      ...rangeInputThumb({
         WebkitAppearance: 'none',
-        cursor: 'pointer',
-        border: 'none',
-        borderRadius: props.theme.borderRadius.xl,
-        background: props.theme.colors.secondary,
-        height: props.theme.spacing.md,
-        width: props.theme.spacing.md,
-        transition: 'transform',
-        transitionTimingFunction: props.theme.easingFunctions.easeIn,
-        transitionDuration: props.theme.transitionDurations.short
-      }),
-      ':active': {
+        height: theme.spacing.md,
+        ':focus': {
+          outline: 'none'
+        },
+        ...rangeInputTrack({
+          width: '100%',
+          cursor: 'pointer',
+          display: 'flex',
+          alignItems: 'center',
+          border: 'none',
+          borderRadius: theme.borderRadius.xs,
+          height: theme.spacing.xs,
+          background: theme.colors.primary
+        }),
         ...rangeInputThumb({
-          transform: 'scale(1.1)'
-        })
-      }
-    })
+          WebkitAppearance: 'none',
+          cursor: 'pointer',
+          border: 'none',
+          borderRadius: theme.borderRadius.xl,
+          background: theme.colors.secondary,
+          height: theme.spacing.md,
+          width: theme.spacing.md,
+          transition: 'transform',
+          transitionTimingFunction: theme.easingFunctions.easeIn,
+          transitionDuration: theme.transitionDurations.short
+        }),
+        ':active': {
+          ...rangeInputThumb({
+            transform: 'scale(1.1)'
+          })
+        }
+      })
+    }
   }
-);
+});

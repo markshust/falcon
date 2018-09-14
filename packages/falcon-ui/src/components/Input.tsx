@@ -9,32 +9,35 @@ function placeholder(styles: CSSObject): CSSObject {
   };
 }
 
-export const Input = themed(
-  {
-    themeKey: 'input',
-    tag: 'input',
+export const Input = themed({
+  tag: 'input',
+
+  defaultProps: {
     type: 'text',
     invalid: false
   },
-  {
-    p: 'sm',
-    border: 'regular',
-    borderRadius: 'xs',
 
-    css: props => ({
-      ...placeholder({
-        color: props.theme.colors.primaryText
-      }),
-      ':focus': {
-        outline: 'none',
-        borderColor: props.invalid ? props.theme.colors.error : props.theme.colors.secondary
-      },
-      borderColor: props.invalid ? props.theme.colors.error : props.theme.colors.primaryDark,
-      fontFamily: 'inherit',
-      lineHeight: 'inherit',
-      color: 'inherit',
-      WebkitAppearance: 'none',
-      width: '100%'
-    })
+  defaultTheme: {
+    input: {
+      p: 'sm',
+      border: 'regular',
+      borderRadius: 'xs',
+
+      css: ({ invalid, theme }) => ({
+        ...placeholder({
+          color: theme.colors.primaryText
+        }),
+        ':focus': {
+          outline: 'none',
+          borderColor: invalid ? theme.colors.error : theme.colors.secondary
+        },
+        borderColor: invalid ? theme.colors.error : theme.colors.primaryDark,
+        fontFamily: 'inherit',
+        lineHeight: 'inherit',
+        color: 'inherit',
+        WebkitAppearance: 'none',
+        width: '100%'
+      })
+    }
   }
-);
+});

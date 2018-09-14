@@ -3,7 +3,7 @@ import merge from 'deepmerge';
 
 import { theme } from './theme';
 
-import { PropsMappings, mappings } from './propsmapings';
+import { PropsMappings } from './propsmapings';
 
 const defaultTheme: Theme = {
   ...theme,
@@ -17,26 +17,7 @@ export function createTheme(themeOverride: RecursivePartial<Theme> = {}): Theme 
 // export themed component factory
 export * from './themed';
 
-const themablePropsKeys = [...Object.keys(mappings), 'css'];
-
-export function extractThemableProps(props: any) {
-  const themableProps: any = {};
-  const rest: any = {};
-
-  // eslint-disable-next-line
-  for (let key in props) {
-    if (themablePropsKeys.indexOf(key as any) !== -1) {
-      themableProps[key] = props[key];
-    } else {
-      rest[key] = props[key];
-    }
-  }
-
-  return {
-    themableProps,
-    rest
-  };
-}
+export * from './utils';
 
 // --- exported type definitions for theme  ----
 export interface Theme {

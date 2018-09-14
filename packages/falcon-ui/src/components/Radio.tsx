@@ -1,82 +1,87 @@
 import React from 'react';
 import { themed, extractThemableProps } from '../theme';
-import { Box } from './';
+import { Box } from './Box';
 
-const RadioInnerDOM = (props: any) => {
+const RadioInnerDOM = (
+  props: React.DetailedHTMLProps<React.InputHTMLAttributes<HTMLInputElement>, HTMLInputElement>
+) => {
   const { className, ...remaining } = props;
   const { themableProps, rest } = extractThemableProps(remaining);
 
   return (
     <Box {...themableProps} className={className}>
       <input {...rest} type="radio" />
-      <div aria-hidden>
-        <i />
+      <div aria-hidden className="-inner-radio-frame">
+        <i className="-inner-radio-icon" />
       </div>
     </Box>
   );
 };
 
-export const Radio = themed(
-  {
-    tag: RadioInnerDOM,
-    themeKey: 'radio',
+export const Radio = themed({
+  tag: RadioInnerDOM,
+
+  defaultProps: {
     size: 24
   },
-  {
-    css: props => ({
-      display: 'inline-flex',
-      position: 'relative',
-      // radio input is not visible but interactive
-      input: {
-        position: 'absolute',
-        top: 0,
-        left: 0,
-        width: '100%',
-        height: '100%',
-        opacity: 0,
-        zIndex: 1,
-        ':checked + div': {
-          borderColor: props.theme.colors.secondary,
-          i: {
-            opacity: 1,
-            background: props.theme.colors.secondary
+
+  defaultTheme: {
+    radio: {
+      css: ({ size, theme }) => ({
+        display: 'inline-flex',
+        position: 'relative',
+        // radio input is not visible but interactive
+        input: {
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          width: '100%',
+          height: '100%',
+          opacity: 0,
+          zIndex: 1,
+          ':checked + .-inner-radio-frame': {
+            borderColor: theme.colors.secondary,
+            '.-inner-radio-icon': {
+              opacity: 1,
+              background: theme.colors.secondary
+            }
+          },
+          ':hover + .-inner-radio-frame': {
+            borderColor: theme.colors.secondaryLight,
+            '.-inner-radio-icon': {
+              background: theme.colors.secondaryLight
+            }
           }
         },
-        ':hover + div': {
-          borderColor: props.theme.colors.secondaryLight,
-          i: {
-            background: props.theme.colors.secondaryLight
-          }
+
+        '.-inner-radio-icon': {
+          height: size - 10,
+          width: size - 10,
+          display: 'block',
+          opacity: 0,
+          backround: theme.colors.white,
+          borderRadius: theme.borderRadius.xl,
+          transitionProperty: 'opacity, background',
+          transitionTimingFunction: theme.easingFunctions.easeIn,
+          transitionDuration: theme.transitionDurations.short
+        },
+
+        '.-inner-radio-frame': {
+          height: size,
+          width: size,
+          position: 'relative',
+          display: 'flex',
+          cursor: 'pointer',
+          borderRadius: theme.borderRadius.xl,
+          border: theme.borders.bold,
+          borderColor: theme.colors.primaryDark,
+          transitionProperty: 'border, background',
+          transitionTimingFunction: theme.easingFunctions.easeIn,
+          transitionDuration: theme.transitionDurations.short,
+          justifyContent: 'center',
+          alignItems: 'center'
         }
-      },
-
-      i: {
-        height: props.size - 10,
-        width: props.size - 10,
-        display: 'block',
-        opacity: 0,
-        backround: props.theme.colors.white,
-        borderRadius: props.theme.borderRadius.xl,
-        transitionProperty: 'opacity, background',
-        transitionTimingFunction: props.theme.easingFunctions.easeIn,
-        transitionDuration: props.theme.transitionDurations.short
-      },
-
-      div: {
-        height: props.size,
-        width: props.size,
-        position: 'relative',
-        display: 'flex',
-        cursor: 'pointer',
-        borderRadius: props.theme.borderRadius.xl,
-        border: props.theme.borders.bold,
-        borderColor: props.theme.colors.primaryDark,
-        transitionProperty: 'border, background',
-        transitionTimingFunction: props.theme.easingFunctions.easeIn,
-        transitionDuration: props.theme.transitionDurations.short,
-        justifyContent: 'center',
-        alignItems: 'center'
-      }
-    })
+      })
+    }
   }
-);
+});

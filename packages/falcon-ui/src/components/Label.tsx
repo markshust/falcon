@@ -1,13 +1,13 @@
 import { themed } from '../theme';
 
-export const Label = themed(
-  {
-    themeKey: 'label',
-    tag: 'label'
-  },
-  {
-    display: 'block',
-    mb: 'sm',
-    lineHeight: 'small'
+export const Label = themed({
+  tag: 'label',
+
+  defaultTheme: {
+    label: {
+      display: 'block',
+      mb: 'sm',
+      lineHeight: 'small'
+    }
   }
-);
+});

@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { Box } from './';
+import { Box } from './Box';
 
 export class Portal extends React.Component {
   state = { wrapper: null };

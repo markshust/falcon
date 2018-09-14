@@ -1,14 +1,13 @@
 import { themed } from '../theme';
 
-export const Card = themed(
-  {
-    themeKey: 'card',
-    tag: 'div'
-  },
-  {
-    display: 'block',
-    p: 'md',
-    boxShadow: 'xs',
-    bg: 'white'
+export const Card = themed({
+  tag: 'div',
+  defaultTheme: {
+    card: {
+      display: 'block',
+      boxShadow: 'xs',
+      p: 'md',
+      bg: 'white'
+    }
   }
-);
+});

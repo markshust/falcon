@@ -65,7 +65,7 @@ export const mappings = propsMapping({
   fontFamily: {
     themeProp: 'fonts'
   },
-  textAlign: {},
+
   lineHeight: {
     themeProp: 'lineHeights'
   },
@@ -87,6 +87,7 @@ export const mappings = propsMapping({
   alignSelf: {},
   order: {},
   flexBasis: {},
+
   gridGap: {
     themeProp: 'spacing'
   },
@@ -105,6 +106,7 @@ export const mappings = propsMapping({
   gridTemplateColumns: {},
   gridTemplateAreas: {},
   gridArea: {},
+
   borderRadius: {
     themeProp: 'borderRadius'
   },
@@ -130,18 +132,13 @@ export const mappings = propsMapping({
   boxShadow: {
     themeProp: 'boxShadows'
   },
+
   opacity: {},
   position: {},
   top: {},
   right: {},
   bottom: {},
-  left: {},
-  zIndex: {
-    themeProp: 'zIndex'
-  },
-  overflow: {},
-  overflowX: {},
-  overflowY: {}
+  left: {}
 });
 
 export type PropsMappings = typeof mappings;
