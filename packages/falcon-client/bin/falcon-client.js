@@ -1,25 +1,40 @@
 #!/usr/bin/env node
-const buildTools = require('./../src/buildTools');
+const Logger = require('@deity/falcon-logger');
 const razzle = require('./../src/buildTools/razzle');
+const workbox = require('./../src/buildTools/workbox');
+const { failIfAppEntryFilesNotFound, clearAppBuildDir } = require('./../src/buildTools');
 
-const script = process.argv[2];
-const args = process.argv.slice(3);
+(async () => {
+  const script = process.argv[2];
+  const args = process.argv.slice(3);
 
-buildTools.failIfAppEntryFilesNotFound();
+  try {
+    failIfAppEntryFilesNotFound();
 
-switch (script) {
-  case 'start': {
-    buildTools.clearAppBuildDir();
-    razzle(script, args);
-    break;
+    switch (script) {
+      case 'start': {
+        clearAppBuildDir();
+
+        await razzle.runScript(script, args);
+        break;
+      }
+      case 'build': {
+        await razzle.runScript(script, args);
+        await workbox.injectManifest();
+        break;
+      }
+      case 'test': {
+        await razzle.runScript(script, args);
+        break;
+      }
+      default:
+        Logger.log(`Unknown script "${script}".`);
+        Logger.log('Perhaps you need to update @deity/falcon-client?');
+        break;
+    }
+
+    process.exit();
+  } catch (error) {
+    process.exit(1);
   }
-  case 'build':
-  case 'test': {
-    razzle(script, args);
-    break;
-  }
-  default:
-    console.log(`Unknown script "${script}".`);
-    console.log('Perhaps you need to update @deity/falcon-client?');
-    break;
-}
+})();

@@ -15,7 +15,7 @@ const swLocation = path.join('build', 'public', 'sw.js');
 function injectManifest() {
   return workbox
     .injectManifest({
-      // swSrc: path.join(paths.falconClient.appSrc, 'serviceWorker/sw.js'),
+      swSrc: path.join(paths.falconClient.appSrc, 'serviceWorker/sw.js'),
       swDest: path.join(paths.razzle.appPath, swLocation),
       maximumFileSizeToCacheInBytes: 8 * 1024 * 1024, // 8MB
       globDirectory: '.',
@@ -34,9 +34,7 @@ function injectManifest() {
       // injectionPointRegexp:
       // manifestTransforms: []
     })
-    .then(x => {
-      const { count, size } = x;
-      Logger.log(`all params: ${JSON.stringify(x, null, 2)}`);
+    .then(({ count, size /* warnings:[] */ }) => {
       Logger.log(
         `Generated Service Worker ${swLocation} which will precache ${count} files, totaling ${formatBytes(size)}.\n`
       );
