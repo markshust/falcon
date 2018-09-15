@@ -46,8 +46,8 @@ module.exports = class ApiContainer {
           Logger.debug(`ApiContainer: Extracting endpoints from "${apiInstance.name}" API DataSource`);
           this.endpoints.push(...apiInstance.getEndpoints());
         }
-      } catch (e) {
-        Logger.warn(`"${pkg}" package cannot be loaded. Make sure it is installed properly. Details: ${e.stack}`);
+      } catch (error) {
+        Logger.warn(`"${pkg}" package cannot be loaded. Make sure it is installed properly. Details: ${error.stack}`);
       }
     });
   }

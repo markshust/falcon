@@ -1,8 +1,8 @@
-/* eslint-disable no-restricted-syntax, no-await-in-loop */
+/* eslint-disable no-restricted-syntax, no-await-in-loop, no-underscore-dangle */
 
 const { EventEmitter } = require('events');
 const Logger = require('@deity/falcon-logger');
-const { mergeSchemas } = require('graphql-tools');
+const { mergeSchemas, makeExecutableSchema } = require('graphql-tools');
 
 /**
  * @typedef {object} ExtensionInstanceConfig
@@ -81,7 +81,13 @@ module.exports = class ExtensionContainer extends EventEmitter {
     const config = Object.assign(
       {
         resolvers: [],
-        schemas: [],
+        schemas: [
+          // Creating base types with placeholder (_) fields
+          'type Query { _: Boolean }',
+          'type Mutation { _: Boolean }',
+          'type Subscription { _: Boolean }',
+          'schema { query: Query, mutation: Mutation, subscription: Subscription }'
+        ],
         // contextModifiers will be used as helpers - it will gather all the context functions and we'll invoke
         // all of them when context will be created. All the results will be merged to produce final context
         contextModifiers: defaultConfig.context ? [defaultConfig.context] : []
@@ -107,9 +113,29 @@ module.exports = class ExtensionContainer extends EventEmitter {
     };
 
     config.schema = mergeSchemas({
-      schemas: config.schemas,
+      schemas: [makeExecutableSchema({ typeDefs: config.schemas })],
       resolvers: config.resolvers
     });
+
+    // Removing "placeholder" (_) fields from the Type definitions
+    delete config.schema._queryType._fields._;
+    delete config.schema._mutationType._fields._;
+    delete config.schema._subscriptionType._fields._;
+
+    // If there were no other fields defined for Type by any other extension
+    // - we need to remove it completely in order to comply with GraphQL specification
+    if (!Object.keys(config.schema._queryType._fields).length) {
+      config.schema._queryType = undefined;
+      delete config.schema._typeMap.Query;
+    }
+    if (!Object.keys(config.schema._mutationType._fields).length) {
+      config.schema._mutationType = undefined;
+      delete config.schema._typeMap.Mutation;
+    }
+    if (!Object.keys(config.schema._subscriptionType._fields).length) {
+      config.schema._subscriptionType = undefined;
+      delete config.schema._typeMap.Subscription;
+    }
 
     const { dataSources } = config;
     config.dataSources = () => dataSources;
@@ -130,33 +156,30 @@ module.exports = class ExtensionContainer extends EventEmitter {
         return;
       }
       const value = source[name];
+      const valueArray = Array.isArray(value) ? value : [value];
 
       switch (name) {
-        // schema and typeDefs entries go to the same array as we'll use mergeSchemas() helper which is able to
-        // merge both types
-        case 'typeDefs':
-          dest.schemas.push({ typeDefs: value });
-          break;
         case 'schema':
         case 'schemas':
-          if (Array.isArray(value)) {
-            dest.schemas = dest.schemas.concat(value);
-          } else {
-            dest.schemas.push(value);
-          }
+          valueArray.forEach(schemaItem => {
+            if (typeof schemaItem !== 'string') {
+              Logger.warn(
+                `ExtensionContainer: "${extensionName}" extension contains non-string GraphQL Schema definition,` +
+                  `please check its "${name}" configuration and make sure all items are represented as strings. ${schemaItem}`
+              );
+            }
+          });
+
+          dest.schemas.push(...valueArray);
           break;
         case 'resolvers':
-          if (Array.isArray(value)) {
-            dest.resolvers = dest.resolvers.concat(value);
-          } else {
-            dest.resolvers.push(value);
-          }
+          dest.resolvers.push(...valueArray);
           break;
         case 'context':
           dest.contextModifiers.push(value);
           break;
         case 'dataSources':
-          dest.dataSources = Object.assign(dest.dataSources, value);
+          Object.assign(dest.dataSources, value);
           break;
         default:
           // todo: consider overriding the properties that we don't have custom merge logic for yet instead of
