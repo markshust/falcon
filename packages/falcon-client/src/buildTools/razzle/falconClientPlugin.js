@@ -125,7 +125,6 @@ module.exports = appConfig => (config, { target, dev } /* ,  webpackObject */) =
   config.resolve.alias = {
     ...(config.resolve.alias || {}),
     assets: path.join(paths.razzle.appPath, 'assets'),
-    public: path.join(paths.razzle.appPath, 'public'),
     src: paths.razzle.appSrc,
 
     'app-path': paths.razzle.appPath
