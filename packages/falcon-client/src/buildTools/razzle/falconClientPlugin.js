@@ -32,6 +32,13 @@ function setEntryToFalconClient(config, target) {
   }
 }
 
+function fixUrlLoaderFallback(config) {
+  const urlLoaderFinder = makeLoaderFinder('url-loader');
+  const urlLoader = config.module.rules.find(urlLoaderFinder);
+
+  urlLoader.options.fallback = require.resolve('file-loader');
+}
+
 function makeFalconClientJsFileResolvedByWebpack(config) {
   const babelLoaderFinder = makeLoaderFinder('babel-loader');
   const babelLoader = config.module.rules.find(babelLoaderFinder);
@@ -117,6 +124,7 @@ function addFalconI18nPlugin({ resourcePackages = [], filter }, config, dev) {
 module.exports = appConfig => (config, { target, dev } /* ,  webpackObject */) => {
   config.resolve.alias = {
     ...(config.resolve.alias || {}),
+    assets: path.join(paths.razzle.appPath, 'assets'),
     public: path.join(paths.razzle.appPath, 'public'),
     src: paths.razzle.appSrc,
 
@@ -125,6 +133,7 @@ module.exports = appConfig => (config, { target, dev } /* ,  webpackObject */) =
 
   setEntryToFalconClient(config, target);
   makeFalconClientJsFileResolvedByWebpack(config);
+  fixUrlLoaderFallback(config);
 
   addVendorsBundle([
     'apollo-cache-inmemory',
