@@ -1,10 +1,12 @@
-import { ConfigurableConstructorParams } from '../types';
+import { ConfigurableConstructorParams, FetchUrlResult } from '../types';
 import ApiDataSource from './ApiDataSource';
+import { GraphQLResolveInfo } from 'graphql';
 
-export default abstract class Extension {
+export default abstract class Extension<TApiConfig = object> {
   public config: object;
   public name: string;
   public api?: ApiDataSource;
+  public apiConfig: TApiConfig | null = null;
   /**
    * @param {object} config Extension config object
    * @param {string} name Extension short-name
@@ -17,14 +19,15 @@ export default abstract class Extension {
   /**
    * Initializes extension in this method
    * Must return a result from "api.preInitialize()"
-   * @return {Promise<TResult|null>} API DataSource preInitialize result
+   * @return {Promise<TApiConfig|null>} API DataSource preInitialize result
    */
-  async initialize<TResult = any>(): Promise<TResult|null> {
+  async initialize(): Promise<TApiConfig|null> {
     if (!this.api) {
       throw new Error(`"${this.name}" extension: API DataSource was not defined`);
     }
+    this.apiConfig = await this.api.preInitialize<TApiConfig>();
 
-    return this.api.preInitialize<TResult>();
+    return this.apiConfig;
   }
 
   /**
@@ -34,6 +37,13 @@ export default abstract class Extension {
   async getGraphQLConfig(): Promise<object> {
     return {};
   }
+
+  abstract async fetchUrl(
+    obj: object,
+    args: any,
+    context: any,
+    info: GraphQLResolveInfo
+  ): Promise<FetchUrlResult>;
 
   get fetchUrlPriority(): number {
     return (this.api as ApiDataSource).fetchUrlPriority;
