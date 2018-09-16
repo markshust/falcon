@@ -1,3 +1,4 @@
+/* eslint-disable import/no-extraneous-dependencies */
 const workbox = require('workbox-build');
 const Logger = require('@deity/falcon-logger');
 const path = require('path');
