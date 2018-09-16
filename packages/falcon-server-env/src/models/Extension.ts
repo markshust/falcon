@@ -9,17 +9,22 @@ export default abstract class Extension {
    * @param {object} config Extension config object
    * @param {string} name Extension short-name
    */
-  constructor({ config, name }: ConfigurableConstructorParams) {
+  constructor({ config = {}, name }: ConfigurableConstructorParams = {}) {
     this.name = name || this.constructor.name;
     this.config = config;
   }
 
-  async initialize(): Promise<void|any> {
+  /**
+   * Initializes extension in this method
+   * Must return a result from "api.preInitialize()"
+   * @return {Promise<TResult|null>} API DataSource preInitialize result
+   */
+  async initialize<TResult = any>(): Promise<TResult|null> {
     if (!this.api) {
       throw new Error(`"${this.name}" extension: API DataSource was not defined`);
     }
 
-    return this.api.preInitialize();
+    return this.api.preInitialize<TResult>();
   }
 
   /**
@@ -28,5 +33,9 @@ export default abstract class Extension {
    */
   async getGraphQLConfig(): Promise<object> {
     return {};
+  }
+
+  get fetchUrlPriority(): number {
+    return (this.api as ApiDataSource).fetchUrlPriority;
   }
 }

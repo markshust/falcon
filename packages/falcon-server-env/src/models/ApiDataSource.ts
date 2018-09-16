@@ -24,7 +24,7 @@ export default abstract class ApiDataSource<TContext = any, THelpers = any> exte
    * @param {ApiDataSourceConfig} config API DataSource config
    * @param {string} name API DataSource short-name
    */
-  constructor({ config, name }: ConfigurableConstructorParams<ApiDataSourceConfig>) {
+  constructor({ config, name }: ConfigurableConstructorParams<ApiDataSourceConfig> = {}) {
     super();
     this.name = name || this.constructor.name;
     this.config = config || {};
@@ -46,9 +46,9 @@ export default abstract class ApiDataSource<TContext = any, THelpers = any> exte
   /**
    * This method should be used for "pre-initializing" API DataSource instance,
    * for example - for fetching API backend configuration required for Server start up
-   * @return {Promise<undefined|mixed>} Result object
+   * @return {Promise<TResult|null>} Result object
    */
-  async preInitialize(): Promise<void|any> {
+  async preInitialize<TResult = any>(): Promise<TResult|null> {
     return null;
   }
 

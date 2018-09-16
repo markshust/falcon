@@ -1,4 +1,4 @@
-type Query {
+extend type Query {
   post(path: String!): Post
   posts(query: PageQuery): PostListing
 }
@@ -40,8 +40,4 @@ type Post {
   slug: String
   image: PostImage
   related: [Post]
-}
-
-schema {
-  query: Query
 }

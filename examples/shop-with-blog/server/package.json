@@ -1,5 +1,5 @@
 {
-  "name": "@deity/shop-with-blog-server",
+  "name": "@deity/example-shop-with-blog-server",
   "license": "OSL-3.0",
   "main": "index.js",
   "version": "1.0.0",

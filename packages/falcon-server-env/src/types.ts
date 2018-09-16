@@ -3,7 +3,7 @@ import { CacheOptions, RequestOptions } from 'apollo-datasource-rest/dist/RESTDa
 import { IMiddleware } from 'koa-router';
 import { RequestInit } from 'apollo-server-env';
 export interface ConfigurableConstructorParams<T = object> {
-  config: T;
+  config?: T;
   name?: string;
 }
 
