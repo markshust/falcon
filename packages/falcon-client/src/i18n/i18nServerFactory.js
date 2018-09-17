@@ -1,4 +1,3 @@
-import path from 'path';
 import i18next from 'i18next';
 import Backend from 'i18next-sync-fs-backend';
 
@@ -44,7 +43,7 @@ export default ({
       escapeValue: false
     },
     backend: {
-      loadPath: path.resolve(path.join(process.env.RAZZLE_PUBLIC_DIR, 'i18n/{{lng}}/{{ns}}.json')),
+      loadPath: 'build/i18n/{{lng}}/{{ns}}.json',
       jsonIndent: 2
     }
   });
@@ -69,9 +68,14 @@ export function filterResourceStoreByNs(storeData, namespaces) {
 
 export function extractI18nextState(ctx) {
   if (ctx.i18next) {
+    /* on development we would like to have HMR then we can not inject initial translations
+     * because even resources will be updated i18next will not reload its internal state after module.hot.accept()
+     */
+    const data = process.env.NODE_ENV === 'development' ? undefined : ctx.state.i18nextFilteredStore;
+
     return {
       language: ctx.i18next.language,
-      data: ctx.state.i18nextFilteredStore
+      data
     };
   }
 

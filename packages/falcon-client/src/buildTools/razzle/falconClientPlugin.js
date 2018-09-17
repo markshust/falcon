@@ -103,16 +103,20 @@ function addGraphQLTagLoader(config) {
  * @param {boolean} dev is dev?
  * @returns {void}
  */
-function addFalconI18nPlugin({ resourcePackages = [], filter }, config, dev) {
-  config.plugins = [
-    ...config.plugins,
-    new FalconI18nLocalesPlugin({
-      mainSource: path.join(paths.razzle.appPath, 'i18n'),
-      defaultSources: resourcePackages.map(x => paths.resolvePackageDir(x)).map(x => path.join(x, 'i18n')),
-      output: dev ? 'public/i18n' : 'build/public/i18n',
-      filter
-    })
-  ];
+function addFalconI18nPlugin({ resourcePackages = [], filter }) {
+  return (config, target) => {
+    if (target === 'web') {
+      config.plugins = [
+        ...config.plugins,
+        new FalconI18nLocalesPlugin({
+          mainSource: path.join(paths.razzle.appPath, 'i18n'),
+          defaultSources: resourcePackages.map(x => paths.resolvePackageDir(x)).map(x => path.join(x, 'i18n')),
+          output: 'build/i18n',
+          filter
+        })
+      ];
+    }
+  };
 }
 
 /**
@@ -156,7 +160,7 @@ module.exports = appConfig => (config, { target, dev } /* ,  webpackObject */) =
   ])(config, { target, dev });
 
   addGraphQLTagLoader(config);
-  addFalconI18nPlugin(appConfig.i18n, config, dev);
+  addFalconI18nPlugin(appConfig.i18n)(config, target);
 
   return config;
 };
