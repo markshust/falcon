@@ -299,17 +299,27 @@ type ThemedOptions<TTag extends string | {}, TProps> = {
 };
 
 export function themed<TProps, TTag extends string | {}>(options: ThemedOptions<TTag, TProps>) {
-  let label = 'themed';
+  let label = '';
 
   if (options.defaultTheme) {
     const componentKey = Object.keys(options.defaultTheme)[0];
     if (typeof (options.defaultTheme as any)[componentKey] === 'object') {
-      label = `${label}-${componentKey}`;
+      label = `${componentKey}`;
     }
   }
 
   const styledComponentWithThemeProps = styled(Tag, {
-    label // label is transformed for displayName of styled component
+    label, // label is transformed for displayName of styled component,
+    // target inserted as css class in resulting element so this could potentially be used as a fallback
+    // to style components via traditional css
+    target: `themed${
+      label
+        ? `-${label
+            .replace(/([a-z])([A-Z])/g, '$1-$2')
+            .replace(/\s+/g, '-')
+            .toLowerCase()}`
+        : ''
+    }`
   })(getThemedCss);
 
   // default theme is also passed as part of default props
