@@ -36,6 +36,11 @@ class CustomApiDataSource extends ApiDataSource {
 }
 
 describe('ApiDataSource', () => {
+
+  afterAll(() => {
+    nock.restore();
+  });
+
   it('Should create an instance of ApiDataSource', async () => {
     let customApiDataSource: CustomApiDataSource = new CustomApiDataSource({
       config: {}
@@ -98,6 +103,5 @@ describe('ApiDataSource', () => {
 
     willSendRequestSpy.mockRestore();
     didReceiveResponseSpy.mockRestore();
-    nock.restore();
   });
 });
