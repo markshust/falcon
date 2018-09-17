@@ -11,12 +11,15 @@ export const Button = themed({
       borderRadius: 'sm',
       boxShadow: 'sm',
       fontSize: 'md',
+      lineHeight: 'small',
 
       css: ({ theme }) => ({
         // basic reset styles
         fontFamily: 'inherit',
         WebkitFontSmoothing: 'antialiased',
-        display: 'inline-block',
+        display: 'inline-flex',
+        justifyContent: 'center',
+        alignItems: 'center',
         textAlign: 'center',
         border: 'none',
 
