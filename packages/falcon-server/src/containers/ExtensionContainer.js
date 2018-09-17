@@ -1,6 +1,4 @@
 /* eslint-disable no-restricted-syntax, no-await-in-loop, no-underscore-dangle */
-
-const { EventEmitter } = require('events');
 const Logger = require('@deity/falcon-logger');
 const { mergeSchemas, makeExecutableSchema } = require('graphql-tools');
 
@@ -14,14 +12,13 @@ const { mergeSchemas, makeExecutableSchema } = require('graphql-tools');
 /**
  * Holds extensions and expose running hooks for for them.
  */
-module.exports = class ExtensionContainer extends EventEmitter {
+module.exports = class ExtensionContainer {
   /**
    * Creates extensions container
    * @param {ExtensionInstanceConfig[]} [extensions] extensions List of extension configurations
    * @param {Map<string,ApiDataSource>} dataSources Map of API DataSources
    */
   constructor(extensions, dataSources) {
-    super();
     /** @type {Map<string,Extension>} */
     this.extensions = new Map();
 
