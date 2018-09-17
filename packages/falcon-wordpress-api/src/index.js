@@ -1,66 +1,45 @@
-const { RESTDataSource } = require('apollo-datasource-rest');
+const { ApiDataSource } = require('@deity/falcon-server-env');
 const qs = require('qs');
 const pick = require('lodash/pick');
 const isEmpty = require('lodash/isEmpty');
 const isObject = require('lodash/isObject');
 const uniq = require('lodash/uniq');
-const HtmlManager = require('./htmlManager');
-const request = require('request-promise-native');
 const Logger = require('@deity/falcon-logger');
-const { URL } = require('apollo-server-env');
 const url = require('url');
 const cheerio = require('cheerio');
 
-module.exports = class ApiWordpress extends RESTDataSource {
-  constructor(config) {
-    super(config);
-    this.config = config;
-    this.host = config.host;
-    this.port = config.port;
-    this.username = config.username;
-    this.password = config.password;
-    this.protocol = config.protocol;
-    this.apiPrefix = config.apiPrefix;
-    this.apiSuffix = config.apiSuffix;
-    this.fetchUrlPriority = (config.wordpress && config.wordpress.fetchUrlPriority) || 10;
-    this.language = config.language;
-    this.htmlManager = new HtmlManager();
-
-    const port = this.port || (this.protocol === 'https' ? ':443' : '');
-    this.baseURL = `${this.protocol}://${this.host}${port}`;
-  }
-
-  async init() {
-    await this.getInfo();
+module.exports = class WordpressApi extends ApiDataSource {
+  async authorizeRequest(req) {
+    const { username, password } = this.config;
+    const token = Buffer.from(`${username}:${password}`).toString('base64');
+    req.headers.set('Authorization', `Basic ${token}`);
   }
 
   /**
    * Resolves url based on passed parameters
-   * @param {Object} req - request params
-   * @returns {URL} resolved url object
+   * @param {object} req - request params
+   * @return {string} resolved url object
    */
   async resolveURL(req) {
-    // if language has been passed as parameter then remove it from request params
-    // and use for url construction as language code is part of URL in WP API
-    const language = req.params.get('language');
+    const { path, context = {} } = req;
+    const { language } = context;
+    const { apiPrefix, apiSuffix, language: baseLanguage } = this.config;
+    let prefix = `${apiPrefix}${apiSuffix}`;
+
     if (language) {
-      delete req.params.delete('language');
-      // store language in context, so it can be used for response decoding
-      this.context.language = language;
+      // for base lang do not add prefix
+      const languagePrefix = language && language !== baseLanguage ? `/${language}` : '';
+      prefix = `${languagePrefix}/${prefix}`;
     }
 
-    return new URL(`${this.createApiURL(language)}${req.path}`);
+    return super.resolveURL({ path: `${prefix}/${path}` });
   }
 
-  /**
-   * Creates url of the api used for all requests
-   * @param {String} lang - language that should be used for url construction
-   * @returns {String} - created url
-   */
-  createApiURL(lang) {
-    // for base lang do not add prefix
-    const languagePrefix = lang && lang !== this.language ? `/${lang}` : '';
-    return `${this.baseURL}${languagePrefix}${this.apiPrefix}${this.apiSuffix}/`;
+  async preInitialize() {
+    if (!this.context) {
+      this.initialize({ context: {} });
+    }
+    return this.get('blog/info');
   }
 
   /**
@@ -110,18 +89,19 @@ module.exports = class ApiWordpress extends RESTDataSource {
 
   /**
    * Parses response and returns data in format accedpted by falcon-blog-extension
-   * @param {Object} response object
-   * @param {Object} req native request object
-   * @return {Object} parsed response
+   * @param {object} res object
+   * @param {object} req native request object
+   * @return {object} parsed response
    */
-  async didReceiveResponse(response, req) {
-    const data = await super.didReceiveResponse(response, req);
-    const { language } = this.context;
-    const languagePrefix = language && language !== this.language ? `/${language}` : '';
+  async didReceiveResponse(res, req) {
+    const data = await super.didReceiveResponse(res, req);
+    const { language } = res.context;
+    const languagePrefix = language && language !== this.config.language ? `/${language}` : '';
+    const { headers } = res;
 
-    let total = response.headers.get('x-wp-total');
-    let totalPages = response.headers.get('x-wp-totalpages');
-    const responseTags = response.headers.get('x-cache-tags');
+    let totalItems = headers.get('x-wp-total');
+    let totalPages = headers.get('x-wp-totalpages');
+    const responseTags = headers.get('x-cache-tags');
 
     const meta = {
       languagePrefix,
@@ -132,7 +112,7 @@ module.exports = class ApiWordpress extends RESTDataSource {
       meta.tags = responseTags.split(',');
     }
 
-    if (!total && !totalPages) {
+    if (!totalItems && !totalPages) {
       return { data, meta };
     }
 
@@ -141,30 +121,20 @@ module.exports = class ApiWordpress extends RESTDataSource {
     let { per_page: perPage = 10, page: currentPage = 1 } = query;
 
     totalPages = parseInt(totalPages, 10);
-    total = parseInt(total, 10);
+    totalItems = parseInt(totalItems, 10);
     perPage = parseInt(perPage, 10);
     currentPage = parseInt(currentPage, 10);
 
     const pagination = {
-      total,
+      totalPages,
+      totalItems,
       perPage,
       currentPage,
-      totalPages,
       nextPage: currentPage < totalPages ? currentPage + 1 : null,
       prevPage: currentPage > 1 ? currentPage - 1 : null
     };
 
-    return { data: { items: data, pagination }, meta };
-  }
-
-  /**
-   * Fetches WordPress settings
-   * @returns {Object} Promise that resolves with fetched data
-   */
-  async getInfo() {
-    // use request library because here we don't have GraphQL context - we just have to ask WP
-    // for available config
-    return request(`${this.createApiURL()}blog/info`);
+    return { items: data, pagination, meta };
   }
 
   /**
@@ -425,22 +395,12 @@ module.exports = class ApiWordpress extends RESTDataSource {
    */
   //  async fetchUrl({ path, headers = {}, language }) {
   async fetchUrl(path, language) {
-    const params = {
-      path
-    };
-    const options = {};
+    const params = { path };
     if (language) {
       params.language = language;
     }
 
-    if (this.isDraft(path)) {
-      const token = Buffer.from(`${this.username}:${this.password}`).toString('base64');
-      options.headers = {
-        Authorization: `Basic ${token}`
-      };
-    }
-
-    const response = await this.get('url', { path, language });
+    const response = await this.get('url', { path }, { authRequired: this.isDraft(path), language });
 
     const {
       data,
