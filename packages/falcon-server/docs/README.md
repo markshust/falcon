@@ -8,3 +8,4 @@ Table of contents:
 - [Extension Model](./Extension.md)
   - [Blog Extension](https://github.com/deity-io/falcon/tree/master/packages/falcon-blog-extension/README.md)
   - [Shop Extension](https://github.com/deity-io/falcon/tree/master/packages/falcon-shop-extension/README.md)
+- [Schema stitching](./SchemaStitching.md)

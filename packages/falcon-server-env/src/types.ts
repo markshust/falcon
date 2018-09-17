@@ -4,8 +4,9 @@ import { IMiddleware } from 'koa-router';
 import { RequestInit } from 'apollo-server-env';
 
 export interface FetchUrlResult {
+  id: string | number;
   type: string;
-  url: string;
+  path: string;
 }
 export interface ConfigurableConstructorParams<T = object> {
   config?: T;
