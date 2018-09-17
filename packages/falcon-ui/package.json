@@ -18,7 +18,7 @@
   },
   "scripts": {
     "prebuild": "rimraf dist",
-    "build": "rollup -c & babel src -d dist -x .ts,.tsx -s & tsc",
+    "build": "rollup -c && babel src -d dist -x .ts,.tsx -s && tsc && size-limit",
     "start": "docz dev",
     "build:docs": "docz build",
     "test": "jest"
@@ -51,6 +51,7 @@
     "rollup": "^0.64.1",
     "rollup-plugin-babel": "^4.0.1",
     "rollup-plugin-node-resolve": "^3.3.0",
+    "size-limit": "^0.20.0",
     "typescript": "^3.0.1"
   },
   "dependencies": {
@@ -62,5 +63,12 @@
     "@mdx-js/tag": "^0.15.0-2",
     "csstype": "^2.5.6",
     "deepmerge": "^2.1.1"
-  }
+  },
+  "size-limit": [
+    {
+      "path": "dist/index.js",
+      "gzip": false,
+      "limit": "60 KB"
+    }
+  ]
 }
