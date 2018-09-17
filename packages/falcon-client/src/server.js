@@ -26,13 +26,12 @@ export default ({ App, clientApolloSchema, configuration }) => {
 
   const staticFiles = new Router();
   staticFiles.get('/sw.js', serve(process.env.RAZZLE_PUBLIC_DIR, { maxage: 0 }));
-  staticFiles.get('/static/*', serve(process.env.RAZZLE_PUBLIC_DIR, { maxage: 60 * 60 * 24 * 7 * 30 * 12 }));
+  staticFiles.get('/static/*', serve(process.env.RAZZLE_PUBLIC_DIR, { maxage: 31536000 }));
 
   const router = new Router();
   router.get('/app-shell', ...renderAppShell({ configuration }));
   router.get('/*', ...renderApp({ configuration, clientApolloSchema, App }));
 
-  // Initialize and configure Koa application
   const server = new Koa();
   configuration.onServerCreated(server);
 
