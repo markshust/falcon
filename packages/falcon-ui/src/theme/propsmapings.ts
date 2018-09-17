@@ -59,6 +59,7 @@ export const mappings = propsMapping({
   },
 
   width: {},
+  height: {},
   fontSize: {
     themeProp: 'fontSizes'
   },
