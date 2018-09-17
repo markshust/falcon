@@ -98,35 +98,37 @@ export type ThemedComponentPropsWithVariants<T = {}> = ThemedComponentProps<T> &
 export interface ThemedComponents {
   [themeKey: string]: ThemedComponentPropsWithVariants;
 }
+type NumberOrStringValues<T> = { readonly [P in keyof T]: number | string };
 
 type Colors = typeof theme.colors;
+
 export interface ThemeColors extends Colors {}
 
-type Breakpoints = typeof theme.breakpoints;
+type Breakpoints = NumberOrStringValues<typeof theme.breakpoints>;
 export interface ThemeBreakpoints extends Breakpoints {}
 
-type Spacing = typeof theme.spacing;
+type Spacing = NumberOrStringValues<typeof theme.spacing>;
 export interface ThemeSpacing extends Spacing {}
 
 type Fonts = typeof theme.fonts;
 export interface ThemeFonts extends Fonts {}
 
-type FontSizes = typeof theme.fontSizes;
+type FontSizes = NumberOrStringValues<typeof theme.fontSizes>;
 export interface ThemeFontSizes extends FontSizes {}
 
 type FontWeights = typeof theme.fontWeights;
 export interface ThemeFontWeights extends FontWeights {}
 
-type LineHeights = typeof theme.lineHeights;
+type LineHeights = NumberOrStringValues<typeof theme.lineHeights>;
 export interface ThemeLineHeights extends LineHeights {}
 
-type LetterSpacings = typeof theme.letterSpacings;
+type LetterSpacings = NumberOrStringValues<typeof theme.letterSpacings>;
 export interface ThemeLetterSpacings extends LetterSpacings {}
 
 type Borders = typeof theme.borders;
 export interface ThemeBorders extends Borders {}
 
-type BorderRadius = typeof theme.borderRadius;
+type BorderRadius = NumberOrStringValues<typeof theme.borderRadius>;
 export interface ThemeBorderRadius extends BorderRadius {}
 
 type BoxShadows = typeof theme.boxShadows;
