@@ -241,7 +241,7 @@ function getThemedCss(props: ThemedProps) {
 // filtering which props to forward to next component is tricky
 // and behaves differently if next component is html element, custom component
 // or custom component whihch is themed component
-const customPropsBlacklist = ['as', 'themeKey', 'variant', 'defaultTheme'];
+const customPropsBlacklist = ['as', 'tag', 'themeKey', 'variant', 'defaultTheme'];
 
 const filterPropsToForward = (baseComponent: any, props: any, ref: any) => {
   const filteredProps = {} as any;
@@ -256,11 +256,6 @@ const filterPropsToForward = (baseComponent: any, props: any, ref: any) => {
     // neighter forward any of the blacklisted props
     const themableProp = propsMappingKeys.indexOf(key as any) !== -1 || customPropsBlacklist.indexOf(key) !== -1;
     if (themableProp) continue;
-
-    // if custom component is not a themed component do not forward `tag` prop to it
-    if (!isThemedComponent && key === 'tag') {
-      continue;
-    }
 
     filteredProps[key] = props[key];
   }
@@ -328,8 +323,6 @@ export function themed<TProps, TTag extends string | {}>(options: ThemedOptions<
     defaultTheme: options.defaultTheme,
     tag: options.tag
   };
-
-  styledComponentWithThemeProps.themedComponent = true;
 
   return styledComponentWithThemeProps as <TTagOverride extends string | {} = TTag>(
     props: BaseProps<TTagOverride> & Partial<typeof options['defaultProps']> & ThemedComponentProps & PropsWithVariant
