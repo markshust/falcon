@@ -1,9 +1,7 @@
-const { makeExecutableSchema } = require('graphql-tools');
-const requireGraphQLFile = require('require-graphql-file');
+const { Extension } = require('@deity/falcon-server-env');
 const Logger = require('@deity/falcon-logger');
 
-const typeDefs = requireGraphQLFile('./schema');
-const DEFAULT_FETCH_URL_PRIORITY = 10;
+const typeDefs = require('fs').readFileSync('src/schema.graphql', 'utf8');
 
 /**
  * Simple blog extension.
@@ -12,64 +10,47 @@ const DEFAULT_FETCH_URL_PRIORITY = 10;
  * - list posts
  * - show single post
  * - show shop products inside post
- *
- * Only wordpress is supported as backend at the moment.
  */
-module.exports = class Blog {
-  constructor(config) {
-    this.config = config;
+module.exports = class Blog extends Extension {
+  async initialize() {
+    await super.initialize();
+    const { languages = {} } = this.apiConfig;
+
+    if (languages.options) {
+      this.languages = languages.options;
+    } else {
+      Logger.warn(`Seems that "${this.api.name}" API DataSource has no languages defined.`);
+    }
+
+    return this.apiConfig;
   }
 
-  async init() {
-    return this.initConfig();
+  isLanguageSupported(language) {
+    return this.languages && this.languages.find(item => item.code === language);
   }
 
-  getGraphQLConfig() {
+  async getGraphQLConfig() {
     return {
-      schema: makeExecutableSchema({ typeDefs }),
+      schema: [typeDefs],
+      dataSources: {
+        [this.api.name]: this.api
+      },
       resolvers: {
         Query: {
-          post: async (root, { path }, { dataSources, session }) => {
+          post: async (root, { path }, { session }) => {
             // todo this can break with category/post url hierarchy
             const slug = path.replace('/', '');
 
-            return dataSources[this.config.api].getPost({ slug, language: session.language });
+            return this.api.getPost({ slug, language: session.language });
           },
-          posts: (root, params, { dataSources, session }) =>
-            dataSources[this.config.api].getPosts({ language: session.language })
+          posts: (root, params, { session }) => this.api.getPosts({ language: session.language })
         }
       }
     };
   }
 
-  getFetchUrlPriority() {
-    return this.api.getFetchUrlPriority() || DEFAULT_FETCH_URL_PRIORITY;
-  }
-
-  async fetchUrl(root, { path }, { dataSources, session = {} }) {
+  async fetchUrl(root, { path }, { session = {} }) {
     const { language } = session;
-    return dataSources[this.config.api].fetchUrl(path, language);
-  }
-
-  getApi() {
-    return this.api;
-  }
-
-  async initConfig() {
-    const data = await this.getApi().getInfo();
-
-    const { languages = {} } = data;
-
-    if (languages.options) {
-      this.languages = languages.options;
-    } else {
-      Logger.warn('Seems that your wordpress has no languages defined.');
-    }
-
-    this.apiConfig = data;
-  }
-
-  isLanguageSupported(language) {
-    return this.languages && this.languages.find(item => item.code === language);
+    return this.api.fetchUrl(path, language);
   }
 };
