@@ -31,3 +31,6 @@ export * from './components/NumberInput';
 export * from './components/Select';
 export * from './components/ThemeProvider';
 export * from './components/Breadcrumbs';
+export * from './components/Details';
+export * from './components/Navbar';
+export * from './components/Dropdown';
