@@ -4,7 +4,9 @@ const fs = require('fs');
 const appDirectory = fs.realpathSync(process.cwd());
 const resolveApp = relativePath => path.resolve(appDirectory, relativePath);
 
-const falconClientDir = path.dirname(require.resolve('@deity/falcon-client/package.json'));
+function resolvePackageDir(name) {
+  return path.dirname(require.resolve(`${name}/package.json`));
+}
 
 module.exports = {
   razzle: {
@@ -15,9 +17,10 @@ module.exports = {
     appClientIndexJs: resolveApp('src/client')
   },
   falconClient: {
-    rootDir: falconClientDir,
-    appSrc: path.join(falconClientDir, 'src'),
+    rootDir: resolvePackageDir('@deity/falcon-client'),
+    appSrc: path.join(resolvePackageDir('@deity/falcon-client'), 'src'),
     appServerIndexJs: require.resolve('@deity/falcon-client/src/index'),
     appClientIndexJs: require.resolve('@deity/falcon-client/src/client')
-  }
+  },
+  resolvePackageDir
 };

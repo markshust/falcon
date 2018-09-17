@@ -2,12 +2,19 @@
   "name": "create-falcon-app",
   "version": "1.0.0",
   "description": "CLI tool to bootstrap Falcon applications",
-  "main": "index.js",
+  "repository": "https://github.com/deity-io/falcon/tree/master/packages/create-falcon-app",
+  "license": "OSL-3.0",
   "bin": {
     "create-falcon-app": "./bin/create-falcon-app"
   },
-  "license": "OSL-3.0",
+  "scripts": {
+    "prepare": "node scripts/prepublish.js"
+  },
   "dependencies": {
-    
+    "chalk": "^2.4.1",
+    "commander": "^2.17.1",
+    "fs-extra": "^7.0.0",
+    "execa": "^1.0.0",
+    "listr": "^0.14.2"
   }
 }

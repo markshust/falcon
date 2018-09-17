@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import serialize from 'serialize-javascript';
 import Helmet from 'react-helmet';
 import GoogleTagManager from '../google/GoogleTagManager';
+import SerializeState from './SerializeState';
 
 /**
  * Wrapper component containing HTML metadata and boilerplate tags.
@@ -25,7 +25,7 @@ export default class Html extends Component {
   }
 
   render() {
-    const { assets, asyncContext = {}, state = {}, content, config } = this.props;
+    const { assets, asyncContext, state, i18nextState, content, config } = this.props;
     const head = Helmet.rewind();
 
     return (
@@ -55,18 +55,14 @@ export default class Html extends Component {
         <body>
           {this.renderGtm(true)}
           <div id="root" dangerouslySetInnerHTML={{ __html: content }} />
-          <script
-            charSet="UTF-8"
-            dangerouslySetInnerHTML={{
-              __html: `window.__APOLLO_STATE__=${serialize(state || {})}`
-            }}
-          />
-          <script
-            charSet="UTF-8"
-            dangerouslySetInnerHTML={{
-              __html: `window.ASYNC_COMPONENTS_STATE=${serialize(asyncContext || {})}`
-            }}
-          />
+          <SerializeState variable="__APOLLO_STATE__" value={state} />
+          <SerializeState variable="ASYNC_COMPONENTS_STATE" value={asyncContext} />
+          <SerializeState variable="I18NEXT_STATE" value={i18nextState} />
+          {process.env.NODE_ENV === 'production' ? (
+            <script src={assets.vendors.js} charSet="UTF-8" async />
+          ) : (
+            <script src={assets.vendors.js} charSet="UTF-8" async crossOrigin="true" />
+          )}
           {process.env.NODE_ENV === 'production' ? (
             <script src={assets.client.js} charSet="UTF-8" async />
           ) : (
@@ -83,10 +79,14 @@ Html.propTypes = {
     client: PropTypes.shape({
       js: PropTypes.string,
       css: PropTypes.string
+    }),
+    vendors: PropTypes.shape({
+      js: PropTypes.string
     })
   }),
   asyncContext: PropTypes.shape({}),
   state: PropTypes.shape({}),
+  i18nextState: PropTypes.shape({}),
   content: PropTypes.string,
   config: PropTypes.shape({
     usePwaManifest: PropTypes.bool,
@@ -95,9 +95,10 @@ Html.propTypes = {
 };
 
 Html.defaultProps = {
-  assets: {},
+  assets: { client: { js: '', css: '' } },
   asyncContext: {},
   state: {},
+  i18nextState: {},
   content: '',
   config: {}
 };

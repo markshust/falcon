@@ -1,10 +1,15 @@
 {
   "name": "@falcon/shop-and-blog",
-  "private": true,
-  "license": "OSL-3.0",
   "version": "1.0.0",
+  "license": "OSL-3.0",
+  "repository": "https://github.com/deity-io/falcon/tree/master/examples/shop-with-blog/client",
+  "private": true,
   "jest": {
-    "coverageReporters": ["html", "text", "text-summary"],
+    "coverageReporters": [
+      "html",
+      "text",
+      "text-summary"
+    ],
     "moduleNameMapper": {
       "^src(.*)$": "<rootDir>/src$1",
       "^public(.*)$": "<rootDir>/public$1"
@@ -19,6 +24,7 @@
   "scripts": {
     "start": "falcon-client start",
     "start:dbg": "cross-env VERBOSE=true falcon-client start -- --inspect",
+    "start:dbg-brk": "cross-env VERBOSE=true falcon-client start -- --inspect-brk",
     "start:prod": "cross-env NODE_ENV=production node build/server.js",
     "build": "falcon-client build",
     "test": "falcon-client test --env=jsdom",
@@ -27,12 +33,17 @@
   },
   "dependencies": {
     "@deity/falcon-client": "1.0.0",
+    "@deity/falcon-i18n": "1.0.0",
     "config": "^2.0.1",
+    "graphql": "^0.13.2",
     "graphql-tag": "^2.9.2",
+    "i18next": "^11.6.0",
+    "prop-types": "15.6.2",
     "react": "^16.4.2",
     "react-apollo": "^2.1.11",
     "react-async-component": "^2.0.0",
     "react-dom": "^16.4.2",
+    "react-i18next": "^7.11.0",
     "react-router-dom": "^4.3.1"
   },
   "devDependencies": {
