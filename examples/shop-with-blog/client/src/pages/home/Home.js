@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import { Query } from 'react-apollo';
 import gql from 'graphql-tag';
 import { Link } from 'react-router-dom';
-import logo from 'assets/logo.png';
+import logo from 'src/assets/logo.png';
 import './Home.css';
 
 const Home = props => {
