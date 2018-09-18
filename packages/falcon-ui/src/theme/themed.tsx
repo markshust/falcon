@@ -244,8 +244,7 @@ function getThemedCss(props: ThemedProps) {
 const customPropsBlacklist = ['as', 'tag', 'themeKey', 'variant', 'defaultTheme'];
 
 const filterPropsToForward = (baseComponent: any, props: any, ref: any) => {
-  const filteredProps = {} as any;
-  const isThemedComponent = baseComponent.themedComponent;
+  const filteredProps: any = {};
   const isHtmlTag = typeof baseComponent === 'string';
   // eslint-disable-next-line
   for (let key in props) {
