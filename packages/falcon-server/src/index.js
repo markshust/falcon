@@ -72,7 +72,9 @@ class FalconServer {
     // Set signed cookie keys (https://koajs.com/#app-keys-)
     this.app.keys = this.config.session.keys;
 
-    this.router = new Router();
+    this.router = new Router({
+      prefix: '/api'
+    });
 
     // todo: implement backend session store e.g. https://www.npmjs.com/package/koa-redis-session
     this.app.use(session((this.config.session && this.config.session.options) || {}, this.app));

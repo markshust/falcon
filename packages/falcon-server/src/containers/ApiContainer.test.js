@@ -14,7 +14,7 @@ describe('ApiContainer', () => {
     expect(apiInstance.name).toBe('fake-api');
 
     const endpoint = container.endpoints[0];
-    expect(endpoint.path).toBe('/api/info');
+    expect(endpoint.path).toBe('/info');
   });
 
   it('Should do nothing for an empty API list', () => {
