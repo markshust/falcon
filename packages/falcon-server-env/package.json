@@ -34,6 +34,7 @@
   "scripts": {
     "prebuild": "rimraf dist",
     "build": "tsc",
+    "prepare": "npm run build",
     "test": "jest --watch",
     "test:coverage": "jest --ci --coverage"
   },
