@@ -1,4 +1,4 @@
-import helpers from './';
+import helpers from './htmlHelpers';
 
 describe('Helpers', () => {
   it('Should "stripHtml"', () => {

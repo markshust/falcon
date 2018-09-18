@@ -11,14 +11,14 @@ import {
   ContextRequestOptions
 } from '../types';
 import { URLSearchParamsInit } from 'apollo-server-env';
-import helpers, { ApiHelpers } from '../helpers';
+import htmlHelpers, { ApiHelpers } from '../helpers/htmlHelpers';
 import { format } from 'url';
 
 export default abstract class ApiDataSource<TContext = any, THelpers = any> extends RESTDataSource<TContext> {
   public name: string;
   public config: ApiDataSourceConfig;
   public fetchUrlPriority: number = 1;
-  public helpers: THelpers | ApiHelpers = helpers;
+  public helpers: THelpers | ApiHelpers = htmlHelpers;
 
   /**
    * @param {ApiDataSourceConfig} config API DataSource config
