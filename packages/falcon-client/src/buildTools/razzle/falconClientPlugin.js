@@ -127,6 +127,23 @@ function addFalconI18nPlugin({ resourcePackages = [], filter }) {
 }
 
 /**
+ * fixing issue https://github.com/ztoben/assets-webpack-plugin/issues/41
+ * @param {object} config webpack config
+ * @param {'web'|'node'} target webpack config
+ */
+function fixAssetsWebpackPlugin(config, target) {
+  if (target === 'web') {
+    const indexOfAssetsWebpackPlugin = getPluginIndexByName(config, 'AssetsWebpackPlugin');
+    config.plugins[indexOfAssetsWebpackPlugin] = new AssetsPlugin({
+      path: paths.razzle.appBuild,
+      filename: 'assets.json',
+      includeAllFileTypes: true,
+      prettyPrint: true
+    });
+  }
+}
+
+/**
  * falcon-client and razzle integration plugin
  * @param {{i18n: i18nPluginConfig }} appConfig webpack config
  * @returns {object} razzle plugin
@@ -143,6 +160,7 @@ module.exports = appConfig => (config, { target, dev } /* ,  webpackObject */) =
   setEntryToFalconClient(config, target);
   makeFalconClientJsFileResolvedByWebpack(config);
   fixUrlLoaderFallback(config);
+  fixAssetsWebpackPlugin(config, target);
 
   addVendorsBundle([
     'apollo-cache-inmemory',
