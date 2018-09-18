@@ -1,0 +1,16 @@
+{
+  "name": "Deity Shop with Blog",
+  "short_name": "@deity/shop-and-blog",
+  "description": "This is @deity/shop-and-blog example.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#ffffff",
+  "icons": [
+    {
+      "src": "./assets/logo.svg",
+      "sizes": "302x107",
+      "type": "image/svg"
+    }
+  ]
+}

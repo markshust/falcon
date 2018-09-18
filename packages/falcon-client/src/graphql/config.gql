@@ -1,4 +1,4 @@
-query SSR {
+query CLIENT_SIDE_APP_INIT {
   config @client {
     serverSideRendering
     i18n {
@@ -11,7 +11,7 @@ query SSR {
 
 query APP_INIT {
   config @client {
-    usePwaManifest
+    useWebManifest
     googleTagManager {
       id
     }

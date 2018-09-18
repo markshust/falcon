@@ -26,7 +26,9 @@ export default class Html extends Component {
 
   render() {
     const { assets, asyncContext, state, i18nextState, config, children } = this.props;
-    const { i18n } = config;
+    const { useWebManifest, i18n } = config;
+    const webpanifest = assets[''] && assets[''].webmanifest;
+
     const head = Helmet.rewind();
 
     return (
@@ -38,8 +40,9 @@ export default class Html extends Component {
           {head.meta.toComponent()}
           {head.link.toComponent()}
           {head.script.toComponent()}
-          {config.usePwaManifest && <link rel="manifest" href="/manifest.json" />}
+          {useWebManifest && <link rel="manifest" href={webpanifest} type="application/manifest+json" />}
           <link rel="shortcut icon" href="/favicon.ico" />
+
           <meta name="viewport" content="width=device-width, initial-scale=1" />
           <meta name="theme-color" content="#fff" />
           <meta name="format-detection" content="telephone=no" />
