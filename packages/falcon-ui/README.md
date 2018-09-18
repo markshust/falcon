@@ -1,9 +1,9 @@
 # falcon-ui
 
-## Introduction
+## Intro
 
 **Falcon UI** is a library of composable and themable primitive UI components for React,
-that help with building consistent, fast, responsive ecommerce web apps.
+that help with building consistent, fast, responsive web apps.
 It ships as part of **@deity/falcon** starter kit, but can also be installed standalone
 using instructions below.
 
