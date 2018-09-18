@@ -10,7 +10,14 @@ import { APP_INIT } from '../graphql/config.gql';
  */
 export default () => {
   // eslint-disable-next-line
-  const webpackAssets = process.env.RAZZLE_ASSETS_MANIFEST && require(process.env.RAZZLE_ASSETS_MANIFEST);
+  let assetsManifest = process.env.RAZZLE_ASSETS_MANIFEST && require(process.env.RAZZLE_ASSETS_MANIFEST);
+
+  const assets = {
+    clientJs: assetsManifest.client.js,
+    clientCss: assetsManifest.client.css,
+    vendorsJs: assetsManifest.vendors.js,
+    webmanifest: assetsManifest[''] && assetsManifest[''].webmanifest
+  };
 
   return async ctx => {
     const { client, App, asyncContext, serverTiming } = ctx.state;
@@ -20,7 +27,7 @@ export default () => {
 
     const htmlDocument = renderToString(
       <Html
-        assets={webpackAssets}
+        assets={assets}
         asyncContext={asyncContext}
         state={client.extract()}
         i18nextState={extractI18nextState(ctx)}

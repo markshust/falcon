@@ -27,7 +27,6 @@ export default class Html extends Component {
   render() {
     const { assets, asyncContext, state, i18nextState, config, children } = this.props;
     const { useWebManifest, i18n } = config;
-    const webpanifest = assets[''] && assets[''].webmanifest;
 
     const head = Helmet.rewind();
 
@@ -40,20 +39,14 @@ export default class Html extends Component {
           {head.meta.toComponent()}
           {head.link.toComponent()}
           {head.script.toComponent()}
-          {useWebManifest && <link rel="manifest" href={webpanifest} type="application/manifest+json" />}
+          {useWebManifest && <link rel="manifest" href={assets.webpanifest} type="application/manifest+json" />}
           <link rel="shortcut icon" href="/favicon.ico" />
 
           <meta name="viewport" content="width=device-width, initial-scale=1" />
           <meta name="theme-color" content="#fff" />
           <meta name="format-detection" content="telephone=no" />
-          {assets.client.css && (
-            <link
-              rel="stylesheet"
-              href={assets.client.css}
-              type="text/css"
-              media="screen, projection"
-              charSet="UTF-8"
-            />
+          {assets.clientCss && (
+            <link rel="stylesheet" href={assets.clientCss} type="text/css" media="screen, projection" charSet="UTF-8" />
           )}
         </head>
         <body>
@@ -65,14 +58,14 @@ export default class Html extends Component {
           <SerializeState variable="ASYNC_COMPONENTS_STATE" value={asyncContext} />
           <SerializeState variable="I18NEXT_STATE" value={i18nextState} />
           {process.env.NODE_ENV === 'production' ? (
-            <script src={assets.vendors.js} charSet="UTF-8" async />
+            <script src={assets.vendorsJs} charSet="UTF-8" async />
           ) : (
-            <script src={assets.vendors.js} charSet="UTF-8" async crossOrigin="true" />
+            <script src={assets.vendorsJs} charSet="UTF-8" async crossOrigin="true" />
           )}
           {process.env.NODE_ENV === 'production' ? (
-            <script src={assets.client.js} charSet="UTF-8" async />
+            <script src={assets.clientJs} charSet="UTF-8" async />
           ) : (
-            <script src={assets.client.js} charSet="UTF-8" async crossOrigin="true" />
+            <script src={assets.clientJs} charSet="UTF-8" async crossOrigin="true" />
           )}
         </body>
       </html>
@@ -83,13 +76,10 @@ export default class Html extends Component {
 Html.propTypes = {
   children: PropTypes.node,
   assets: PropTypes.shape({
-    client: PropTypes.shape({
-      js: PropTypes.string,
-      css: PropTypes.string
-    }),
-    vendors: PropTypes.shape({
-      js: PropTypes.string
-    })
+    clientJs: PropTypes.string,
+    clientCss: PropTypes.string,
+    vendorsJs: PropTypes.string,
+    webmanifest: PropTypes.string
   }),
   asyncContext: PropTypes.shape({}),
   state: PropTypes.shape({}),
@@ -104,7 +94,7 @@ Html.propTypes = {
 };
 
 Html.defaultProps = {
-  assets: { client: { js: '', css: '' }, vendors: { js: '' } },
+  assets: { clientJs: '', clientCss: '', vendorsJs: '', webmanifest: '' },
   asyncContext: {},
   state: {},
   i18nextState: {},
