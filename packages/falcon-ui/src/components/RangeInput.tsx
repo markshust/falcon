@@ -22,6 +22,7 @@ export const RangeInput = themed({
   defaultTheme: {
     rangeInput: {
       css: ({ theme }) => ({
+        background: 'transparent',
         width: '100%',
         WebkitAppearance: 'none',
         height: theme.spacing.md,

@@ -66,7 +66,9 @@ export const DetailsContent = themed({
 
   defaultTheme: {
     detailsContent: {
-      p: 'md'
+      pt: 'md',
+      pb: 'md',
+      pl: 'md'
     }
   }
 });
