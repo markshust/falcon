@@ -2,6 +2,7 @@
 const path = require('path');
 const FalconI18nLocalesPlugin = require('@deity/falcon-i18n-webpack-plugin');
 const WebpackConfigHelpers = require('razzle-dev-utils/WebpackConfigHelpers');
+const AssetsPlugin = require('assets-webpack-plugin');
 const paths = require('./../paths');
 
 const webpackConfigHelper = new WebpackConfigHelpers(paths.razzle.appPath);
@@ -142,6 +143,31 @@ function fixAssetsWebpackPlugin(config, target) {
   }
 }
 
+function addWebManifest() {
+  return (config, target) => {
+    if (target === 'web') {
+      const fileLoaderFinder = webpackConfigHelper.makeLoaderFinder('file-loader');
+      const mediaFilesRule = config.module.rules.find(fileLoaderFinder);
+      if (mediaFilesRule) {
+        mediaFilesRule.exclude.push(/\.(webmanifest|browserconfig)$/);
+      }
+
+      config.module.rules.push({
+        test: /(manifest\.webmanifest|browserconfig\.xml)$/,
+        use: [
+          {
+            loader: require.resolve('file-loader'),
+            options: {
+              name: 'static/[name].[hash:8].[ext]',
+              emitFile: true
+            }
+          },
+          { loader: require.resolve('app-manifest-loader') }
+        ]
+      });
+    }
+  };
+}
 /**
  * falcon-client and razzle integration plugin
  * @param {{i18n: i18nPluginConfig }} appConfig webpack config
@@ -151,13 +177,13 @@ function fixAssetsWebpackPlugin(config, target) {
 module.exports = appConfig => (config, { target, dev } /* ,  webpackObject */) => {
   config.resolve.alias = {
     ...(config.resolve.alias || {}),
-    assets: path.join(paths.razzle.appPath, 'assets'),
     src: paths.razzle.appSrc,
     'app-path': paths.razzle.appPath
   };
 
   setEntryToFalconClient(config, target);
   makeFalconClientJsFileResolvedByWebpack(config);
+
   fixUrlLoaderFallback(config);
   fixAssetsWebpackPlugin(config, target);
 
@@ -184,6 +210,7 @@ module.exports = appConfig => (config, { target, dev } /* ,  webpackObject */) =
 
   addGraphQLTagLoader(config);
   addFalconI18nPlugin(appConfig.i18n)(config, target);
+  addWebManifest()(config, target);
 
   return config;
 };
