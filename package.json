@@ -5,6 +5,7 @@
   "license": "OSL-3.0",
   "repository": "git@github.com:deity-io/falcon.git",
   "scripts": {
+    "prepush": "npm run test",
     "precommit": "lint-staged",
     "test": "lerna run test:coverage",
     "prepare": "lerna run prepare",
@@ -35,7 +36,10 @@
     "packages/falcon-dynamic-route-extension",
     "packages/falcon-magento2-api",
     "packages/falcon-wordpress-api",
+    "packages/falcon-url-extension",
+    "packages/falcon-i18n",
     "packages/falcon-dev-tools/eslint-config-falcon",
+    "packages/falcon-dev-tools/falcon-i18n-webpack-plugin",
     "examples/shop-with-blog/client",
     "examples/shop-with-blog/server"
   ]

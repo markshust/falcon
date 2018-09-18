@@ -16,6 +16,9 @@ yarn-error.log
 
 packages/**/dist/
 examples/**/build/
+examples/**/public/i18n/
+
+#sandbox:
 examples/**/static/dist/
 examples/**/static/manifest.json
 examples/**/webpack-assets.json

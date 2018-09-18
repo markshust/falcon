@@ -5,7 +5,7 @@
   "repository": "https://github.com/deity-io/falcon/tree/master/packages/create-falcon-app",
   "license": "OSL-3.0",
   "bin": {
-    "create-falcon-app": "./bin/create-falcon-app"
+    "create-falcon-app": "./bin/create-falcon-app.js"
   },
   "scripts": {
     "prepare": "node scripts/prepublish.js"

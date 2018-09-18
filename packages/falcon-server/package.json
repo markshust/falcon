@@ -5,7 +5,7 @@
   "version": "1.0.0",
   "repository": "https://github.com/deity-io/falcon/tree/master/packages/falcon-server",
   "bin": {
-    "falcon-server": "bin/falcon-server"
+    "falcon-server": "bin/falcon-server.js"
   },
   "scripts": {
     "test": "jest --watch",

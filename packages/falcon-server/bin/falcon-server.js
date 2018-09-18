@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 
+// eslint-disable-next-line no-underscore-dangle
 global.__SERVER__ = true;
 
 const fs = require('fs');

@@ -6,10 +6,11 @@ const createFalconApp = require('../src');
 const pkg = require('../package.json');
 const { EOL } = require('os');
 
-const availableExamples = createFalconApp
-  .getAvailableExamples()
-  .map(example => chalk.green(example))
-  .join(', ') || chalk.red('<none>');
+const availableExamples =
+  createFalconApp
+    .getAvailableExamples()
+    .map(example => chalk.green(example))
+    .join(', ') || chalk.red('<none>');
 
 const getAppHelp = (packageManager, name) => {
   const pkgRun = packageManager === 'yarn' ? 'yarn' : 'npm run';
@@ -28,19 +29,27 @@ program
       console.log(`All required dependencies were installed, so you don't need to worry about them.${EOL}`);
 
       if (activeProjects.length > 1) {
-        console.log(`Generated ${chalk.green(name)} application contains ${chalk.green(activeProjects.length)} sub-applications`);
-        console.log(`Please run the following code in separate terminals to start your applications in ${chalk.green('development')} mode${EOL}`);
+        console.log(
+          `Generated ${chalk.green(name)} application contains ${chalk.green(activeProjects.length)} sub-applications`
+        );
+        console.log(
+          `Please run the following code in separate terminals to start your applications in ${chalk.green(
+            'development'
+          )} mode${EOL}`
+        );
       } else {
-        console.log(`Please run the following code to start your application in ${chalk.green('development')} mode${EOL}`);
+        console.log(
+          `Please run the following code to start your application in ${chalk.green('development')} mode${EOL}`
+        );
       }
 
       activeProjects.forEach(project => console.log(getAppHelp(packageManager, project) + EOL));
-    } catch(e) {
+    } catch (e) {
       console.error(chalk.red('Failed to create app!'));
       console.error(chalk.red(e.message));
     }
   })
-  .option('-e, --example <example-name>', `Create from Example app. Available options: ${ availableExamples }`)
+  .option('-e, --example <example-name>', `Create from Example app. Available options: ${availableExamples}`)
   .allowUnknownOption()
   .on('--help', () => 'messages.help')
   .parse(process.argv);
