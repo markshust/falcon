@@ -12,7 +12,7 @@ export default () => async (ctx, next) => {
   try {
     await next();
   } catch (error) {
-    Logger.error(`Internal Server Error:\n  ${error}`);
+    Logger.error(`Internal Server Error!\n `, error);
 
     let viewsDir = path.resolve(__dirname, './../', 'views');
     if (fs.existsSync(path.join(viewsDir, '/errors/500.html')) === false) {
