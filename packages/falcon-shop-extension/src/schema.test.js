@@ -1,20 +1,11 @@
-const { addMockFunctionsToSchema } = require('graphql-tools');
-const { graphql } = require('graphql');
+const { mockServer } = require('graphql-tools');
+const { ApiDataSource } = require('@deity/falcon-server-env');
 const Shop = require('.');
 
-/**
- * Helper based on mockServer from 'graphql-tools' but provides possibility to pass also context
- * during query execution
- * @param {GraphQLSchema} schema - executable schema to be tested
- * @param {Object} mocks - map with mocks
- * @param {boolean} preserveResolvers - flag passed directly to addMockFunctionsToSchema
- * @returns {Object} mocked server with query() method
- */
-function mockServer(schema, mocks, preserveResolvers = false) {
-  if (mocks) {
-    addMockFunctionsToSchema({ schema, mocks, preserveResolvers });
+class CustomApi extends ApiDataSource {
+  async getPosts() {
+    return [];
   }
-  return { query: (query, vars, ctx) => graphql(schema, query, {}, { ctx }, vars) };
 }
 
 const mocks = {
@@ -91,6 +82,7 @@ describe('Falcon Shop Extension', () => {
     let server;
     beforeAll(() => {
       const shop = new Shop();
+      shop.api = new CustomApi();
 
       // prepare server with mocks for tests
       ({ schema } = shop.getGraphQLConfig());

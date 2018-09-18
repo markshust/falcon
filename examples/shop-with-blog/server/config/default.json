@@ -11,6 +11,16 @@
         "apiPrefix": "/blog-api",
         "apiSuffix": "/wp/v2"
       }
+    },
+    {
+      "name": "api-magento2",
+      "package": "@deity/falcon-magento2-api",
+      "config": {
+        "host": "snapshot.deity.io",
+        "protocol": "https",
+        "username": "node-api",
+        "password": "3de3f3a262"
+      }
     }
   ],
   "extensions": [
@@ -18,6 +28,12 @@
       "package": "@deity/falcon-blog-extension",
       "config": {
         "api": "api-wordpress"
+      }
+    },
+    {
+      "package": "@deity/falcon-shop-extension",
+      "config": {
+        "api": "api-magento2"
       }
     }
   ],

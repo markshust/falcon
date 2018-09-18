@@ -9,8 +9,10 @@
     "start:prod": "cross-env NODE_ENV=production node index.js"
   },
   "dependencies": {
-    "@deity/falcon-server": "1.0.0",
     "@deity/falcon-blog-extension": "1.0.0",
+    "@deity/falcon-magento2-api": "1.0.0",
+    "@deity/falcon-server": "1.0.0",
+    "@deity/falcon-shop-extension": "1.0.0",
     "@deity/falcon-wordpress-api": "1.0.0",
     "config": "^2.0.1",
     "cross-env": "^5.2.0"
