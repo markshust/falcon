@@ -1,7 +1,7 @@
 const { Extension } = require('@deity/falcon-server-env');
 const Logger = require('@deity/falcon-logger');
-
-const typeDefs = require('fs').readFileSync('src/schema.graphql', 'utf8');
+const { resolve } = require('path');
+const typeDefs = require('fs').readFileSync(resolve(__dirname, 'schema.graphql'), 'utf8');
 
 /**
  * Simple blog extension.
