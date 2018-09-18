@@ -2,6 +2,7 @@ import React from 'react';
 import { renderToString } from 'react-dom/server';
 import { StaticRouter } from 'react-router-dom';
 import { ApolloProvider, getDataFromTree } from 'react-apollo';
+import Helmet from 'react-helmet';
 import { I18nextProvider } from 'react-i18next';
 import { AsyncComponentProvider, createAsyncContext } from 'react-async-component';
 import asyncBootstrapper from 'react-async-bootstrapper';
@@ -51,6 +52,7 @@ export default ({ App }) => async (ctx, next) => {
 
   ctx.state.App = markup;
   ctx.state.asyncContext = asyncContext.getState();
+  ctx.state.helmetContext = Helmet.renderStatic();
   ctx.state.i18nextFilteredStore = filterResourceStoreByNs(i18next.services.resourceStore.data, i18nextUsedNamespaces);
 
   return context.url ? ctx.redirect(context.url) : next();

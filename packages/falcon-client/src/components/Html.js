@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import Helmet from 'react-helmet';
 import GoogleTagManager from '../google/GoogleTagManager';
 import SerializeState from './SerializeState';
 
@@ -25,20 +24,21 @@ export default class Html extends Component {
   }
 
   render() {
-    const { assets, asyncContext, state, i18nextState, config, children } = this.props;
+    const { assets, asyncContext, state, helmetContext, i18nextState, config, children } = this.props;
     const { useWebManifest, i18n } = config;
 
-    const head = Helmet.rewind();
+    // const htmlAttrs = helmetContext.htmlAttributes.toComponent();
+    // const bodyAttrs = helmetContext.bodyAttributes.toComponent();
 
     return (
       <html lang={i18nextState.language || i18n.lng}>
         <head>
           {this.renderGtm()}
-          {head.base.toComponent()}
-          {head.title.toComponent()}
-          {head.meta.toComponent()}
-          {head.link.toComponent()}
-          {head.script.toComponent()}
+          {helmetContext && helmetContext.base.toComponent()}
+          {helmetContext && helmetContext.title.toComponent()}
+          {helmetContext && helmetContext.meta.toComponent()}
+          {helmetContext && helmetContext.link.toComponent()}
+          {helmetContext && helmetContext.script.toComponent()}
           {useWebManifest && <link rel="manifest" href={assets.webpanifest} type="application/manifest+json" />}
           <link rel="shortcut icon" href="/favicon.ico" />
 
@@ -82,6 +82,7 @@ Html.propTypes = {
     webmanifest: PropTypes.string
   }),
   asyncContext: PropTypes.shape({}),
+  helmetContext: PropTypes.shape({}),
   state: PropTypes.shape({}),
   i18nextState: PropTypes.shape({
     language: PropTypes.string,

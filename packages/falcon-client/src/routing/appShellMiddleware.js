@@ -20,7 +20,7 @@ export default () => {
   };
 
   return async ctx => {
-    const { client, App, asyncContext, serverTiming } = ctx.state;
+    const { client, App, asyncContext, helmetContext, serverTiming } = ctx.state;
     const { config } = client.readQuery({ query: APP_INIT });
 
     const renderTimer = serverTiming.start('HTML renderToString()');
@@ -29,6 +29,7 @@ export default () => {
       <Html
         assets={assets}
         asyncContext={asyncContext}
+        helmetContext={helmetContext}
         state={client.extract()}
         i18nextState={extractI18nextState(ctx)}
         config={config}
