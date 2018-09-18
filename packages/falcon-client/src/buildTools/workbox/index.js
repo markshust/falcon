@@ -31,7 +31,7 @@ function injectManifest() {
           'build/server.js'
         ]
       },
-      dontCacheBustUrlsMatching: /\/static\/(js\/(.*).(.*).js|css\/(.*).(.*).css)/
+      dontCacheBustUrlsMatching: /\/static\/.*/
       // injectionPointRegexp:
       // manifestTransforms: []
     })
