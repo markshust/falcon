@@ -113,15 +113,14 @@ function addGraphQLTagLoader(config) {
 function addFalconI18nPlugin({ resourcePackages = [], filter }) {
   return (config, target) => {
     if (target === 'web') {
-      config.plugins = [
-        ...config.plugins,
+      config.plugins.unshift(
         new FalconI18nLocalesPlugin({
           mainSource: path.join(paths.razzle.appPath, 'i18n'),
           defaultSources: resourcePackages.map(x => paths.resolvePackageDir(x)).map(x => path.join(x, 'i18n')),
           output: 'build/i18n',
           filter
         })
-      ];
+      );
     }
   };
 }
