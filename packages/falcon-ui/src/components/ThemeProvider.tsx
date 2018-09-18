@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { ReactNode } from 'react';
 import Provider from '@emotion/provider';
 import { Global } from '@emotion/core';
 import { createTheme, PropsWithTheme } from '../theme';
@@ -13,7 +13,7 @@ const normalizeCssStyles = {
   }
 };
 
-export const ThemeProvider = (props: Partial<PropsWithTheme>) => {
+export const ThemeProvider = (props: Partial<PropsWithTheme> & { children?: ReactNode }) => {
   // create default theme if nothing is provided
   const { theme, ...rest } = props;
   const themeToUse = theme || defaultTheme;
