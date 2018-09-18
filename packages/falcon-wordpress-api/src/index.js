@@ -95,7 +95,7 @@ module.exports = class WordpressApi extends ApiDataSource {
    */
   async didReceiveResponse(res, req) {
     const data = await super.didReceiveResponse(res, req);
-    const { language } = res.context;
+    const { language } = res.context || {};
     const languagePrefix = language && language !== this.config.language ? `/${language}` : '';
     const { headers } = res;
 
