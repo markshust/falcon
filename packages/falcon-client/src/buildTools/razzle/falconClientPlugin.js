@@ -1,8 +1,15 @@
 /* eslint-disable import/no-extraneous-dependencies */
 const path = require('path');
 const FalconI18nLocalesPlugin = require('@deity/falcon-i18n-webpack-plugin');
-const makeLoaderFinder = require('razzle-dev-utils/makeLoaderFinder');
+const WebpackConfigHelpers = require('razzle-dev-utils/WebpackConfigHelpers');
 const paths = require('./../paths');
+
+const webpackConfigHelper = new WebpackConfigHelpers(paths.razzle.appPath);
+function getPluginIndexByName(config, name) {
+  return webpackConfigHelper
+    .getPlugins(config)
+    .findIndex(x => x.plugin && x.plugin.constructor && x.plugin.constructor.name === name);
+}
 
 function setEntryToFalconClient(config, target) {
   if (target === 'web') {
@@ -33,14 +40,14 @@ function setEntryToFalconClient(config, target) {
 }
 
 function fixUrlLoaderFallback(config) {
-  const urlLoaderFinder = makeLoaderFinder('url-loader');
+  const urlLoaderFinder = webpackConfigHelper.makeLoaderFinder('url-loader');
   const urlLoader = config.module.rules.find(urlLoaderFinder);
 
   urlLoader.options.fallback = require.resolve('file-loader');
 }
 
 function makeFalconClientJsFileResolvedByWebpack(config) {
-  const babelLoaderFinder = makeLoaderFinder('babel-loader');
+  const babelLoaderFinder = webpackConfigHelper.makeLoaderFinder('babel-loader');
   const babelLoader = config.module.rules.find(babelLoaderFinder);
   if (!babelLoader) {
     throw new Error(`'babel-loader' was erased from config, it is required to configure '@deity/falcon-client'`);
@@ -75,10 +82,10 @@ function addVendorsBundle(modules = []) {
 }
 
 function addGraphQLTagLoader(config) {
-  const fileLoaderFinder = makeLoaderFinder('file-loader');
-  const fileLoader = config.module.rules.find(fileLoaderFinder);
-  if (fileLoader) {
-    fileLoader.exclude.push(/\.(graphql|gql)$/);
+  const fileLoaderFinder = webpackConfigHelper.makeLoaderFinder('file-loader');
+  const mediaFilesRule = config.module.rules.find(fileLoaderFinder);
+  if (mediaFilesRule) {
+    mediaFilesRule.exclude.push(/\.(graphql|gql)$/);
   }
 
   config.module.rules.push({
@@ -130,7 +137,6 @@ module.exports = appConfig => (config, { target, dev } /* ,  webpackObject */) =
     ...(config.resolve.alias || {}),
     assets: path.join(paths.razzle.appPath, 'assets'),
     src: paths.razzle.appSrc,
-
     'app-path': paths.razzle.appPath
   };
 
