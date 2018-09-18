@@ -400,7 +400,16 @@ module.exports = class WordpressApi extends ApiDataSource {
       params.language = language;
     }
 
-    const response = await this.get('url', { path }, { authRequired: this.isDraft(path), language });
+    const response = await this.get(
+      'url',
+      { path },
+      {
+        context: {
+          authRequired: this.isDraft(path),
+          language
+        }
+      }
+    );
 
     const {
       data,
