@@ -87,8 +87,8 @@ class BlogExtension extends Extension {
 }
 ```
 
-ApiContainer and ExtensionContainer will be the rest of the job:
+ApiContainer and ExtensionContainer will do the rest of the job:
 
-- Creating an instances of both classes
+- Creating instances of both classes
 - Assigning specified `extension.config.api` Instance to Extension
 - Generating, stitching and merging GraphQL Schema for FalconServer

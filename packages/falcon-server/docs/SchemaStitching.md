@@ -49,7 +49,7 @@ This way the main `Query` Type will be extended with a custom `getMyField` metho
 which should return an instance of `FieldType`.
 
 > Please note, for all root types (`Query`, `Mutation` and `Subscription`) you
-mustuse `extend` statement in order to add your functionality into FalconServer
+must use `extend` statement in order to add your functionality into FalconServer
 GraphQL application. It is also possible to extend a GraphQL type, which is
 defined by other extensions - just use the same `extend` statement
 (for example, in your `custom-extension` you can extend `Product` type in

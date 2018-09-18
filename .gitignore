@@ -20,4 +20,7 @@ examples/**/static/dist/
 examples/**/static/manifest.json
 examples/**/webpack-assets.json
 examples/**/webpack-stats.json
-examples/**/config/local.json
+
+examples/**/config/*
+!examples/**/config/custom-environment-variables.*
+!examples/**/config/default.*
