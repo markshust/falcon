@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "@deity/falcon-logger": "1.0.0",
-    "graphql-tools": "^3.1.1",
-    "require-graphql-file": "^1.0.1"
+    "@deity/falcon-server-env": "^1.0.0",
+    "graphql-tools": "^3.1.1"
   }
 }

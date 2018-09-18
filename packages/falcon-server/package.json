@@ -11,14 +11,32 @@
     "test": "jest --watch",
     "test:coverage": "jest --ci --coverage"
   },
+  "jest": {
+    "collectCoverageFrom": [
+      "src/**/*.js"
+    ],
+    "coverageReporters": [
+      "html",
+      "text",
+      "text-summary"
+    ],
+    "setupFiles": [
+      "../../test/nodeEnvSetupFile"
+    ]
+  },
   "dependencies": {
-    "@deity/falcon-logger": "1.0.0",
-    "apollo-server-koa": "^2.0.4",
+    "@deity/falcon-server-env": "^1.0.0",
+    "@deity/falcon-logger": "^1.0.0",
+    "apollo-server-koa": "^2.0.7",
+    "eventemitter2": "^5.0.1",
     "graphql": "^0.13.2",
     "graphql-tools": "^3.1.1",
-    "koa": "^2.5.2",
+    "koa": "^2.5.3",
     "koa-router": "^7.4.0",
-    "koa-session": "^5.8.2",
-    "lodash": "^4.17.10"
+    "koa-session": "^5.9.0",
+    "lodash": "^4.17.11"
+  },
+  "devDependencies": {
+    "supertest": "^3.3.0"
   }
 }

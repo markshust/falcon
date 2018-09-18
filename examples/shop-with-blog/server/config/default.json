@@ -1,10 +1,11 @@
 {
+  "debug": false,
   "port": 4000,
   "apis": [
     {
       "name": "api-wordpress",
       "package": "@deity/falcon-wordpress-api",
-      "options": {
+      "config": {
         "host": "snapshot.deity.io",
         "protocol": "https",
         "apiPrefix": "/blog-api",
@@ -15,7 +16,7 @@
   "extensions": [
     {
       "package": "@deity/falcon-blog-extension",
-      "options": {
+      "config": {
         "api": "api-wordpress"
       }
     }

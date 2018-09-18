@@ -1,5 +1,12 @@
 const { mockServer } = require('graphql-tools');
+const { ApiDataSource } = require('@deity/falcon-server-env');
 const Blog = require('.');
+
+class CustomApi extends ApiDataSource {
+  async getPosts() {
+    return [];
+  }
+}
 
 const mocks = {
   Post: () => ({
@@ -57,23 +64,27 @@ const QUERY_TEST_CASES = [
     query: `
       query {
         posts {
-          id
-          title
+          items {
+            id
+            title
+          }
         }
       }
     `,
     expected: {
       data: {
-        posts: [
-          {
-            id: 1,
-            title: 'Post title'
-          },
-          {
-            id: 1,
-            title: 'Post title'
-          }
-        ]
+        posts: {
+          items: [
+            {
+              id: 1,
+              title: 'Post title'
+            },
+            {
+              id: 1,
+              title: 'Post title'
+            }
+          ]
+        }
       }
     }
   }
@@ -83,15 +94,21 @@ describe('Falcon Blog Extension', () => {
   describe('Schema', () => {
     let schema;
     let server;
-    beforeAll(() => {
+    beforeAll(async () => {
       const blog = new Blog();
+      blog.api = new CustomApi();
 
       // prepare server with mocks for tests
-      ({ schema } = blog.getGraphQLConfig());
+      ({ schema } = await blog.getGraphQLConfig());
+      schema.push('type Query { _: Boolean }');
       server = mockServer(schema, mocks);
     });
 
-    it('should have valid type definitions', async () => {
+    it('Correctly passes Query params to API resolver', async () => {
+      server.query();
+    });
+
+    it('Should have valid type definitions', async () => {
       expect(async () => {
         await server.query(`{ __schema { types { name } } }`);
       }).not.toThrow();

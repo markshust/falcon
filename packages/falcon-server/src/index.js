@@ -3,33 +3,77 @@ const Router = require('koa-router');
 const session = require('koa-session');
 const { ApolloServer } = require('apollo-server-koa');
 const Logger = require('@deity/falcon-logger');
-const ExtensionsContainer = require('./extensions');
-const ApiEngine = require('./apiEngine');
-const { makeExecutableSchema } = require('graphql-tools');
+const ApiContainer = require('./containers/ApiContainer');
+const ExtensionContainer = require('./containers/ExtensionContainer');
+const { EventEmitter2 } = require('eventemitter2');
 
-const ENV = process.env.NODE_ENV || 'development';
-const isDevelopment = ENV === 'development';
+const Events = {
+  ERROR: 'falcon-server.error',
+
+  BEFORE_INITIALIZED: 'falcon-server.before-initialized',
+  AFTER_INITIALIZED: 'falcon-server.after-initialized',
+
+  BEFORE_STARTED: 'falcon-server.before-started',
+  AFTER_STARTED: 'falcon-server.after-started',
+
+  BEFORE_WEB_SERVER_CREATED: 'falcon-server.before-web-server-created',
+  AFTER_WEB_SERVER_CREATED: 'falcon-server.after-web-server-created',
+
+  BEFORE_API_CONTAINER_CREATED: 'falcon-server.before-api-container-created',
+  AFTER_API_CONTAINER_CREATED: 'falcon-server.after-api-container-created',
+
+  BEFORE_EXTENSION_CONTAINER_CREATED: 'falcon-server.before-extension-container-created',
+  AFTER_EXTENSION_CONTAINER_CREATED: 'falcon-server.after-extension-container-created',
+  AFTER_EXTENSION_CONTAINER_INITIALIZED: 'falcon-server.after-extension-container-initialized',
+
+  BEFORE_APOLLO_SERVER_CREATED: 'falcon-server.before-apollo-server-created',
+  AFTER_APOLLO_SERVER_CREATED: 'falcon-server.after-apollo-server-created',
+
+  BEFORE_ENDPOINTS_REGISTERED: 'falcon-server.before-endpoints-registered',
+  AFTER_ENDPOINTS_REGISTERED: 'falcon-server.after-endpoints-registered'
+};
 
 class FalconServer {
-  constructor(conf) {
-    Logger.setLogLevel(conf.logLevel);
-    this.config = conf;
+  constructor(config) {
+    this.config = config;
+    const { maxListeners = 20, verboseEvents = false } = this.config;
+    if (config.logLevel) {
+      Logger.setLogLevel(config.logLevel);
+    }
+
+    this.eventEmitter = new EventEmitter2({
+      maxListeners,
+      wildcard: true,
+      verboseMemoryLeak: false
+    });
+
+    if (verboseEvents) {
+      this.eventEmitter.onAny(event => {
+        Logger.trace(`Triggering "${event}" event listener...`);
+      });
+    }
   }
 
-  async init() {
-    await this.initApp();
-    await this.initApis();
-    await this.initExtensions();
-    await this.initApolloServer();
-    this.registerRoutes();
+  async initialize() {
+    await this.eventEmitter.emitAsync(Events.BEFORE_INITIALIZED, this);
+    await this.initializeServerApp();
+    await this.initializeExtensions();
+    await this.initializeApolloServer();
+    await this.registerEndpoints();
+    await this.eventEmitter.emitAsync(Events.AFTER_INITIALIZED, this);
   }
 
-  initApp() {
+  /**
+   * @private
+   */
+  async initializeServerApp() {
+    await this.eventEmitter.emitAsync(Events.BEFORE_WEB_SERVER_CREATED, this.config);
     this.app = new Koa();
+    // Set signed cookie keys (https://koajs.com/#app-keys-)
     this.app.keys = this.config.session.keys;
 
     this.router = new Router({
-      prefix: '/api/'
+      prefix: '/api'
     });
 
     // todo: implement backend session store e.g. https://www.npmjs.com/package/koa-redis-session
@@ -41,50 +85,35 @@ class FalconServer {
       ctx.req.session = ctx.session;
       return next();
     });
+    await this.eventEmitter.emitAsync(Events.AFTER_WEB_SERVER_CREATED, this.app);
   }
 
-  async initApis() {
-    this.apiEngine = new ApiEngine({
-      apis: this.config.apis,
-      app: this.app,
-      config: {
-        logLevel: this.config.logLevel
-      }
-    });
-    await this.apiEngine.init();
+  /**
+   * @private
+   */
+  async initializeExtensions() {
+    await this.eventEmitter.emitAsync(Events.BEFORE_API_CONTAINER_CREATED, this.config.apis);
+    /** @type {ApiContainer} */
+    this.apiContainer = new ApiContainer(this.config.apis);
+    await this.eventEmitter.emitAsync(Events.AFTER_API_CONTAINER_CREATED, this.apiContainer);
+
+    await this.eventEmitter.emitAsync(Events.BEFORE_EXTENSION_CONTAINER_CREATED, this.config.extensions);
+    /** @type {ExtensionContainer} */
+    this.extensionContainer = new ExtensionContainer(this.config.extensions, this.apiContainer.dataSources);
+    await this.eventEmitter.emitAsync(Events.AFTER_EXTENSION_CONTAINER_CREATED, this.extensionContainer);
+
+    await this.extensionContainer.initialize();
+    await this.eventEmitter.emitAsync(Events.AFTER_EXTENSION_CONTAINER_INITIALIZED, this.extensionContainer);
   }
 
-  async initExtensions() {
-    this.extensions = new ExtensionsContainer({
-      extensions: this.config.extensions,
-      // todo: try to refactor code so ExtensionContainer doesn't need apiEngine
-      apiEngine: this.apiEngine
-    });
-    await this.extensions.init();
-  }
+  /**
+   * @private
+   */
+  async initializeApolloServer() {
+    const cache = this.getCacheInstance();
 
-  // this is havy-WIP :)
-  async initApolloServer() {
-    const cache = this.initCacheBackend();
-
-    // Construct a schema, using GraphQL schema language
-    const schemas = [
-      makeExecutableSchema({
-        typeDefs: `
-        type Query {
-          hello: String
-        }
-      `
-      })
-    ];
-
-    // Provide resolver functions for your schema fields
-    const resolvers = [];
-
-    const apolloServerConfig = await this.extensions.createGraphQLConfig({
-      schemas,
-      resolvers,
-      dataSources: this.apiEngine.getDataSources(),
+    const apolloServerConfig = await this.extensionContainer.createGraphQLConfig({
+      dataSources: this.apiContainer.dataSources.values(),
       // inject session to graph context
       // todo: re-think that - maybe we could avoid passing session here and instead pass just required data
       // from session?
@@ -92,64 +121,83 @@ class FalconServer {
         session: ctx.req.session
       }),
       cache,
-      tracing: isDevelopment,
-      playground: isDevelopment && {
+      tracing: this.config.debug,
+      playground: this.config.debug && {
         settings: {
           'request.credentials': 'include' // include to keep the session between requests
         }
       }
     });
 
+    await this.eventEmitter.emitAsync(Events.BEFORE_APOLLO_SERVER_CREATED, apolloServerConfig);
     const server = new ApolloServer(apolloServerConfig);
+    await this.eventEmitter.emitAsync(Events.AFTER_APOLLO_SERVER_CREATED, server);
 
     server.applyMiddleware({ app: this.app });
   }
 
   /**
    * Create instance of cache backend based on configuration ("cache" key from config)
+   * @private
    * @return {Object} instance of cache backend
    */
-  initCacheBackend() {
-    if (this.config.cache && this.config.cache.enabled) {
+  getCacheInstance() {
+    const { enabled = false, package: pkg, options = {} } = this.config.cache || {};
+    if (enabled) {
       try {
-        const CacheBackend = require(this.config.cache.package); // eslint-disable-line import/no-dynamic-require
-        return new CacheBackend(this.config.cache.options || {});
+        // eslint-disable-next-line import/no-dynamic-require
+        const CacheBackend = require(pkg);
+        return new CacheBackend(options);
       } catch (ex) {
         Logger.error(
-          `Cannot load cache backend from package ${
+          `FalconServer: Cannot initialize cache backend using "${
             this.config.cache.package
-          } so Apollo Server will start without cache`
+          }" package, GraphQL server will operate without cache`
         );
       }
     }
   }
 
-  registerRoutes() {
-    const routes = this.apiEngine.getRoutes();
-    routes.forEach(route => {
-      (Array.isArray(route.methods) ? route.methods : [route.methods]).forEach(method => {
-        this.router[method](route.path, route.handler);
+  /**
+   * @private
+   */
+  async registerEndpoints() {
+    Logger.debug(`FalconServer: registering API endpoints`);
+    await this.eventEmitter.emitAsync(Events.BEFORE_ENDPOINTS_REGISTERED, this.apiContainer.endpoints);
+    this.apiContainer.endpoints.forEach(endpoint => {
+      (Array.isArray(endpoint.methods) ? endpoint.methods : [endpoint.methods]).forEach(method => {
+        this.router[method](endpoint.path, endpoint.handler);
       });
     });
 
     this.app.use(this.router.routes()).use(this.router.allowedMethods());
+    await this.eventEmitter.emitAsync(Events.AFTER_ENDPOINTS_REGISTERED, this.router);
   }
 
   start() {
     const handleStartupError = err => {
-      Logger.error('Initialization error - cannot start the server');
-      Logger.error(err.stack);
-      process.exit(2);
+      this.eventEmitter.emitAsync(Events.ERROR, err).then(() => {
+        Logger.error('FalconServer: Initialization error - cannot start the server');
+        Logger.error(err.stack);
+        process.exit(2);
+      });
     };
 
-    this.init()
-      .then(() => {
-        this.app.listen({ port: this.config.port }, () => {
-          Logger.info(`🚀 Server ready at http://localhost:${this.config.port}`);
-        });
-      }, handleStartupError)
+    this.initialize()
+      .then(() => this.eventEmitter.emitAsync(Events.BEFORE_STARTED, this))
+      .then(
+        () =>
+          new Promise(resolve => {
+            this.app.listen({ port: this.config.port }, () => {
+              Logger.info(`🚀 Server ready at http://localhost:${this.config.port}`);
+              resolve();
+            });
+          }, handleStartupError)
+      )
+      .then(() => this.eventEmitter.emitAsync(Events.AFTER_STARTED, this))
       .catch(handleStartupError);
   }
 }
 
 module.exports = FalconServer;
+module.exports.Events = Events;
