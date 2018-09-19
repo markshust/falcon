@@ -3,36 +3,13 @@ import React from 'react';
 import Helmet from 'react-helmet';
 import { asyncComponent } from 'react-async-component';
 import { Route, Switch } from 'react-router-dom';
+import { translate } from 'react-i18next';
 import Koa from 'koa';
 import supertest from 'supertest';
 import server from './server';
 import DynamicRoute from './components/DynamicRoute';
 
 describe('Server', () => {
-  let components;
-  let Home;
-  let App;
-
-  beforeAll(() => {
-    Helmet.canUseDOM = false;
-    components = {
-      shop: asyncComponent({
-        resolve: () => import('./__mocks__/pages/Shop')
-      }),
-      post: asyncComponent({
-        resolve: () => import('./__mocks__/pages/Post')
-      })
-    };
-
-    Home = () => <div>Foo</div>;
-    App = () => (
-      <Switch>
-        <Route exact path="/" component={Home} />
-        <DynamicRoute components={components} />
-      </Switch>
-    );
-  });
-
   it('Should properly call eventHandlers', () => {
     const onServerCreatedMock = jest.fn();
     const onServerInitializedMock = jest.fn();
@@ -46,7 +23,7 @@ describe('Server', () => {
     };
 
     const serverApp = server({
-      App: Home,
+      App: () => <div />,
       configuration,
       clientApolloSchema: {
         defaults: {}
@@ -60,6 +37,30 @@ describe('Server', () => {
   });
 
   it('Should render Home page (SSR)', async () => {
+    Helmet.canUseDOM = false;
+    const Home = translate()(({ t }) => (
+      <div>
+        <h2>Foo</h2>
+        <p>{t('key')}</p>
+      </div>
+    ));
+
+    const App = () => (
+      <Switch>
+        <Route exact path="/" component={Home} />
+        <DynamicRoute
+          components={{
+            shop: asyncComponent({
+              resolve: () => import('./__mocks__/pages/Shop')
+            }),
+            post: asyncComponent({
+              resolve: () => import('./__mocks__/pages/Post')
+            })
+          }}
+        />
+      </Switch>
+    );
+
     const config = {
       logLevel: 'error',
       serverSideRendering: true,
@@ -88,11 +89,17 @@ describe('Server', () => {
       }
     };
 
-    const serverHandler = server({ App, configuration, clientApolloSchema }).callback();
+    const serverHandler = server({
+      App,
+      configuration,
+      clientApolloSchema,
+      i18nResources: { en: { common: { key: 'foo bar baz' } } }
+    }).callback();
     const response = await supertest(serverHandler).get('/');
 
     expect(response.status).toBe(200);
     expect(response.headers).toContainKey('server-timing');
-    expect(response.text).toEqual(expect.stringContaining('Foo</div>'));
+    expect(response.text).toEqual(expect.stringContaining('<h2>Foo</h2>'));
+    expect(response.text).toEqual(expect.stringContaining('<p>foo bar baz</p>'));
   });
 });
