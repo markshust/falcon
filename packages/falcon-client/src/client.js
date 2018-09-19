@@ -7,6 +7,7 @@ import { AsyncComponentProvider } from 'react-async-component';
 import asyncBootstrapper from 'react-async-bootstrapper';
 import { I18nextProvider } from 'react-i18next';
 import ApolloClient from './service/ApolloClient';
+import HtmlHead from './components/HtmlHead';
 import App, { clientApolloSchema } from './clientApp';
 import { CLIENT_SIDE_APP_INIT } from './graphql/config.gql';
 import i18nFactory from './i18n/i18nClientFactory';
@@ -31,7 +32,10 @@ const markup = (
         initialI18nStore={i18nextState.data}
       >
         <BrowserRouter>
-          <App />
+          <React.Fragment>
+            <HtmlHead htmlLang={i18nextState.language || config.i18n.lng} />
+            <App />
+          </React.Fragment>
         </BrowserRouter>
       </I18nextProvider>
     </AsyncComponentProvider>
