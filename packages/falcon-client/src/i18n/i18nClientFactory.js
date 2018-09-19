@@ -16,7 +16,7 @@ const loadLocale = (url, options, callback) =>
 export default ({ lng = 'en', fallbackLng = 'en', whitelist = ['en'], debug = false } = {}) => {
   const defaultNS = 'common';
 
-  return i18next.use(XHR).init({
+  const instance = i18next.use(XHR).init({
     lng,
     ns: ['common'], // on client side we need only 'common' ns, other will be fetched on demand
     fallbackLng,
@@ -38,4 +38,12 @@ export default ({ lng = 'en', fallbackLng = 'en', whitelist = ['en'], debug = fa
       ajax: loadLocale
     }
   });
+
+  if (module.hot) {
+    instance.on('initialized', () => {
+      instance.reloadResources();
+    });
+  }
+
+  return instance;
 };

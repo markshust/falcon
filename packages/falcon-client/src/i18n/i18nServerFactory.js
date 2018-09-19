@@ -68,14 +68,9 @@ export function filterResourceStoreByNs(storeData, namespaces) {
 
 export function extractI18nextState(ctx) {
   if (ctx.i18next) {
-    /* on development we would like to have HMR then we can not inject initial translations
-     * because even resources will be updated i18next will not reload its internal state after module.hot.accept()
-     */
-    const data = process.env.NODE_ENV === 'development' ? undefined : ctx.state.i18nextFilteredStore;
-
     return {
       language: ctx.i18next.language,
-      data
+      data: ctx.state.i18nextFilteredStore
     };
   }
 
