@@ -40,13 +40,20 @@ function setEntryToFalconClient(config, target) {
   }
 }
 
+function excludeIcoFromFileLoader(config) {
+  const fileLoaderFinder = webpackConfigHelper.makeLoaderFinder('file-loader');
+  const fileLoader = config.module.rules.find(fileLoaderFinder);
+  fileLoader.exclude.push(/\.(ico)$/);
+}
+
 function fixUrlLoaderFallback(config, target) {
   const urlLoaderFinder = webpackConfigHelper.makeLoaderFinder('url-loader');
   const urlLoader = config.module.rules.find(urlLoaderFinder);
-
   urlLoader.options.fallback = require.resolve('file-loader');
+
   urlLoader.options.limit = -1; // always fallback to file-loader
   urlLoader.options.emitFile = target === 'web';
+  urlLoader.test.push(/\.(ico)$/);
 }
 
 function makeFalconClientJsFileResolvedByWebpack(config) {
@@ -209,6 +216,8 @@ module.exports = appConfig => (config, { target, dev } /* ,  webpackObject */) =
     'react-i18next',
     'react-router-dom'
   ])(config, { target, dev });
+
+  excludeIcoFromFileLoader(config);
 
   addGraphQLTagLoader(config);
   addFalconI18nPlugin(appConfig.i18n)(config, target);
