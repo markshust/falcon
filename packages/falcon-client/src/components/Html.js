@@ -27,25 +27,22 @@ export default class Html extends Component {
     const { assets, children, helmetContext, state, asyncContext, i18nextState } = this.props;
 
     return (
-      <html lang={i18nextState.language || i18n.lng}>
+      <html lang="en" {...helmetContext.htmlAttributes.toComponent()}>
         <head>
-          {this.renderGtm()}
-          {helmetContext && helmetContext.base.toComponent()}
-          {helmetContext && helmetContext.title.toComponent()}
-          {helmetContext && helmetContext.meta.toComponent()}
-          {helmetContext && helmetContext.link.toComponent()}
-          {helmetContext && helmetContext.script.toComponent()}
-          {useWebManifest && <link rel="manifest" href={assets.webpanifest} type="application/manifest+json" />}
-          <link rel="shortcut icon" href="/favicon.ico" />
+          {helmetContext.base.toComponent()}
+          {helmetContext.title.toComponent()}
+          {helmetContext.meta.toComponent()}
+          {helmetContext.link.toComponent()}
+          {helmetContext.script.toComponent()}
 
-          <meta name="viewport" content="width=device-width, initial-scale=1" />
-          <meta name="theme-color" content="#fff" />
-          <meta name="format-detection" content="telephone=no" />
+          {this.renderGtm()}
+
+          {assets.webmanifest && <link rel="manifest" href={assets.webmanifest} type="application/manifest+json" />}
           {assets.clientCss && (
             <link rel="stylesheet" href={assets.clientCss} type="text/css" media="screen, projection" charSet="UTF-8" />
           )}
         </head>
-        <body>
+        <body {...helmetContext.bodyAttributes.toComponent()}>
           {this.renderGtm(true)}
 
           <div id="root">{children}</div>
@@ -53,6 +50,7 @@ export default class Html extends Component {
           <SerializeState variable="__APOLLO_STATE__" value={state} />
           <SerializeState variable="ASYNC_COMPONENTS_STATE" value={asyncContext} />
           <SerializeState variable="I18NEXT_STATE" value={i18nextState} />
+
           {process.env.NODE_ENV === 'production' ? (
             <script src={assets.vendorsJs} charSet="UTF-8" async />
           ) : (
@@ -71,15 +69,15 @@ export default class Html extends Component {
 
 Html.propTypes = {
   children: PropTypes.node,
+  helmetContext: PropTypes.shape({}).isRequired,
   assets: PropTypes.shape({
     clientJs: PropTypes.string,
     clientCss: PropTypes.string,
     vendorsJs: PropTypes.string,
     webmanifest: PropTypes.string
   }),
-  asyncContext: PropTypes.shape({}),
-  helmetContext: PropTypes.shape({}),
   state: PropTypes.shape({}),
+  asyncContext: PropTypes.shape({}),
   i18nextState: PropTypes.shape({
     language: PropTypes.string,
     data: PropTypes.shape({})
