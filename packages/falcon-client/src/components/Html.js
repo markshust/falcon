@@ -32,8 +32,6 @@ export default class Html extends Component {
           {helmetContext.base.toComponent()}
           {helmetContext.title.toComponent()}
           {helmetContext.meta.toComponent()}
-          {helmetContext.link.toComponent()}
-          {helmetContext.script.toComponent()}
 
           {this.renderGtm()}
 
@@ -41,6 +39,8 @@ export default class Html extends Component {
           {assets.clientCss && (
             <link rel="stylesheet" href={assets.clientCss} type="text/css" media="screen, projection" charSet="UTF-8" />
           )}
+          {helmetContext.link.toComponent()}
+          {helmetContext.script.toComponent()}
         </head>
         <body {...helmetContext.bodyAttributes.toComponent()}>
           {this.renderGtm(true)}
