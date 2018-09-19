@@ -23,6 +23,7 @@ export const Details = themed({
         },
 
         '> summary:after': {
+          display: 'block',
           content: props.open ? '"-"' : '"+"',
           marginLeft: props.theme.spacing.sm,
           fontSize: props.theme.fontSizes.lg,

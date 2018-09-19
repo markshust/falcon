@@ -1,4 +1,4 @@
 import React from 'react';
-import { ThemeProvider } from '../src';
+import { ThemeProvider, ThemeEditor } from '../src';
 
-export default (props: any) => <ThemeProvider withEditor {...props} />;
+export default (props: any) => <ThemeProvider editor={ThemeEditor} {...props} />;

@@ -3,14 +3,8 @@ import Provider from '@emotion/provider';
 import { Global } from '@emotion/core';
 import merge from 'deepmerge';
 
-import { createTheme, PropsWithTheme, Theme, ThemeEditor } from '../theme';
+import { createTheme, PropsWithTheme, Theme } from '../theme';
 import { Root } from './Root';
-
-let Editor: typeof ThemeEditor;
-
-if (process.env.NODE_ENV !== 'production') {
-  Editor = ThemeEditor;
-}
 
 // IMPORTANT: those styles get injected as global styles
 // every other reset style can be applied on Root component
@@ -25,7 +19,7 @@ type ThemeProviderState = {
   activeTheme: Theme;
 };
 type ThemeProviderProps = Partial<PropsWithTheme> & {
-  withEditor?: boolean;
+  editor?: React.ReactType;
   withoutRoot?: boolean;
 };
 
@@ -55,7 +49,7 @@ export class ThemeProvider extends React.Component<ThemeProviderProps, ThemeProv
   };
 
   render() {
-    const { theme, withEditor, ...rest } = this.props;
+    const { theme, editor: Editor, ...rest } = this.props;
 
     return (
       <Provider theme={this.state.activeTheme}>
@@ -63,7 +57,7 @@ export class ThemeProvider extends React.Component<ThemeProviderProps, ThemeProv
 
         {this.props.withoutRoot ? this.props.children : <Root {...rest} />}
 
-        {withEditor && Editor && <Editor theme={this.state.activeTheme} updateTheme={this.updateTheme} />}
+        {Editor && <Editor theme={this.state.activeTheme} updateTheme={this.updateTheme} />}
       </Provider>
     );
   }
