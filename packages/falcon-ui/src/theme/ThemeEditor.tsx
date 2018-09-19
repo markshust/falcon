@@ -259,7 +259,7 @@ export class ThemeEditor extends React.Component<any, any> {
 
   render() {
     return (
-      <ThemeProvider>
+      <ThemeProvider withoutRoot>
         <ThemeSidebar open={this.state.sidebarVisible} toggle={this.toggleSidebar}>
           <GridLayout
             p="sm"

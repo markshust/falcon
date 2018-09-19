@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { Box } from './Box';
+import { Root } from './Root';
 
 export class Portal extends React.Component {
   state = { wrapper: null };
@@ -22,7 +22,7 @@ export class Portal extends React.Component {
   render() {
     const { wrapper } = this.state;
     if (wrapper) {
-      return ReactDOM.createPortal(<Box {...this.props} />, wrapper);
+      return ReactDOM.createPortal(<Root {...this.props} />, wrapper);
     }
 
     return null;

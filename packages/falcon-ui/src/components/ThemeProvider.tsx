@@ -15,7 +15,7 @@ if (process.env.NODE_ENV !== 'production') {
 // IMPORTANT: those styles get injected as global styles
 // every other reset style can be applied on Root component
 // but not body margin
-const normalizeCssStyles = {
+const tinyNormalizeStyles = {
   body: {
     margin: 0
   }
@@ -26,6 +26,7 @@ type ThemeProviderState = {
 };
 type ThemeProviderProps = Partial<PropsWithTheme> & {
   withEditor?: boolean;
+  withoutRoot?: boolean;
 };
 
 export class ThemeProvider extends React.Component<ThemeProviderProps, ThemeProviderState> {
@@ -58,9 +59,9 @@ export class ThemeProvider extends React.Component<ThemeProviderProps, ThemeProv
 
     return (
       <Provider theme={this.state.activeTheme}>
-        <Global styles={normalizeCssStyles} />
+        {!this.props.withoutRoot && <Global styles={tinyNormalizeStyles} />}
 
-        <Root {...rest} />
+        {this.props.withoutRoot ? this.props.children : <Root {...rest} />}
 
         {withEditor && Editor && <Editor theme={this.state.activeTheme} updateTheme={this.updateTheme} />}
       </Provider>
