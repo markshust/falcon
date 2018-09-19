@@ -8,7 +8,7 @@ import Html from '../components/Html';
  * @return {function(ctx: object, next: function): Promise<void>} Koa middleware
  */
 export default () => async ctx => {
-  const { App, client, asyncContext, helmetContext, serverTiming, webpackAssets } = ctx.state;
+  const { AppMarkup, client, asyncContext, helmetContext, serverTiming, webpackAssets } = ctx.state;
   const renderTimer = serverTiming.start('HTML renderToString()');
 
   const htmlDocument = renderToString(
@@ -19,7 +19,7 @@ export default () => async ctx => {
       state={client.extract()}
       i18nextState={extractI18nextState(ctx)}
     >
-      {App}
+      {AppMarkup}
     </Html>
   );
 

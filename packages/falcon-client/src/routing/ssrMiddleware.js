@@ -54,7 +54,7 @@ export default ({ App }) => async (ctx, next) => {
     renderToString(markup);
   }, 'SSR renderToString()');
 
-  ctx.state.App = markup;
+  ctx.state.AppMarkup = markup;
   ctx.state.asyncContext = asyncContext.getState();
   ctx.state.helmetContext = Helmet.renderStatic();
   ctx.state.i18nextFilteredStore = filterResourceStoreByNs(i18next.services.resourceStore.data, i18nextUsedNamespaces);
