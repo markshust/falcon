@@ -9,10 +9,11 @@ import Logger from '@deity/falcon-logger';
  * @return {function(ctx: object, next: function): Promise<void>} Koa middleware
  */
 export default () => async (ctx, next) => {
+  const { request } = ctx;
   try {
     await next();
   } catch (error) {
-    Logger.error(`Internal Server Error!\n `, error);
+    Logger.error(`Internal Server Error!\n request: ${request.url}\n`, error);
 
     let viewsDir = path.resolve(__dirname, './../', 'views');
     if (fs.existsSync(path.join(viewsDir, '/errors/500.html')) === false) {
