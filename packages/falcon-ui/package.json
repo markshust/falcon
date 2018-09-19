@@ -20,6 +20,7 @@
     "prebuild": "rimraf dist",
     "build": "rollup -c && babel src -d dist -x .ts,.tsx -s && tsc && size-limit",
     "start": "docz dev",
+    "prebuild:docs": "rimraf docz",
     "build:docs": "docz build",
     "test": "jest"
   },
