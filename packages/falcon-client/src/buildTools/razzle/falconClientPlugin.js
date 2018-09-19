@@ -40,11 +40,13 @@ function setEntryToFalconClient(config, target) {
   }
 }
 
-function fixUrlLoaderFallback(config) {
+function fixUrlLoaderFallback(config, target) {
   const urlLoaderFinder = webpackConfigHelper.makeLoaderFinder('url-loader');
   const urlLoader = config.module.rules.find(urlLoaderFinder);
 
   urlLoader.options.fallback = require.resolve('file-loader');
+  urlLoader.options.limit = -1; // always fallback to file-loader
+  urlLoader.options.emitFile = target === 'web';
 }
 
 function makeFalconClientJsFileResolvedByWebpack(config) {
@@ -184,7 +186,7 @@ module.exports = appConfig => (config, { target, dev } /* ,  webpackObject */) =
   setEntryToFalconClient(config, target);
   makeFalconClientJsFileResolvedByWebpack(config);
 
-  fixUrlLoaderFallback(config);
+  fixUrlLoaderFallback(config, target);
   fixAssetsWebpackPlugin(config, target);
 
   addVendorsBundle([
