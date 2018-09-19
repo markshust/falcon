@@ -2,7 +2,7 @@ import React from 'react';
 import { renderToString } from 'react-dom/server';
 import Helmet from 'react-helmet';
 import { APP_INIT } from '../graphql/config.gql';
-import UberHelmet from './../components/UberHelmet';
+import HtmlHead from './../components/HtmlHead';
 
 /**
  * Head Rendering middleware.
@@ -12,7 +12,7 @@ export default () => async (ctx, next) => {
   const { client } = ctx.state;
   const { config } = client.readQuery({ query: APP_INIT });
 
-  const markup = <UberHelmet htmlLang={config.i18n.lng} />;
+  const markup = <HtmlHead htmlLang={config.i18n.lng} />;
   renderToString(markup);
 
   ctx.state.helmetContext = Helmet.renderStatic();
