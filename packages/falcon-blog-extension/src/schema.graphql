@@ -1,9 +1,9 @@
 extend type Query {
   post(path: String!): Post
-  posts(query: PageQuery): PostListing
+  posts(query: BlogPageQuery): PostListing
 }
 
-input PageQuery {
+input BlogPageQuery {
   perPage: Int
   page: Int
 }

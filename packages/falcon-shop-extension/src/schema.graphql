@@ -1,10 +1,10 @@
-type Query {
+extend type Query {
   category(id: Int!): Category
   product(id: Int!): Product
   products(
     categoryId: Int
     includeSubcategories: Boolean
-    query: PageQuery
+    query: ShopPageQuery
     sortOrders: [SortOrder]
     filters: [Filter]
     skus: [String]
@@ -13,7 +13,7 @@ type Query {
   countries: Directory
   order(id: Int!): Order
   lastOrder: Order
-  orders(query: PageQuery): Orders
+  orders(query: ShopPageQuery): Orders
   address(id: Int!): Address
   customer: Customer
   cmsPage(id: Int, identifier: String): CmsPage
@@ -21,7 +21,7 @@ type Query {
   validatePasswordToken(id: Int!, token: String!): Boolean
 }
 
-type Mutation {
+extend type Mutation {
   addToCart(input: AddToCartInput!): CartItemPayload
   applyCoupon(input: CouponInput!): Boolean
   cancelCoupon: Boolean
@@ -64,7 +64,7 @@ input EstimateShippingInput {
   address: AddressInput
 }
 
-input PageQuery {
+input ShopPageQuery {
   # simple list of field to get aggregated result count
   aggregations: [String]
   perPage: Int
@@ -482,9 +482,4 @@ type CmsPage {
   id: String
   title: String
   content: String
-}
-
-schema {
-  query: Query
-  mutation: Mutation
 }
