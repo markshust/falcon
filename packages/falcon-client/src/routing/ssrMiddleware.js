@@ -32,7 +32,7 @@ export default ({ App }) => async (ctx, next) => {
         >
           <StaticRouter context={context} location={ctx.url}>
             <React.Fragment>
-              <HtmlHead htmlLang={i18next.language || 'en' /* i18n.lng */} />
+              <HtmlHead htmlLang={i18next.language} />
               <App />
             </React.Fragment>
           </StaticRouter>
