@@ -1,4 +1,3 @@
-const { URL } = require('apollo-server-env');
 const Logger = require('@deity/falcon-logger');
 const { ApiDataSource } = require('@deity/falcon-server-env');
 const util = require('util');
@@ -140,9 +139,9 @@ module.exports = class Magento2ApiBase extends ApiDataSource {
       storeCode = this.storePrefix;
     }
 
-    const finalPath = `/rest/${storeCode}/V1${path}`;
-
-    return new URL(finalPath, this.baseURL);
+    return super.resolveURL({
+      path: `/rest/${storeCode}/V1${path}`
+    });
   }
 
   /**
