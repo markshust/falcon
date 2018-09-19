@@ -1,5 +1,7 @@
+import webpackAssets from './webpackAssetsMiddleware';
 import apolloClientProvider from './apolloClientProvider';
 import ssr from './ssrMiddleware';
+import helmet from './helmetMiddleware';
 import appShell from './appShellMiddleware';
 import i18next from './i18nextMiddleware';
 
@@ -9,9 +11,14 @@ import i18next from './i18nextMiddleware';
  * @return {function(ctx: object, next: function)[]} Koa middlewares
  */
 export function renderAppShell({ configuration }) {
-  const { configSchema } = configuration;
+  const { config, configSchema } = configuration;
 
-  return [apolloClientProvider({ clientStates: { configSchema } }), appShell()];
+  return [
+    webpackAssets({ includeWebManifest: config.useWebManifest }),
+    apolloClientProvider({ clientStates: { configSchema } }),
+    helmet(),
+    appShell()
+  ];
 }
 
 /**
@@ -31,6 +38,7 @@ export function renderApp({ configuration, clientApolloSchema, App }) {
   const { i18n, serverSideRendering } = config;
 
   return [
+    webpackAssets({ includeWebManifest: config.useWebManifest }),
     apolloClientProvider({
       clientStates: {
         configSchema,
