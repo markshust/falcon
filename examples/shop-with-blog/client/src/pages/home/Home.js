@@ -42,18 +42,6 @@ const Home = props => {
         <li>
           <Link to="/shop">Shop (dynamic)</Link>
         </li>
-        <li>
-          <a href="https://github.com/jaredpalmer/razzle">Docs</a>
-        </li>
-        <li>
-          <a href="http://koajs.com">Koa official site</a>
-        </li>
-        <li>
-          <a href="https://github.com/jaredpalmer/razzle/issues">Issues</a>
-        </li>
-        <li>
-          <a href="https://palmer.chat">Community Slack</a>
-        </li>
       </ul>
     </div>
   );
