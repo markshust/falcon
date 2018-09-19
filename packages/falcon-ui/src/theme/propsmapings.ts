@@ -1,5 +1,5 @@
 import CSS from 'csstype';
-import { Theme } from './';
+import { Theme, CSSObject } from './';
 
 function propsMapping<T extends PropsMapping>(param: T) {
   return param;
@@ -29,6 +29,20 @@ export const mappings = propsMapping({
     cssProp: 'marginBottom',
     themeProp: 'spacing'
   },
+  mx: {
+    themeProp: 'spacing',
+    transformToCss: value => ({
+      marginLeft: value,
+      marginRight: value
+    })
+  },
+  my: {
+    themeProp: 'spacing',
+    transformToCss: value => ({
+      marginTop: value,
+      marginBottom: value
+    })
+  },
   p: {
     cssProp: 'padding',
     themeProp: 'spacing'
@@ -49,6 +63,20 @@ export const mappings = propsMapping({
     cssProp: 'paddingBottom',
     themeProp: 'spacing'
   },
+  px: {
+    themeProp: 'spacing',
+    transformToCss: value => ({
+      paddingLeft: value,
+      paddingRight: value
+    })
+  },
+  py: {
+    themeProp: 'spacing',
+    transformToCss: value => ({
+      paddingTop: value,
+      paddingBottom: value
+    })
+  },
   bg: {
     cssProp: 'backgroundColor',
     themeProp: 'colors'
@@ -60,6 +88,14 @@ export const mappings = propsMapping({
 
   width: {},
   height: {},
+
+  size: {
+    transformToCss: value => ({
+      height: value,
+      width: value
+    })
+  },
+
   fontSize: {
     themeProp: 'fontSizes'
   },
@@ -147,6 +183,7 @@ export type PropsMappings = typeof mappings;
 export type ResponsivePropMapping = {
   cssProp?: keyof CSS.Properties;
   themeProp?: keyof Theme;
+  transformToCss?: (value: number | string) => CSSObject;
 };
 
 type PropsMapping = {

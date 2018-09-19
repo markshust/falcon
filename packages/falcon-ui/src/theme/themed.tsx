@@ -22,7 +22,7 @@ const convertPropToCss = (
   propMapping: ResponsivePropMapping,
   matchingProp: string | number,
   theme: Theme
-) => {
+): CSSObject => {
   // if mapping does not have cssProp specified fallback to it's key as css property name
   const cssPropName = propMapping.cssProp || mappingKey;
   // if matching props is themable prop then get it's actual value from theme props otherwise
@@ -30,9 +30,12 @@ const convertPropToCss = (
   // TODO: typescript: is there a way to improve those typings?
   const cssPropValue = !propMapping.themeProp ? matchingProp : (theme[propMapping.themeProp] as any)[matchingProp];
 
+  if (propMapping.transformToCss) {
+    return propMapping.transformToCss(cssPropValue);
+  }
+
   return {
-    cssPropName,
-    cssPropValue
+    [cssPropName]: cssPropValue
   };
 };
 
@@ -52,7 +55,7 @@ const convertThemedPropsToCss = (props: ThemedComponentProps, theme: Theme): CSS
     return {};
   }
   // TODO: typescript: can typings be improved for that object?
-  const cssObject = {} as any;
+  const targetCss = {} as any;
 
   // eslint-disable-next-line
   for (let mappingKey in props) {
@@ -65,8 +68,11 @@ const convertThemedPropsToCss = (props: ThemedComponentProps, theme: Theme): CSS
     }
     // if matching prop is typeof string it means it's not responsive
     if (typeof matchingProp === 'string' || typeof matchingProp === 'number') {
-      const cssPair = convertPropToCss(mappingKey, propMapping, matchingProp, theme);
-      cssObject[cssPair.cssPropName] = cssPair.cssPropValue;
+      const cssObject = convertPropToCss(mappingKey, propMapping, matchingProp, theme);
+      // eslint-disable-next-line
+      for (let mappingKey in cssObject) {
+        targetCss[mappingKey] = cssObject[mappingKey];
+      }
     } else {
       // if it's not string it needs to be object that has responsive breakpoints keys
       // here we only translate all themed values to css values, we don't create media queries
@@ -78,18 +84,20 @@ const convertThemedPropsToCss = (props: ThemedComponentProps, theme: Theme): CSS
           continue;
         }
 
-        const cssPair = convertPropToCss(mappingKey, propMapping, matchingResponsiveProp, theme);
+        const cssObject = convertPropToCss(mappingKey, propMapping, matchingResponsiveProp, theme);
+        // eslint-disable-next-line
+        for (let mappingKey in cssObject) {
+          if (!targetCss[mappingKey]) {
+            targetCss[mappingKey] = {};
+          }
 
-        if (!cssObject[cssPair.cssPropName]) {
-          cssObject[cssPair.cssPropName] = {};
+          targetCss[mappingKey][breakpointKey] = cssObject[mappingKey];
         }
-
-        cssObject[cssPair.cssPropName][breakpointKey] = cssPair.cssPropValue;
       }
     }
   }
 
-  return cssObject;
+  return targetCss;
 };
 
 const nestedCssObjectSelectors = [':', '&', '*', '>', '@'];
