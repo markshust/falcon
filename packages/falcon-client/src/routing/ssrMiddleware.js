@@ -7,6 +7,7 @@ import { I18nextProvider } from 'react-i18next';
 import { AsyncComponentProvider, createAsyncContext } from 'react-async-component';
 import asyncBootstrapper from 'react-async-bootstrapper';
 import { filterResourceStoreByNs } from '../i18n/i18nServerFactory';
+import HtmlHead from './../components/HtmlHead';
 
 /**
  * Server Side Rendering middleware.
@@ -30,7 +31,10 @@ export default ({ App }) => async (ctx, next) => {
           }}
         >
           <StaticRouter context={context} location={ctx.url}>
-            <App />
+            <React.Fragment>
+              <HtmlHead htmlLang={i18next.language || 'en' /* i18n.lng */} />
+              <App />
+            </React.Fragment>
           </StaticRouter>
         </I18nextProvider>
       </AsyncComponentProvider>
