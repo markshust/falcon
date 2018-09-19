@@ -86,6 +86,8 @@ describe('Falcon Shop Extension', () => {
 
       // prepare server with mocks for tests
       ({ schema } = shop.getGraphQLConfig());
+      schema.push('type Query { _: Boolean }');
+      schema.push('type Mutation { _: Boolean }');
       server = mockServer(schema, mocks);
     });
 
