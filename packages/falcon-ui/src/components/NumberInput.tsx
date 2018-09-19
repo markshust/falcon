@@ -97,38 +97,37 @@ class NumberInputInnerDOM extends React.Component<
 
 export const NumberInput = themed({
   tag: NumberInputInnerDOM,
-  defaultProps: {
-    size: 30
-  },
 
   defaultTheme: {
     numberInput: {
-      css: ({ size, theme }) => ({
+      height: 30,
+      width: 120,
+      css: ({ theme }) => ({
         display: 'inline-flex',
         alignItems: 'center',
 
         input: {
+          flex: 1,
+          minWidth: 0,
           appearance: 'none',
           MozAppearance: 'textfield',
           pointerEvents: 'none',
           userSelect: 'none',
-          height: size,
-          width: size,
+          height: '100%',
           fontStyle: 'inherit',
           border: theme.borders.light,
           borderColor: theme.colors.primaryDark,
           borderRadius: theme.borderRadius.xs,
           textAlign: 'center',
           boxShadow: 'none',
-          fontSize: size * 0.45,
           '::-webkit-outer-spin-button,::-webkit-inner-spin-button': {
             appearance: 'none'
           }
         },
 
         '.-inner-input-step-down-element, .-inner-input-step-up-element': {
-          height: size,
-          width: size,
+          width: '28%',
+          height: '100%',
           transform: 'scale(0.8)',
           border: 'none',
           outline: 'none',
@@ -140,10 +139,8 @@ export const NumberInput = themed({
           color: theme.colors.primaryText,
           borderRadius: theme.borderRadius.xl,
           fontWeight: theme.fontWeights.bold,
-          fontSize: size * 0.7,
+          fontSize: 'inherit',
           cursor: 'pointer',
-          flex: 'none',
-          paddingBottom: size * 0.125,
 
           ':hover': {
             background: theme.colors.primary

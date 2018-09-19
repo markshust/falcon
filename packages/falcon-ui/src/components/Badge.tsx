@@ -7,11 +7,10 @@ export const Badge = themed({
     badge: {
       bg: 'secondary',
       color: 'secondaryText',
-      pl: 'md',
-      pr: 'md',
-      pt: 'xs',
-      pb: 'xs',
+      px: 'md',
+      py: 'xs',
       borderRadius: 'md',
+
       css: {
         display: 'inline-block',
         textTransform: 'uppercase'

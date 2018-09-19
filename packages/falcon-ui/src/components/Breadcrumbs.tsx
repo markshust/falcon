@@ -32,11 +32,11 @@ export const Breadcrumb = themed({
         color: current ? theme.colors.secondary : theme.colors.primaryText,
 
         ':after': {
-          content: '"›"',
+          content: '"→"',
           color: 'inherit',
           paddingLeft: theme.spacing.sm,
           paddingRight: theme.spacing.sm,
-          fontSize: theme.fontSizes.lg,
+          fontSize: theme.fontSizes.md,
           lineHeight: theme.lineHeights.small,
           fontWeight: theme.fontWeights.bold,
           display: current ? 'none' : 'block'

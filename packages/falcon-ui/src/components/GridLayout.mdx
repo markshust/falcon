@@ -5,7 +5,7 @@ menu: Components
 
 import { Playground } from 'docz'
 
-import {  GridLayout, Card } from '../'
+import {  GridLayout, Box } from '../'
 
 # Grid Layout
 description
@@ -16,24 +16,24 @@ TODO
 ### Basic usage
 <Playground>
 <GridLayout gridTemplateColumns={{ xs: '1fr 2fr', md: '1fr 1fr 1fr' }} gridTemplateRows='1fr 50vh 1fr'>
-	<Card>
+	<Box boxShadow="xs" p="md">
 		c 1
-	</Card>
-	<Card>
+	</Box>
+	<Box boxShadow="xs" p="md">
 		c 2
-	</Card>
-	<Card>
+	</Box>
+	<Box boxShadow="xs" p="md">
 		c 3
-	</Card>
-	<Card>
+	</Box>
+	<Box boxShadow="xs" p="md">
 		c 4
-	</Card>
-	<Card>
+	</Box>
+	<Box boxShadow="xs" p="md">
 		c 5
-	</Card>
-	<Card>
+	</Box>
+	<Box boxShadow="xs" p="md">
 		c 6
-	</Card>
+	</Box>
 </GridLayout>
 </Playground>
 

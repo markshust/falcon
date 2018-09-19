@@ -21,13 +21,11 @@ const CheckboxInnerDOM = (
 };
 export const Checkbox = themed({
   tag: CheckboxInnerDOM,
-  defaultProps: {
-    size: 24
-  },
 
   defaultTheme: {
     checkbox: {
-      css: ({ size, theme }) => ({
+      size: 24,
+      css: ({ theme }) => ({
         display: 'inline-flex',
         position: 'relative',
         // checkbox input is not visible but interactive
@@ -67,8 +65,8 @@ export const Checkbox = themed({
         },
 
         '.-inner-checkbox-frame': {
-          height: size,
-          width: size,
+          height: '100%',
+          width: '100%',
           position: 'relative',
           display: 'flex',
           cursor: 'pointer',

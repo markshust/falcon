@@ -37,10 +37,8 @@ export const Tab = themed({
       fontSize: 'md',
       flex: 0,
       mr: 'md',
-      pl: 'md',
-      pr: 'md',
-      pt: 'xs',
-      pb: 'xs',
+      px: 'md',
+      py: 'xs',
       borderBottom: 'bold',
 
       css: props => ({

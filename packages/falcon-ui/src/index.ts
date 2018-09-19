@@ -4,7 +4,6 @@ export * from './components/Button';
 export * from './components/GridLayout';
 export * from './components/FlexLayout';
 export * from './components/Root';
-export * from './components/Card';
 export * from './components/Image';
 export * from './components/RangeInput';
 export * from './components/Table';

@@ -7,8 +7,9 @@ export const Button = themed({
     button: {
       color: 'secondaryText',
       bg: 'secondary',
-      p: 'sm',
-      borderRadius: 'sm',
+      py: 'sm',
+      px: 'md',
+      borderRadius: 'lg',
       boxShadow: 'sm',
       fontSize: 'md',
       lineHeight: 'small',

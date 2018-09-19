@@ -6,8 +6,7 @@ export const Divider = themed({
   defaultTheme: {
     divider: {
       display: 'block',
-      mt: 'md',
-      mb: 'md',
+      my: 'md',
       border: 'light',
       borderColor: 'primaryDark',
       opacity: 0.7

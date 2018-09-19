@@ -26,7 +26,7 @@ export const Details = themed({
           content: props.open ? '"-"' : '"+"',
           marginLeft: props.theme.spacing.sm,
           fontSize: props.theme.fontSizes.lg,
-          lineHeight: 0.7,
+          lineHeight: 0.6,
           fontWeight: props.theme.fontWeights.bold,
           color: props.theme.colors.primaryText
         }
@@ -41,10 +41,8 @@ export const Summary = themed({
   defaultTheme: {
     summary: {
       fontSize: 'md',
-      pt: 'sm',
-      pb: 'sm',
-      pr: 'md',
-      pl: 'md',
+      py: 'sm',
+      px: 'md',
       mb: 'xs',
       bg: 'primary',
       lineHeight: 'small',
@@ -66,8 +64,7 @@ export const DetailsContent = themed({
 
   defaultTheme: {
     detailsContent: {
-      pt: 'md',
-      pb: 'md',
+      py: 'md',
       pl: 'md'
     }
   }

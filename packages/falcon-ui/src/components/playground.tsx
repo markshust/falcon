@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { ThemeProvider, Card, Button, Image, Swipeable, SwipeableItem, Box, H2, H3, Text, NumberInput } from '../';
+import { ThemeProvider, Button, Image, Swipeable, SwipeableItem, Box, H2, H3, Text, NumberInput } from '../';
 import { themed, createTheme, Theme } from '../theme';
 
 const HomeLayout = themed({
@@ -10,6 +10,15 @@ const HomeLayout = themed({
   }
 });
 
+const Card = themed({
+  tag: 'card',
+  defaultTheme: {
+    card: {
+      boxShadow: 'xs',
+      p: 'md'
+    }
+  }
+});
 const ProductLayout = themed({
   tag: 'article',
   defaultTheme: {

@@ -21,13 +21,10 @@ const RadioInnerDOM = (
 export const Radio = themed({
   tag: RadioInnerDOM,
 
-  defaultProps: {
-    size: 24
-  },
-
   defaultTheme: {
     radio: {
-      css: ({ size, theme }) => ({
+      size: 24,
+      css: ({ theme }) => ({
         display: 'inline-flex',
         position: 'relative',
         // radio input is not visible but interactive
@@ -55,11 +52,11 @@ export const Radio = themed({
         },
 
         '.-inner-radio-icon': {
-          height: size - 10,
-          width: size - 10,
+          height: 'calc(100% - 4px)',
+          width: 'calc(100% - 4px)',
           display: 'block',
           opacity: 0,
-          backround: theme.colors.white,
+          background: theme.colors.white,
           borderRadius: theme.borderRadius.xl,
           transitionProperty: 'opacity, background',
           transitionTimingFunction: theme.easingFunctions.easeIn,
@@ -67,8 +64,8 @@ export const Radio = themed({
         },
 
         '.-inner-radio-frame': {
-          height: size,
-          width: size,
+          height: '100%',
+          width: '100%',
           position: 'relative',
           display: 'flex',
           cursor: 'pointer',
