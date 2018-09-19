@@ -11,7 +11,7 @@ const HomeLayout = themed({
 });
 
 const Card = themed({
-  tag: 'card',
+  tag: 'div',
   defaultTheme: {
     card: {
       boxShadow: 'xs',
