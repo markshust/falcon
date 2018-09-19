@@ -7,13 +7,11 @@ that help with building consistent, fast, responsive web apps.
 It ships as part of **@deity/falcon** starter kit, but can also be installed standalone
 using instructions below.
 
-## Install
-
 ```sh
   yarn add @deity/falcon-ui
   # or npm i @deity/falcon-ui
 ```
 
-## Docs
+## Docs (WIP)
 
-https://goofy-mayer-8e19c0.netlify.com/
+Please visit: https://falcon-ui-410.netlify.com/
