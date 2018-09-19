@@ -224,24 +224,24 @@ function getThemedCss(props: ThemedProps) {
       }
     }
   }
+  const { css: inlineCss, ...remainingThemedProps } = remainingProps;
+  // out of all component props extract themable ones, convert to css
+  // and add to merge
+  const { themableProps } = extractThemableProps(remainingThemedProps);
+  cssPropsToMerge.push(convertThemedPropsToCss(themableProps, theme));
 
   // as last step add for merging those props which defined directly on component
-  const { css: inlineCss, ...remainingThemedProps } = remainingProps;
   if (inlineCss) {
     cssPropsToMerge.push(getCss(inlineCss, props));
   }
 
-  // out of all component props extract themable ones and add them to merge
-  const { themableProps } = extractThemableProps(remainingThemedProps);
-  themedPropsToMerge.push(themableProps);
-
-  const cssFromInlineCssProps = Object.assign({}, ...cssPropsToMerge);
+  const cssProps = Object.assign({}, ...cssPropsToMerge);
   const mergedThemableProps = Object.assign({}, ...themedPropsToMerge);
   // merged themable props need to be converted to css before returning
   const cssFromThemedProps = convertThemedPropsToCss(mergedThemableProps, theme);
 
   // finally merge css from themed props with css from css props
-  const mergedCss = { ...cssFromThemedProps, ...cssFromInlineCssProps };
+  const mergedCss = { ...cssFromThemedProps, ...cssProps };
   // as a last step we need to check each css prop if it's value is responsive
   return convertResponsivePropsToMediaQueries(mergedCss, theme);
 }
