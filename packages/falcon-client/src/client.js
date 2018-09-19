@@ -11,7 +11,7 @@ import HtmlHead from './components/HtmlHead';
 import App, { clientApolloSchema } from './clientApp';
 import { CLIENT_SIDE_APP_INIT } from './graphql/config.gql';
 import i18nFactory from './i18n/i18nClientFactory';
-import registerServiceWorker from './serviceWorker/register';
+import { register, unregisterAll } from './serviceWorker';
 
 const i18nextState = window.I18NEXT_STATE || {};
 const client = new ApolloClient({
@@ -45,7 +45,9 @@ const markup = (
 asyncBootstrapper(markup).then(() => renderApp(markup, document.getElementById('root')));
 
 if (process.env.NODE_ENV === 'production') {
-  registerServiceWorker('/sw.js');
+  register('/sw.js');
+} else {
+  unregisterAll();
 }
 
 if (module.hot) {
