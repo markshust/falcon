@@ -14,7 +14,7 @@ import SerializeState from './SerializeState';
  */
 export default class Html extends Component {
   renderGtm(noScript = false) {
-    const { googleTagManager } = this.props.config;
+    const { googleTagManager } = this.props;
 
     if (googleTagManager.id) {
       return <GoogleTagManager gtmId={googleTagManager.id} noScript={noScript} />;
@@ -24,11 +24,7 @@ export default class Html extends Component {
   }
 
   render() {
-    const { assets, asyncContext, state, helmetContext, i18nextState, config, children } = this.props;
-    const { useWebManifest, i18n } = config;
-
-    // const htmlAttrs = helmetContext.htmlAttributes.toComponent();
-    // const bodyAttrs = helmetContext.bodyAttributes.toComponent();
+    const { assets, children, helmetContext, state, asyncContext, i18nextState } = this.props;
 
     return (
       <html lang={i18nextState.language || i18n.lng}>
@@ -88,10 +84,7 @@ Html.propTypes = {
     language: PropTypes.string,
     data: PropTypes.shape({})
   }),
-  config: PropTypes.shape({
-    usePwaManifest: PropTypes.bool,
-    googleTagManager: PropTypes.shape({})
-  })
+  googleTagManager: PropTypes.shape({})
 };
 
 Html.defaultProps = {
@@ -99,5 +92,5 @@ Html.defaultProps = {
   asyncContext: {},
   state: {},
   i18nextState: {},
-  config: {}
+  googleTagManager: {}
 };
