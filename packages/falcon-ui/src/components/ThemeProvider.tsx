@@ -11,7 +11,8 @@ import { Root } from './Root';
 // but not body margin
 const tinyNormalizeStyles = {
   body: {
-    margin: 0
+    margin: 0,
+    overflowX: 'hidden'
   }
 };
 
