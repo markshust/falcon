@@ -3,33 +3,34 @@ name: NumberInput
 menu: Components
 ---
 
-import { Playground } from 'docz'
-import Component from "@reactions/component";
-import { NumberInput, ThemeProvider, FlexLayout } from '../'
+import { Playground } from 'docz';
+import Component from '@reactions/component';
+import { NumberInput, ThemeProvider, FlexLayout } from '../';
 
-# Radio
-description
-
-### Best practices
-TODO
+# NumberInput
 
 ### Basic usage
-<Playground>
-	<FlexLayout mb="lg" flexDirection="column" alignItems="flex-start">
-		Uncontrolled:
-		<NumberInput defaultValue={4} mb="md" />
-		<NumberInput defaultValue={400} step={2} mb="md" />
-		<NumberInput defaultValue={4} min={2} max={6} height="40" width="170" />
-	</FlexLayout>
-	<FlexLayout mb="lg" flexDirection="column" alignItems="flex-start">
-		Controlled:
-		<Component initialState={{ value: 5 }}>
-			{({ setState, state }) => (
-				<React.Fragment>
-					<NumberInput value={state.value} onChange={(e)=>{setState({ value: e.target.value})}}/>
-				</React.Fragment>
-			)}
-		</Component>
-	</FlexLayout>
-</Playground>
 
+<Playground>
+  <FlexLayout mb="lg" flexDirection="column" alignItems="flex-start">
+    Uncontrolled:
+    <NumberInput defaultValue={4} mb="md" />
+    <NumberInput defaultValue={400} step={2} mb="md" />
+    <NumberInput defaultValue={4} min={2} max={6} height="40" width="170" />
+  </FlexLayout>
+  <FlexLayout mb="lg" flexDirection="column" alignItems="flex-start">
+    Controlled:
+    <Component initialState={{ value: 5 }}>
+      {({ setState, state }) => (
+        <React.Fragment>
+          <NumberInput
+            value={state.value}
+            onChange={e => {
+              setState({ value: e.target.value });
+            }}
+          />
+        </React.Fragment>
+      )}
+    </Component>
+  </FlexLayout>
+</Playground>

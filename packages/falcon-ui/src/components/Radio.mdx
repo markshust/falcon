@@ -3,28 +3,24 @@ name: Radio
 menu: Components
 ---
 
-import { Playground } from 'docz'
-import { Radio, Box, ThemeProvider } from '../'
+import { Playground } from 'docz';
+import { Radio, Box, ThemeProvider } from '../';
 
 # Radio
-description
-
-### Best practices
-TODO
 
 ### Basic usage
+
 <Playground>
 	<Radio size={16} name="price" mr="md" />
 	<Radio name="price" mr="md" />
 	<Radio size={32} name="price" mr="md" />
 
-	<ThemeProvider theme={{borderRadius: {xl: 0}}}>
-		<Box mt="lg">
-			<Radio size={16} name="price" mr="md" />
-			<Radio name="price" mr="md" />
-			<Radio size={32} name="price" mr="md" />
-		</Box>
-	</ThemeProvider>
+    <ThemeProvider theme={{borderRadius: {xl: 0}}}>
+    	<Box mt="lg">
+    		<Radio size={16} name="price" mr="md" />
+    		<Radio name="price" mr="md" />
+    		<Radio size={32} name="price" mr="md" />
+    	</Box>
+    </ThemeProvider>
 
 </Playground>
-

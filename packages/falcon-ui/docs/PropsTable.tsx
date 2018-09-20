@@ -85,41 +85,13 @@ const getPropType = (prop: Prop, Tooltip?: TooltipComponent) => {
 
 const PropsTable: SFC<PropsTableProps> = (props: any) => {
   const info = props.of.__docgenInfo;
-  console.log('info', info);
-  const components = props.components;
   const componentProps = info && info.props;
-  const defaultProps = props.of.defaultProps;
+
   if (!info || !componentProps) {
     return null;
   }
 
-  const Tooltip = components.tooltip;
 
-  // wyswietlam tylko
-  // tag
-  // theme key
-  // extend
-  // variant
-
-  // 1. usuwam responsive props - tak
-  // 2. link do responsive props?
-
-  // -- dodac info o props ktorych button uzywa a ktore są themable, jak?
-  // -- info z variantami
-
-  // wersja 1:
-  // Button's themed props defined in theme:
-
-  // | prop | value                       | css value                                    | theme key                                     |
-  // | ---- | --------------------------- | -------------------------------------------- | --------------------------------------------- |
-  // | m    | 'lg'                        | 8px (defined in theme.spacing.lg)            | spacing - on hover displays possible values ? |
-  // | css  | Css - on hover fn to string | pisze complex CssObject- on hover wyswietlam | wypisuje jakich kluczy uzywa z theme?         |
-
-  // obsluga responsive prop?
-  // ponizej tabelki pokzac przyklad jak je nadpisywać?
-
-  // Button's variants:
-  // ta sama tabelka jak powyzej
 
   return (
     <Fragment>

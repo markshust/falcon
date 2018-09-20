@@ -3,20 +3,19 @@ name: Root
 menu: Components
 ---
 
-import { Playground } from 'docz'
-import { Root, GridLayout, Box } from '../'
+import { Playground } from 'docz';
+import { Root, GridLayout, Box } from '../';
 
 # Root component
+
 Allows applying common styles across components, like default font family.
 It's rendered as a first child of ThemeProvider component so all other components
 inherit styles from it by default if those are not specified somewhere else down the hierarchy.
 
 ### Basic usage
-<Playground>
- <Root>
-   <Box>
-     hello!
-  </Box>
-</Root>
-</Playground>
 
+<Playground>
+  <Root>
+    <Box>hello!</Box>
+  </Root>
+</Playground>

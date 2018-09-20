@@ -3,58 +3,92 @@ name: Details
 menu: Components
 ---
 
-import { Playground } from 'docz'
-import Component from "@reactions/component";
-import { Details, Summary, DetailsContent, Box } from '../'
+import { Playground } from 'docz';
+import Component from '@reactions/component';
+import { Details, Summary, DetailsContent, Box } from '../';
 
 # Details
 
 ### Example usage as accordion
 
 <Playground>
-	<Component initialState={{ activeIndex: 0, items: [{title: 'First', description: 'Now that we know who you are, I know who I am. Im not a mistake! It all makes sense! you know how you can tell who the arch...'}, {title: 'Second', description: 'In a comic you know how you can tell who the arch-villain s going to be? Hes the exact opposite of the hero'}] }}>
-	{({ setState, state }) => (
-		<React.Fragment>
-			{state.items.map((item, index)=>(
-				<Details key={index} open={state.activeIndex === index}>
-	  				<Summary onClick={(e)=>{
-						  e.preventDefault();
-						   setState(state=> ({activeIndex: state.activeIndex === index ? -1: index}));
-						}
-						}>{item.title}</Summary>
-					<DetailsContent>
-						{item.description}
-					</DetailsContent>
-  				</Details>
-			))}
-		</React.Fragment>
-	)}
-	</Component>
+  <Component
+    initialState={{
+      activeIndex: 0,
+      items: [
+        {
+          title: 'First',
+          description:
+            'Now that we know who you are, I know who I am. Im not a mistake! It all makes sense! you know how you can tell who the arch...'
+        },
+        {
+          title: 'Second',
+          description:
+            'In a comic you know how you can tell who the arch-villain s going to be? Hes the exact opposite of the hero'
+        }
+      ]
+    }}
+  >
+    {({ setState, state }) => (
+      <React.Fragment>
+        {state.items.map((item, index) => (
+          <Details key={index} open={state.activeIndex === index}>
+            <Summary
+              onClick={e => {
+                e.preventDefault();
+                setState(state => ({ activeIndex: state.activeIndex === index ? -1 : index }));
+              }}
+            >
+              {item.title}
+            </Summary>
+            <DetailsContent>{item.description}</DetailsContent>
+          </Details>
+        ))}
+      </React.Fragment>
+    )}
+  </Component>
 </Playground>
 
 ### Example usage with multiple items that opened at once
 
 <Playground>
-	<Component initialState={{ activeIndexes: {}, items: [{title: 'First', description: 'Now that we know who you are, I know who I am. Im not a mistake! It all makes sense! you know how you can tell who the arch...'}, {title: 'Second', description: 'In a comic you know how you can tell who the arch-villain s going to be? Hes the exact opposite of the hero'}] }}>
-	{({ setState, state }) => (
-		<React.Fragment>
-			{state.items.map((item, index)=>(
-
-				<Details key={index} open={state.activeIndexes[index]}>
-	  				<Summary onClick={(e)=>{
-						e.preventDefault();
-						var activeIndexes = state.activeIndexes;
-						activeIndexes[index] = !activeIndexes[index];
-						setState(state=>({
-							activeIndexes: activeIndexes
-						}));
-					}}>{item.title}</Summary>
-					<DetailsContent>
-						{item.description}
-					</DetailsContent>
-  				</Details>
-			))}
-		</React.Fragment>
-	)}
-	</Component>
+  <Component
+    initialState={{
+      activeIndexes: 0,
+      items: [
+        {
+          title: 'First',
+          description:
+            'Now that we know who you are, I know who I am. Im not a mistake! It all makes sense! you know how you can tell who the arch...'
+        },
+        {
+          title: 'Second',
+          description:
+            'In a comic you know how you can tell who the arch-villain s going to be? Hes the exact opposite of the hero'
+        }
+      ]
+    }}
+  >
+    {({ setState, state }) => (
+      <React.Fragment>
+        {state.items.map((item, index) => (
+          <Details key={index} open={state.activeIndexes[index]}>
+            <Summary
+              onClick={e => {
+                e.preventDefault();
+                var activeIndexes = state.activeIndexes;
+                activeIndexes[index] = !activeIndexes[index];
+                setState(state => ({
+                  activeIndexes: activeIndexes
+                }));
+              }}
+            >
+              {item.title}
+            </Summary>
+            <DetailsContent>{item.description}</DetailsContent>
+          </Details>
+        ))}
+      </React.Fragment>
+    )}
+  </Component>
 </Playground>
