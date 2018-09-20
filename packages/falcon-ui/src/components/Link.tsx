@@ -5,8 +5,8 @@ export const Link = themed({
 
   defaultTheme: {
     link: {
-      color: 'black',
       css: {
+        color: 'inherit',
         textDecoration: 'none',
         cursor: 'pointer'
       }

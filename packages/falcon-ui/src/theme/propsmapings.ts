@@ -81,6 +81,30 @@ export const mappings = propsMapping({
     cssProp: 'backgroundColor',
     themeProp: 'colors'
   },
+  fill: {
+    themeProp: 'colors'
+  },
+  stroke: {
+    themeProp: 'colors'
+  },
+  bgFullWidth: {
+    themeProp: 'colors',
+    transformToCss: value => ({
+      position: 'relative',
+      zIndex: 1,
+      ':before': {
+        content: '""',
+        width: '200vw',
+        height: '100%',
+        background: value,
+        position: 'absolute',
+        left: '-50vw',
+        right: '50vw',
+        top: 0,
+        zIndex: -1
+      }
+    })
+  },
   color: {
     cssProp: 'color',
     themeProp: 'colors'

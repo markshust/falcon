@@ -5,10 +5,9 @@ export const Navbar = themed({
 
   defaultTheme: {
     navbar: {
-      py: 'none',
-      px: 'md',
+      p: 'none',
       m: 'none',
-      bg: 'secondary',
+      bgFullWidth: 'secondary',
       color: 'secondaryText',
       css: {
         display: 'flex',
