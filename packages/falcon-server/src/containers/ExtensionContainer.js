@@ -78,13 +78,7 @@ module.exports = class ExtensionContainer {
     const config = Object.assign(
       {
         resolvers: [],
-        schemas: [
-          // Creating base types with placeholder (_) fields
-          'type Query { _: Boolean }',
-          'type Mutation { _: Boolean }',
-          'type Subscription { _: Boolean }',
-          'schema { query: Query, mutation: Mutation, subscription: Subscription }'
-        ],
+        schemas: [],
         // contextModifiers will be used as helpers - it will gather all the context functions and we'll invoke
         // all of them when context will be created. All the results will be merged to produce final context
         contextModifiers: defaultConfig.context ? [defaultConfig.context] : []
@@ -113,26 +107,6 @@ module.exports = class ExtensionContainer {
       schemas: [makeExecutableSchema({ typeDefs: config.schemas })],
       resolvers: config.resolvers
     });
-
-    // Removing "placeholder" (_) fields from the Type definitions
-    delete config.schema._queryType._fields._;
-    delete config.schema._mutationType._fields._;
-    delete config.schema._subscriptionType._fields._;
-
-    // If there were no other fields defined for Type by any other extension
-    // - we need to remove it completely in order to comply with GraphQL specification
-    if (!Object.keys(config.schema._queryType._fields).length) {
-      config.schema._queryType = undefined;
-      delete config.schema._typeMap.Query;
-    }
-    if (!Object.keys(config.schema._mutationType._fields).length) {
-      config.schema._mutationType = undefined;
-      delete config.schema._typeMap.Mutation;
-    }
-    if (!Object.keys(config.schema._subscriptionType._fields).length) {
-      config.schema._subscriptionType = undefined;
-      delete config.schema._typeMap.Subscription;
-    }
 
     const { dataSources } = config;
     config.dataSources = () => dataSources;

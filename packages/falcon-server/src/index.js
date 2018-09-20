@@ -6,6 +6,10 @@ const Logger = require('@deity/falcon-logger');
 const ApiContainer = require('./containers/ApiContainer');
 const ExtensionContainer = require('./containers/ExtensionContainer');
 const { EventEmitter2 } = require('eventemitter2');
+const { resolve: resolvePath } = require('path');
+const { readFileSync } = require('fs');
+
+const BaseSchema = readFileSync(resolvePath(__dirname, './schema.graphql'), 'utf8');
 
 const Events = {
   ERROR: 'falcon-server.error',
@@ -63,6 +67,52 @@ class FalconServer {
     await this.eventEmitter.emitAsync(Events.AFTER_INITIALIZED, this);
   }
 
+  async getApolloServerConfig() {
+    const cache = this.getCacheInstance();
+
+    const apolloServerConfig = await this.extensionContainer.createGraphQLConfig({
+      schemas: [BaseSchema],
+      dataSources: this.apiContainer.dataSources.values(),
+      // inject session to graph context
+      // todo: re-think that - maybe we could avoid passing session here and instead pass just required data
+      // from session?
+      context: ({ ctx }) => ({
+        session: ctx.req.session
+      }),
+      cache,
+      tracing: this.config.debug,
+      playground: this.config.debug && {
+        settings: {
+          'request.credentials': 'include' // include to keep the session between requests
+        }
+      }
+    });
+
+    /* eslint-disable no-underscore-dangle */
+    // Removing "placeholder" (_) fields from the Type definitions
+    delete apolloServerConfig.schema._queryType._fields._;
+    delete apolloServerConfig.schema._mutationType._fields._;
+    delete apolloServerConfig.schema._subscriptionType._fields._;
+
+    // If there were no other fields defined for Type by any other extension
+    // - we need to remove it completely in order to comply with GraphQL specification
+    if (!Object.keys(apolloServerConfig.schema._queryType._fields).length) {
+      apolloServerConfig.schema._queryType = undefined;
+      delete apolloServerConfig.schema._typeMap.Query;
+    }
+    if (!Object.keys(apolloServerConfig.schema._mutationType._fields).length) {
+      apolloServerConfig.schema._mutationType = undefined;
+      delete apolloServerConfig.schema._typeMap.Mutation;
+    }
+    if (!Object.keys(apolloServerConfig.schema._subscriptionType._fields).length) {
+      apolloServerConfig.schema._subscriptionType = undefined;
+      delete apolloServerConfig.schema._typeMap.Subscription;
+    }
+    /* eslint-enable no-underscore-dangle */
+
+    return apolloServerConfig;
+  }
+
   /**
    * @private
    */
@@ -110,24 +160,7 @@ class FalconServer {
    * @private
    */
   async initializeApolloServer() {
-    const cache = this.getCacheInstance();
-
-    const apolloServerConfig = await this.extensionContainer.createGraphQLConfig({
-      dataSources: this.apiContainer.dataSources.values(),
-      // inject session to graph context
-      // todo: re-think that - maybe we could avoid passing session here and instead pass just required data
-      // from session?
-      context: ({ ctx }) => ({
-        session: ctx.req.session
-      }),
-      cache,
-      tracing: this.config.debug,
-      playground: this.config.debug && {
-        settings: {
-          'request.credentials': 'include' // include to keep the session between requests
-        }
-      }
-    });
+    const apolloServerConfig = await this.getApolloServerConfig();
 
     await this.eventEmitter.emitAsync(Events.BEFORE_APOLLO_SERVER_CREATED, apolloServerConfig);
     const server = new ApolloServer(apolloServerConfig);
@@ -201,3 +234,4 @@ class FalconServer {
 
 module.exports = FalconServer;
 module.exports.Events = Events;
+module.exports.BaseSchema = BaseSchema;

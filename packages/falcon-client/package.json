@@ -30,10 +30,10 @@
   "dependencies": {
     "@deity/falcon-logger": "1.0.0",
     "apollo-cache-inmemory": "^1.2.9",
-    "apollo-client": "^2.4.1",
-    "apollo-link": "^1.2.2",
-    "apollo-link-http": "^1.5.4",
-    "apollo-link-state": "^0.4.1",
+    "apollo-client": "^2.4.2",
+    "apollo-link": "^1.2.3",
+    "apollo-link-http": "^1.5.5",
+    "apollo-link-state": "^0.4.2",
     "cross-env": "^5.2.0",
     "cross-spawn": "^6.0.5",
     "deepmerge": "^2.1.1",
@@ -57,14 +57,14 @@
   },
   "devDependencies": {
     "@deity/falcon-i18n-webpack-plugin": "^1.0.0",
-    "apollo-link-schema": "^1.1.0",
+    "apollo-link-schema": "^1.1.1",
     "graphql-tools": "^3.1.1",
     "jest-transform-graphql": "^2.1.0",
-    "jest-extended": "^0.8.1",
-    "enzyme": "^3.5.0",
-    "enzyme-adapter-react-16": "^1.3.0",
+    "jest-extended": "^0.9.0",
+    "enzyme": "^3.6.0",
+    "enzyme-adapter-react-16": "^1.5.0",
     "react-test-renderer": "^16.4.2",
-    "supertest": "^3.1.0"
+    "supertest": "^3.3.0"
   },
   "peerDependencies": {
     "graphql": "^0.11.0 || ^0.12.0 || ^0.13.0 || ^14.0.0",

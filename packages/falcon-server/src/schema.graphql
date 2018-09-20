@@ -1,0 +1,47 @@
+type Query {
+  _: Boolean
+}
+
+type Mutation {
+  _: Boolean
+}
+
+type Subscription {
+  _: Boolean
+}
+
+schema {
+  query: Query
+  mutation: Mutation
+  subscription: Subscription
+}
+
+"""
+Pagination type
+"""
+type Pagination {
+  """
+  Total number of pages ("totalItems"/"perPage")
+  """
+  totalPages: Int!
+  """
+  Total number of items of the request
+  """
+  totalItems: Int!
+  """
+  Number items per page
+  """
+  perPage: Int!
+  """
+  Current page index
+  """
+  currentPage: Int!
+  """
+  Next page index (if not the last one)
+  """
+  nextPage: Int
+  """
+  Prevoius page index (if not the first one)
+  """
+  prevPage: Int
+}

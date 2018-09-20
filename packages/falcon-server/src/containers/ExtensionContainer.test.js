@@ -1,5 +1,6 @@
 const { mockServer } = require('graphql-tools');
 const ExtensionContainer = require('./ExtensionContainer');
+const { BaseSchema } = require('../index');
 
 const extensions = [
   {
@@ -32,22 +33,24 @@ describe('ExtensionContainer', () => {
     container = new ExtensionContainer(extensions, {});
   });
 
-  it('should correctly load extensions passed in configuration', () => {
+  it('Should correctly load extensions passed in configuration', () => {
     expect(container.extensions.size).toEqual(2);
   });
 
-  it('should correctly pass configuration to extensions', () => {
+  it('Should correctly pass configuration to extensions', () => {
     expect(container.extensions.get('fake-shop-extension').config.apiUrl).toEqual('https://example.com');
   });
 
   describe('Schema stitching', () => {
-    it('should not throw errors during GraphQL config computing', () => {
+    it('Should not throw errors during GraphQL config computing', () => {
       expect(async () => {
-        await container.createGraphQLConfig();
+        await container.createGraphQLConfig({
+          schemas: [BaseSchema]
+        });
       }).not.toThrow();
     });
 
-    it('should produce proper schema from schemas returned by extensions', async () => {
+    it('Should produce proper schema from schemas returned by extensions', async () => {
       const query = `
         {
           __type(name: "Product") {
@@ -58,7 +61,9 @@ describe('ExtensionContainer', () => {
           }
         }
       `;
-      const { schema } = await container.createGraphQLConfig();
+      const { schema } = await container.createGraphQLConfig({
+        schemas: [BaseSchema]
+      });
       const server = mockServer(schema, mocks);
       const result = await server.query(query);
       expect(result.data.__type.fields.length).toEqual(3); // eslint-disable-line no-underscore-dangle
