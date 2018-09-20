@@ -44,9 +44,9 @@ export class ThemeProvider extends React.Component<ThemeProviderProps, ThemeProv
   }
 
   updateTheme = (themeDiff: Partial<Theme>) => {
-    this.setState({
-      activeTheme: merge(this.state.activeTheme, themeDiff)
-    });
+    this.setState(state => ({
+      activeTheme: merge(state.activeTheme, themeDiff)
+    }));
   };
 
   render() {

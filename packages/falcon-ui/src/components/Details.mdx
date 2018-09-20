@@ -76,11 +76,13 @@ import { Details, Summary, DetailsContent, Box } from '../';
             <Summary
               onClick={e => {
                 e.preventDefault();
-                var activeIndexes = state.activeIndexes;
-                activeIndexes[index] = !activeIndexes[index];
-                setState(state => ({
-                  activeIndexes: activeIndexes
-                }));
+                setState(state => {
+                  var activeIndexes = state.activeIndexes;
+                  activeIndexes[index] = !activeIndexes[index];
+                    return {
+                    activeIndexes: activeIndexes
+                  };
+                });
               }}
             >
               {item.title}
