@@ -1,4 +1,4 @@
-const { ApiDataSource } = require('@deity/falcon-server-env');
+const { ApiDataSource, htmlHelpers } = require('@deity/falcon-server-env');
 const qs = require('qs');
 const pick = require('lodash/pick');
 const isEmpty = require('lodash/isEmpty');
@@ -198,7 +198,7 @@ module.exports = class WordpressApi extends ApiDataSource {
 
     const reducedItem = pick(item, ['slug', 'acf', 'id', 'featured_image']);
 
-    reducedItem.title = item.title && item.title.rendered && this.htmlManager.stripHtmlEntities(item.title.rendered);
+    reducedItem.title = item.title && item.title.rendered && htmlHelpers.stripHtmlEntities(item.title.rendered);
     reducedItem.content = item.content && item.content.rendered;
     reducedItem.featured_image = this.reduceFeaturedImage(reducedItem.featured_image);
     this.reduceAcf(reducedItem.acf);
@@ -256,7 +256,7 @@ module.exports = class WordpressApi extends ApiDataSource {
 
   reduceRelatedPost(post) {
     // todo reduce to same format as normal post to clean components
-    post.title = this.htmlManager.stripHtmlEntities(post.title);
+    post.title = htmlHelpers.stripHtmlEntities(post.title);
 
     return post;
   }
@@ -270,9 +270,9 @@ module.exports = class WordpressApi extends ApiDataSource {
       content = data;
     }
 
-    content = this.htmlManager.stripHtmlEntities(content);
+    content = htmlHelpers.stripHtmlEntities(content);
 
-    return this.htmlManager.generateExcerpt(content, lenght);
+    return htmlHelpers.generateExcerpt(content, lenght);
   }
 
   reduceFeaturedImage(image) {
@@ -314,7 +314,7 @@ module.exports = class WordpressApi extends ApiDataSource {
     }
 
     if (post.title && post.title.rendered) {
-      post.title = this.htmlManager.stripHtmlEntities(post.title.rendered);
+      post.title = htmlHelpers.stripHtmlEntities(post.title.rendered);
     }
 
     if (post.content) {
@@ -334,7 +334,7 @@ module.exports = class WordpressApi extends ApiDataSource {
     }
 
     post.content = post.content && post.content.rendered;
-    post.title = this.htmlManager.stripHtmlTags(post.title);
+    post.title = htmlHelpers.stripHtmlTags(post.title);
 
     response.data = post;
 
