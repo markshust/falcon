@@ -6,7 +6,7 @@ import { Route, Switch } from 'react-router-dom';
 import { translate } from 'react-i18next';
 import Koa from 'koa';
 import supertest from 'supertest';
-import createAppServer from './server';
+import falconWebServer from './falcon-web-server';
 import DynamicRoute from './components/DynamicRoute';
 
 describe('Server', () => {
@@ -30,21 +30,22 @@ describe('Server', () => {
       onServerStarted: onServerStartedMock
     };
 
-    const serverApp = createAppServer({
+    const serverApp = falconWebServer({
       App: () => <div />,
       configuration,
       clientApolloSchema: {
         defaults: {}
       }
     });
+    serverApp.started();
 
-    expect(serverApp).toBeInstanceOf(Koa);
-    expect(onServerCreatedMock).toBeCalledWith(serverApp);
+    expect(serverApp.instance).toBeInstanceOf(Koa);
+    expect(onServerCreatedMock).toBeCalledWith(serverApp.instance);
 
-    expect(onServerInitializedMock).toBeCalledWith(serverApp);
+    expect(onServerInitializedMock).toBeCalledWith(serverApp.instance);
     expect(onServerInitializedMock).toHaveBeenCalledAfter(onServerCreatedMock);
 
-    expect(onServerStartedMock).toBeCalledWith(serverApp);
+    expect(onServerStartedMock).toBeCalledWith(serverApp.instance);
     expect(onServerStartedMock).toHaveBeenCalledAfter(onServerInitializedMock);
   });
 
@@ -102,7 +103,7 @@ describe('Server', () => {
       }
     };
 
-    const serverHandler = createAppServer({
+    const serverHandler = falconWebServer({
       App,
       configuration,
       clientApolloSchema

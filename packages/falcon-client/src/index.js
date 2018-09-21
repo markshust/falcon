@@ -6,8 +6,7 @@ import falconWebServer from './server';
 // passing `app` as an argument to `createServer` (or use `app#listen()` instead)
 // @see https://github.com/koajs/koa/blob/master/docs/api/index.md#appcallback
 
-const webServer = falconWebServer();
-let currentWebServerHandler = webServer.callback();
+let currentWebServerHandler = falconWebServer.callback();
 
 const server = http.createServer(currentWebServerHandler);
 server.listen(process.env.PORT || 3000, error => {
@@ -16,7 +15,7 @@ server.listen(process.env.PORT || 3000, error => {
   }
 
   Logger.log('🚀  started');
-  webServer.started();
+  falconWebServer.started();
 });
 
 if (module.hot) {
@@ -27,8 +26,8 @@ if (module.hot) {
 
     server.removeListener('request', currentWebServerHandler);
 
-    const newWebServer = require('./server').default();
-    const newHandler = newWebServer.callback();
+    const newFalconWebServer = require('./server').default;
+    const newHandler = newFalconWebServer.callback();
 
     server.on('request', newHandler);
     currentWebServerHandler = newHandler;
