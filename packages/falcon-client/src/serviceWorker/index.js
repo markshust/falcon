@@ -12,15 +12,17 @@ export function register(swPath = '/sw.js') {
   }
 
   window.addEventListener('load', () => {
+    const scope = '/';
+
     navigator.serviceWorker
-      .register(swPath, { scope: '/' })
+      .register(swPath, { scope })
       .then(registration => {
         if (isLocalHost) {
-          console.log('SW registered: ', registration);
+          console.log(`SW registered for '${scope}'.`, registration);
         }
       })
       .catch(registrationError => {
-        console.log('SW registration failed: ', registrationError);
+        console.warn(`SW registration for '${scope}' failed.`, registrationError);
       });
 
     // window.addEventListener('beforeinstallprompt', event => {
@@ -41,8 +43,8 @@ export function unregisterAll() {
     swRegistrations.forEach(registration =>
       registration
         .unregister()
-        .then(console.log(`Service Worker for '${registration.scope}' successfully unregistered.`))
-        .catch(x => console.error(`Can not unregistered Service Worker for ${registration.scope}.`, x))
+        .then(console.log(`SW unregistered for '${registration.scope}'.`))
+        .catch(x => console.warn(`SW unregistration for '${registration.scope}' failed.`, x))
     );
   });
 }
