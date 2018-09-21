@@ -47,6 +47,7 @@
     "jest-serializer-html": "^5.0.0",
     "react": "^16.5",
     "react-dom": "^16.5",
+    "react-powerplug": "^1.0.0-rc.1",
     "react-test-renderer": "^16.4.2",
     "rimraf": "^2.6.1",
     "rollup": "^0.64.1",

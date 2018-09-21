@@ -4,7 +4,7 @@ menu: Components
 ---
 
 import { Playground } from 'docz';
-import Component from '@reactions/component';
+import { Toggle } from 'react-powerplug';
 import { Button, GridLayout, Sidebar, Portal, H1, Text, Backdrop } from '../';
 
 # Sidebar
@@ -12,19 +12,19 @@ import { Button, GridLayout, Sidebar, Portal, H1, Text, Backdrop } from '../';
 ### Basic usage
 
 <Playground>
-  <Component initialState={{ sidebarVisible: false }}>
-    {({ setState, state }) => (
+  <Toggle initial={false}>
+    {({ on, toggle }) => (
       <React.Fragment>
-        <Button onClick={() => setState(state => ({ sidebarVisible: !state.sidebarVisible }))}>Toggle sidebar</Button>
-        <Sidebar as={Portal} visible={state.sidebarVisible}>
-          <H1>Hello!</H1>
+        <Button onClick={toggle}>Toggle sidebar</Button>
+        <Sidebar as={Portal} visible={on}>
+          <H1 p="lg">Hello!</H1>
         </Sidebar>
         <Backdrop
-          onClick={() => setState(state => ({ sidebarVisible: !state.sidebarVisible }))}
+          onClick={toggle}
           as={Portal}
-          visible={state.sidebarVisible}
+          visible={on}
         />
       </React.Fragment>
     )}
-  </Component>
+  </Toggle>
 </Playground>
