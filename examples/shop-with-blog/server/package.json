@@ -11,11 +11,10 @@
   "dependencies": {
     "@deity/falcon-server": "1.0.0",
     "@deity/falcon-shop-extension": "1.0.0",
-    "config": "^2.0.1",
-    "cross-env": "^5.2.0"
+    "config": "^2.0.1"
   },
   "devDependencies": {
     "cross-env": "^5.2.0",
-    "nodemon": "^1.18.3"
+    "nodemon": "^1.18.4"
   }
 }

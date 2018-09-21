@@ -5,6 +5,7 @@
   "license": "OSL-3.0",
   "repository": "git@github.com:deity-io/falcon.git",
   "scripts": {
+    "prepush": "npm run test",
     "precommit": "lint-staged",
     "test": "lerna run test:coverage",
     "lint": "eslint ./"
@@ -16,7 +17,7 @@
     "husky": "^0.14.3",
     "identity-obj-proxy": "^3.0.0",
     "jest": "^23.5.0",
-    "lerna": "^3.1.4",
+    "lerna": "^3.2.1",
     "lint-staged": "^7.2.2",
     "prettier": "^1.14.2"
   },
