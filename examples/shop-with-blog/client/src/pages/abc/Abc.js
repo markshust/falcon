@@ -2,11 +2,11 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import logo from 'src/assets/logo.png';
 
-const Login = () => (
+const Abc = () => (
   <div>
     <div>
       <img src={logo} className="Home-logo" alt="logo" />
-      <h2>Log in to @deity</h2>
+      <h2>test content</h2>
     </div>
 
     <ul>
@@ -17,4 +17,4 @@ const Login = () => (
   </div>
 );
 
-export default Login;
+export default Abc;

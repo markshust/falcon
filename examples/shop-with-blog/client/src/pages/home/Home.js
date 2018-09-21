@@ -34,7 +34,7 @@ const Home = props => {
       </Query>
       <ul className="Home-resources">
         <li>
-          <Link to="/login">Log in</Link>
+          <Link to="/abc">abc</Link>
         </li>
         <li>
           <Link to="/post">Post (dynamic)</Link>

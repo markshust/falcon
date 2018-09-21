@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import Route from 'react-router-dom/Route';
 import Switch from 'react-router-dom/Switch';
 import Home from 'src/pages/home/Home';
-import LogIn from 'src/pages/login/LogIn';
+import Abc from 'src/pages/abc/Abc';
 import Helmet from 'react-helmet';
 import DynamicRoute from '@deity/falcon-client/src/components/DynamicRoute';
 import isOnline from '@deity/falcon-client/src/components/isOnline';
@@ -42,7 +42,7 @@ const App = ({ online }) => (
     {!online && <p>your are offline.</p>}
     <Switch>
       <Route exact path="/" component={Home} />
-      <Route exact path="/login" component={LogIn} />
+      <Route exact path="/abc" component={Abc} />
       <DynamicRoute components={components} />
     </Switch>
   </React.Fragment>
