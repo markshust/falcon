@@ -7,7 +7,8 @@ import { PropsMappings } from './propsmapings';
 
 const defaultTheme: Theme = {
   ...theme,
-  components: {}
+  components: {},
+  icons: {}
 };
 
 export function createTheme(themeOverride: RecursivePartial<Theme> = {}): Theme {
@@ -38,7 +39,13 @@ export interface Theme {
   transitionDurations: ThemeTransitionDurations;
   zIndex: ThemeZIndex;
   components: ThemedComponents;
+  icons: ThemedIcons;
 }
+export type ThemedIcons = {
+  [name: string]: {
+    icon: React.ComponentType;
+  } & ThemedComponentProps;
+};
 
 type ThemedPropMapping = {
   themeProp: keyof Theme;
