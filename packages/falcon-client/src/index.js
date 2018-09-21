@@ -1,40 +1,36 @@
 import http from 'http';
 import Logger from '@deity/falcon-logger';
-import appServer from './server';
-import App, { clientApolloSchema } from './clientApp';
-import configuration from './clientApp/configuration';
+import falconWebServer from './server';
 
-const app = appServer({
-  App,
-  clientApolloSchema,
-  configuration
-});
 // Use `app#callback()` method here instead of directly
 // passing `app` as an argument to `createServer` (or use `app#listen()` instead)
 // @see https://github.com/koajs/koa/blob/master/docs/api/index.md#appcallback
-let currentHandler = app.callback();
-const server = http.createServer(currentHandler);
 
+const webServer = falconWebServer();
+let currentWebServerHandler = webServer.callback();
+
+const server = http.createServer(currentWebServerHandler);
 server.listen(process.env.PORT || 3000, error => {
   if (error) {
     Logger.error(error);
   }
 
   Logger.log('🚀  started');
-  configuration.onServerStarted(app);
+  webServer.started();
 });
 
 if (module.hot) {
   Logger.log('✅  Server-side HMR Enabled!');
 
   module.hot.accept('./server', () => {
-    Logger.log('🔁  HMR Reloading `./server`...');
+    Logger.log('🔁  HMR Reloading server...');
 
-    server.removeListener('request', currentHandler);
-    const newHandler = require('./server')
-      .default({ App, clientApolloSchema, configuration })
-      .callback();
+    server.removeListener('request', currentWebServerHandler);
+
+    const newWebServer = require('./server').default();
+    const newHandler = newWebServer.callback();
+
     server.on('request', newHandler);
-    currentHandler = newHandler;
+    currentWebServerHandler = newHandler;
   });
 }

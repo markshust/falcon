@@ -6,13 +6,14 @@ import { Route, Switch } from 'react-router-dom';
 import { translate } from 'react-i18next';
 import Koa from 'koa';
 import supertest from 'supertest';
-import server from './server';
+import createAppServer from './server';
 import DynamicRoute from './components/DynamicRoute';
 
 describe('Server', () => {
   it('Should properly call eventHandlers', () => {
     const onServerCreatedMock = jest.fn();
     const onServerInitializedMock = jest.fn();
+    const onServerStartedMock = jest.fn();
     const config = {
       serverSideRendering: true,
       logLevel: 'error'
@@ -25,10 +26,11 @@ describe('Server', () => {
         }
       },
       onServerCreated: onServerCreatedMock,
-      onServerInitialized: onServerInitializedMock
+      onServerInitialized: onServerInitializedMock,
+      onServerStarted: onServerStartedMock
     };
 
-    const serverApp = server({
+    const serverApp = createAppServer({
       App: () => <div />,
       configuration,
       clientApolloSchema: {
@@ -38,8 +40,12 @@ describe('Server', () => {
 
     expect(serverApp).toBeInstanceOf(Koa);
     expect(onServerCreatedMock).toBeCalledWith(serverApp);
+
     expect(onServerInitializedMock).toBeCalledWith(serverApp);
     expect(onServerInitializedMock).toHaveBeenCalledAfter(onServerCreatedMock);
+
+    expect(onServerStartedMock).toBeCalledWith(serverApp);
+    expect(onServerStartedMock).toHaveBeenCalledAfter(onServerInitializedMock);
   });
 
   it('Should render Home page (SSR)', async () => {
@@ -96,7 +102,7 @@ describe('Server', () => {
       }
     };
 
-    const serverHandler = server({
+    const serverHandler = createAppServer({
       App,
       configuration,
       clientApolloSchema
