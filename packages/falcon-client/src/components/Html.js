@@ -29,12 +29,15 @@ export default class Html extends Component {
     return (
       <html lang="en" {...helmetContext.htmlAttributes.toComponent()}>
         <head>
+          <meta charSet="utf-8" />
+          <meta name="viewport" content="width=device-width, initial-scale=1" />
           {helmetContext.base.toComponent()}
           {helmetContext.title.toComponent()}
           {helmetContext.meta.toComponent()}
 
           {this.renderGtm()}
 
+          <link rel="shortcut icon" href="/favicon.ico" />
           {assets.webmanifest && <link rel="manifest" href={assets.webmanifest} type="application/manifest+json" />}
           {assets.clientCss && (
             <link rel="stylesheet" href={assets.clientCss} type="text/css" media="screen, projection" charSet="UTF-8" />
