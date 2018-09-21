@@ -16,6 +16,7 @@ describe('Server', () => {
     const onServerStartedMock = jest.fn();
     const config = {
       serverSideRendering: true,
+      useWebManifest: true,
       logLevel: 'error'
     };
     const configuration = {
@@ -35,7 +36,8 @@ describe('Server', () => {
       configuration,
       clientApolloSchema: {
         defaults: {}
-      }
+      },
+      webpackAssets: {}
     });
     serverApp.started();
 
@@ -77,7 +79,7 @@ describe('Server', () => {
     const config = {
       logLevel: 'error',
       serverSideRendering: true,
-      usePwaManifest: true,
+      useWebManifest: true,
       googleTagManager: {
         id: null
       },
@@ -106,7 +108,8 @@ describe('Server', () => {
     const serverHandler = falconWebServer({
       App,
       configuration,
-      clientApolloSchema
+      clientApolloSchema,
+      webpackAssets: {}
     }).callback();
     const response = await supertest(serverHandler).get('/');
 

@@ -5,10 +5,11 @@ import Html from '../components/Html';
 
 /**
  * Application shell renderer middleware.
+ * @param {{webpackAssets: object}} params webpack assets
  * @return {function(ctx: object, next: function): Promise<void>} Koa middleware
  */
-export default () => async ctx => {
-  const { AppMarkup, client, asyncContext, helmetContext, serverTiming, webpackAssets } = ctx.state;
+export default ({ webpackAssets }) => async ctx => {
+  const { AppMarkup, client, asyncContext, helmetContext, serverTiming } = ctx.state;
   const renderTimer = serverTiming.start('HTML renderToString()');
 
   const htmlDocument = renderToString(

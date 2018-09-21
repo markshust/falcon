@@ -13,7 +13,7 @@ import { renderAppShell, renderApp } from './routing';
  * @param {ServerAppConfig} props Application parameters
  * @return {WebServer} Falcon web server
  */
-export default ({ App, clientApolloSchema, configuration }) => {
+export default ({ App, clientApolloSchema, configuration, webpackAssets }) => {
   const { config } = configuration;
   Logger.setLogLevel(config.logLevel);
 
@@ -25,8 +25,8 @@ export default ({ App, clientApolloSchema, configuration }) => {
   router.get('/sw.js', serve(publicDir, { maxage: 0 }));
   router.get('/static/*', serve(publicDir, { maxage: process.env.NODE_ENV === 'production' ? 31536000000 : 0 }));
   router.get('/*', serve(publicDir));
-  router.get('/app-shell', ...renderAppShell({ configuration }));
-  router.get('/*', ...renderApp({ App, clientApolloSchema, configuration }));
+  router.get('/app-shell', ...renderAppShell({ configuration, webpackAssets }));
+  router.get('/*', ...renderApp({ App, clientApolloSchema, configuration, webpackAssets }));
 
   instance
     .use(helmet())
@@ -50,6 +50,7 @@ export default ({ App, clientApolloSchema, configuration }) => {
  * @property {function} App Root application component
  * @property {object} configuration Initial configuration
  * @property {object} clientApolloSchema Apollo State object
+ * @property {object} webpackAssets webpack assets
  */
 
 /**
