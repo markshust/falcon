@@ -15,16 +15,16 @@ const { failIfAppEntryFilesNotFound, clearAppBuildDir } = require('./../src/buil
       case 'start': {
         clearAppBuildDir();
 
-        await razzle.runScript(script, args);
+        razzle.runScript(script, args);
         break;
       }
       case 'build': {
-        await razzle.runScript(script, args);
+        razzle.runScript(script, args);
         await workbox.injectManifest();
         break;
       }
       case 'test': {
-        await razzle.runScript(script, args);
+        razzle.runScript(script, args);
         break;
       }
       default:
@@ -35,6 +35,7 @@ const { failIfAppEntryFilesNotFound, clearAppBuildDir } = require('./../src/buil
 
     process.exit();
   } catch (error) {
+    Logger.error(error);
     process.exit(1);
   }
 })();

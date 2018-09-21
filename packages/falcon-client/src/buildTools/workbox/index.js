@@ -13,9 +13,9 @@ function formatBytes(bytes) {
 
 const swLocation = path.join('build', 'public', 'sw.js');
 
-function injectManifest() {
-  return workbox
-    .injectManifest({
+async function injectManifest() {
+  try {
+    const configuration = {
       swSrc: path.join(paths.falconClient.appSrc, 'serviceWorker/sw.js'),
       swDest: path.join(paths.razzle.appPath, swLocation),
       maximumFileSizeToCacheInBytes: 8 * 1024 * 1024, // 8MB
@@ -32,20 +32,20 @@ function injectManifest() {
         ]
       },
       dontCacheBustUrlsMatching: /\/static\/.*/
-      // injectionPointRegexp:
-      // manifestTransforms: []
-    })
-    .then(({ count, size /* warnings:[] */ }) => {
-      Logger.log(
-        `Generated Service Worker ${swLocation} which will precache ${count} files, totaling ${formatBytes(size)}.\n`
-      );
-    })
-    .catch(x => {
-      Logger.error('Service Worker Generation Failed!\n', x);
-      Logger.error('\n');
+    };
 
-      return Promise.reject(x);
-    });
+    const { count, size, warnings } = await workbox.injectManifest(configuration);
+    Logger.log(
+      `Generated Service Worker ${swLocation} which will precache ${count} files, totaling ${formatBytes(size)}.\n`
+    );
+    if (warnings.length) {
+      Logger.warn(warnings.join('\n'));
+    }
+  } catch (error) {
+    Logger.error('Service Worker generation failed!');
+
+    throw error;
+  }
 }
 
 module.exports = {
