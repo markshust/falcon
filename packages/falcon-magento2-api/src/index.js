@@ -261,15 +261,15 @@ module.exports = class Magento2Api extends Magento2ApiBase {
       searchCriteria.sortOrders = sortOrders;
     }
 
-    const response = await this.request({
+    const response = await this.get(
       path,
-      storeCode,
-      query: {
+      {
         includeSubcategories,
         withAttributeFilters,
         searchCriteria
-      }
-    });
+      },
+      { context: { storeCode } }
+    );
 
     return this.convertList(response, currency);
   }
