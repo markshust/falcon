@@ -24,13 +24,6 @@ export function register(swPath = '/sw.js') {
       .catch(registrationError => {
         console.warn(`SW registration for '${scope}' failed.`, registrationError);
       });
-
-    // window.addEventListener('beforeinstallprompt', event => {
-    //   // time when add to homescreen dialog is shown can be changed
-    //   // based on different requirements
-    //   // more details https://developers.google.com/web/updates/2018/06/a2hs-updates
-    //   event.prompt();
-    // });
   });
 }
 
