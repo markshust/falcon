@@ -50,8 +50,6 @@ const App = ({ online }) => (
 
 App.propTypes = {
   online: PropTypes.bool
-  // t: PropTypes.func,
-  // children: PropTypes.oneOfType([PropTypes.arrayOf(PropTypes.node), PropTypes.node])
 };
 
 export default isOnline()(App);
