@@ -34,17 +34,15 @@ module.exports = class ExtensionContainer {
     extensions.forEach(extension => {
       try {
         const ExtensionClass = require(extension.package); // eslint-disable-line import/no-dynamic-require
-        const extensionInstance = new ExtensionClass({ config: extension.config || {}, name: extension.package });
+        const extensionInstance = new ExtensionClass({ config: extension.config || {}, name: extension.package }, this);
 
         Logger.debug(`ExtensionContainer: "${extensionInstance.name}" added to the list of extensions`);
         const { api: apiName } = extension.config || {};
         if (apiName && dataSources.has(apiName)) {
           extensionInstance.api = dataSources.get(apiName);
+          Logger.debug(`ExtensionContainer: API "${apiName}" has added to Extension "${extensionInstance.name}"`);
         } else {
-          const logMsg = apiName
-            ? `API DataSource for "${extensionInstance.name}" is not defined`
-            : `"${apiName}" API DataSource is not defined`;
-          Logger.warn(`ExtensionContainer: ${logMsg}`);
+          Logger.debug(`ExtensionContainer: Extension "${extensionInstance.name}" has no API defined`);
         }
         this.extensions.set(extensionInstance.name, extensionInstance);
       } catch (ex) {
@@ -122,7 +120,7 @@ module.exports = class ExtensionContainer {
   mergeGraphQLConfig(dest, source, extensionName) {
     Logger.debug(`ExtensionContainer: merging "${extensionName}" extension GraphQL config`);
 
-    for (const name in source) {
+    Object.keys(source).forEach(name => {
       if (!name || typeof source[name] === 'undefined') {
         return;
       }
@@ -162,6 +160,17 @@ module.exports = class ExtensionContainer {
           );
           break;
       }
-    }
+    });
+  }
+
+  /**
+   * Returns array of extensions for which filterFn function called with extension instance as a param returns true
+   * @param {function} filterFn - function to be executed for each extension instance
+   * @returns {array} matched extensions
+   */
+  getExtensionsByCriteria(filterFn) {
+    const result = [];
+    this.extensions.forEach(ext => filterFn(ext) && result.push(ext));
+    return result;
   }
 };

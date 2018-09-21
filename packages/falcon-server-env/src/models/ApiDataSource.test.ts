@@ -1,5 +1,4 @@
 import ApiDataSource from './ApiDataSource';
-import ContextHTTPCache from './ContextHTTPCache';
 import nock = require('nock');
 import { ContextRequestOptions } from '../types';
 

@@ -26,6 +26,8 @@ export interface ApiDataSourceConfig {
   [propName: string]: any;
 }
 
+export type ExtensionContainer = object;
+
 export interface ContextData {
   context?: ContextType;
 }
