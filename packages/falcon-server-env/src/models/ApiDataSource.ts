@@ -2,6 +2,7 @@ import { DataSourceConfig } from 'apollo-datasource';
 import { RESTDataSource } from 'apollo-datasource-rest';
 import { Body } from 'apollo-datasource-rest/dist/RESTDataSource';
 import ContextHTTPCache from '../cache/ContextHTTPCache';
+import { stringify } from 'qs';
 import {
   ApiDataSourceConfig,
   ApiDataSourceEndpoint,
@@ -12,7 +13,7 @@ import {
 } from '../types';
 import { URLSearchParamsInit } from 'apollo-server-env';
 import htmlHelpers, { ApiHelpers } from '../helpers/htmlHelpers';
-import { format } from 'url';
+import { format, URLSearchParams } from 'url';
 
 export default abstract class ApiDataSource<TContext = any, THelpers = any> extends RESTDataSource<TContext> {
   public name: string;
@@ -80,7 +81,7 @@ export default abstract class ApiDataSource<TContext = any, THelpers = any> exte
     init?: ContextRequestInit
   ): Promise<TResult> {
     this.ensureContextPassed(init);
-    return super.get<TResult>(path, params, init);
+    return super.get<TResult>(path, this.convertParams(params as URLSearchParamsInit), init);
   }
 
   protected async post<TResult = any>(
@@ -116,7 +117,7 @@ export default abstract class ApiDataSource<TContext = any, THelpers = any> exte
     init?: ContextRequestInit,
   ): Promise<TResult> {
     this.ensureContextPassed(init);
-    return super.delete<TResult>(path, params, init);
+    return super.delete<TResult>(path, this.convertParams(params as URLSearchParamsInit), init);
   }
 
   private ensureContextPassed(init?: ContextRequestInit): void {
@@ -129,5 +130,14 @@ export default abstract class ApiDataSource<TContext = any, THelpers = any> exte
         (init.cacheOptions as ContextCacheOptions).context = init.context;
       }
     }
+  }
+
+  private convertParams(params: URLSearchParamsInit): URLSearchParamsInit {
+    // if params is plain object then convert it to URLSearchParam with help of qs.stringify - that way
+    // we can be sure that nested object will be converted correctly to search params
+    if (params && params.constructor === Object) {
+      return new URLSearchParams(stringify(params, { encode: false }));
+    }
+    return params;
   }
 }
