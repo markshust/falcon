@@ -1,10 +1,10 @@
 import React from 'react';
 import Provider from '@emotion/provider';
 import { Global } from '@emotion/core';
-import merge from 'deepmerge';
 
 import { createTheme, PropsWithTheme, Theme } from '../theme';
 import { Root } from './Root';
+import { mergeThemes } from '../theme/utils';
 
 // IMPORTANT: those styles get injected as global styles
 // every other reset style can be applied on Root component
@@ -45,7 +45,7 @@ export class ThemeProvider extends React.Component<ThemeProviderProps, ThemeProv
 
   updateTheme = (themeDiff: Partial<Theme>) => {
     this.setState(state => ({
-      activeTheme: merge(state.activeTheme, themeDiff)
+      activeTheme: mergeThemes(state.activeTheme, themeDiff)
     }));
   };
 

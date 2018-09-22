@@ -105,5 +105,9 @@ export const theme = {
   zIndex: {
     backdrop: 800,
     sidebar: 1000
-  }
+  },
+
+  components: {},
+
+  icons: {}
 };

@@ -1,26 +1,19 @@
 import CSS from 'csstype';
-import merge from 'deepmerge';
-
 import { theme } from './theme';
 
 import { PropsMappings } from './propsmapings';
+import { mergeThemes } from './utils';
 
-const defaultTheme: Theme = {
-  ...theme,
-  components: {},
-  icons: {}
-};
+const defaultTheme: Theme = theme;
 
 export function createTheme(themeOverride: RecursivePartial<Theme> = {}): Theme {
-  return merge<Theme, RecursivePartial<Theme>>(defaultTheme, themeOverride);
+  return mergeThemes(defaultTheme, themeOverride);
 }
 
 // export themed component factory
 export * from './themed';
-// export editor
-export * from './ThemeEditor';
-// export themed component factory
-export * from './utils';
+
+export { extractThemableProps } from './utils';
 
 // --- exported type definitions for theme  ----
 export interface Theme {
@@ -58,7 +51,7 @@ type ResponsivePropMapping = {
   cssProp: CssPropsKeys;
 };
 
-type RecursivePartial<T> = { [P in keyof T]?: RecursivePartial<T[P]> };
+export type RecursivePartial<T> = { [P in keyof T]?: RecursivePartial<T[P]> };
 
 type CSSPseudoObject = { [K in CSS.SimplePseudos]?: CSSObject };
 
