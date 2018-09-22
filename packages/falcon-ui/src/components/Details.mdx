@@ -4,7 +4,7 @@ menu: Components
 ---
 
 import { Playground } from 'docz';
-import Component from '@reactions/component';
+import { State, Toggle } from 'react-powerplug';
 import { Details, Summary, DetailsContent, Box } from '../';
 
 # Details
@@ -12,8 +12,8 @@ import { Details, Summary, DetailsContent, Box } from '../';
 ### Example usage as accordion
 
 <Playground>
-  <Component
-    initialState={{
+  <State
+    initial={{
       activeIndex: 0,
       items: [
         {
@@ -46,15 +46,14 @@ import { Details, Summary, DetailsContent, Box } from '../';
         ))}
       </React.Fragment>
     )}
-  </Component>
+  </State>
 </Playground>
 
 ### Example usage with multiple items that opened at once
 
 <Playground>
-  <Component
-    initialState={{
-      activeIndexes: {},
+  <State
+    initial={{
       items: [
         {
           title: 'First',
@@ -69,28 +68,21 @@ import { Details, Summary, DetailsContent, Box } from '../';
       ]
     }}
   >
-    {({ setState, state }) => (
+    {({ state }) => (
       <React.Fragment>
         {state.items.map((item, index) => (
-          <Details key={index} open={state.activeIndexes[index]}>
-            <Summary
-              onClick={e => {
-                e.preventDefault();
-                setState(state => {
-                  var activeIndexes = state.activeIndexes;
-                  activeIndexes[index] = !activeIndexes[index];
-                    return {
-                    activeIndexes: activeIndexes
-                  };
-                });
-              }}
-            >
-              {item.title}
-            </Summary>
-            <DetailsContent>{item.description}</DetailsContent>
-          </Details>
+          <Toggle initial={false}>
+            {({ on, toggle }) => (
+              <Details key={index} open={on}>
+                <Summary onClick={e => { e.preventDefault(); toggle();}}>
+                  {item.title}
+                </Summary>
+                <DetailsContent>{item.description}</DetailsContent>
+              </Details>
+            )}
+          </Toggle>
         ))}
       </React.Fragment>
     )}
-  </Component>
+  </State>
 </Playground>

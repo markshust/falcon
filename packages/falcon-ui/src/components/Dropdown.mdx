@@ -4,7 +4,7 @@ menu: Components
 ---
 
 import { Playground } from 'docz';
-import Component from '@reactions/component';
+import { State } from 'react-powerplug';
 import { Box, Backdrop, Portal, Dropdown, DropdownLabel, DropdownMenu, DropdownMenuItem } from '../';
 
 # Dropdown
@@ -12,11 +12,11 @@ import { Box, Backdrop, Portal, Dropdown, DropdownLabel, DropdownMenu, DropdownM
 ### Basic usage
 
 <Playground>
-    <Component initialState={{ activeIndex: 0, open: false, items: [{name: 'Popular'}, {name:'Ascending'}, {name:'Descending'}] }}>
+    <State initial={{ activeIndex: 0, open: false, items: [{name: 'Popular'}, {name:'Ascending'}, {name:'Descending'}] }}>
     {({ setState, state }) => (
         <Box width={180} height={200}>
         <Dropdown>
-                    <DropdownLabel active={state.open} onClick={()=>setState(state => ({open: !state.open}))}>
+            <DropdownLabel active={state.open} onClick={()=>setState(state => ({open: !state.open}))}>
                 <span>
                 Sort by:
                  {state.items[state.activeIndex].name} 
@@ -31,12 +31,9 @@ import { Box, Backdrop, Portal, Dropdown, DropdownLabel, DropdownMenu, DropdownM
                 </DropdownMenuItem>
                 ))}
             </DropdownMenu>
-
-
         </Dropdown>
         <Backdrop variant="transparent"  onClick={()=>setState(state=> ({open: !state.open}))} visible={state.open} />
         </Box>
     )}
-    </Component>
-
+    </State>
 </Playground>
