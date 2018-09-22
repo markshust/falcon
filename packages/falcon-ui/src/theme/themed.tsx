@@ -9,10 +9,9 @@ import {
   ThemedComponentProps,
   ThemedComponentPropsWithVariants,
   InlineCss
-} from './';
-
+} from './index';
 import { extractThemableProps } from './utils';
-
+import { defaultBaseTheme } from './theme';
 import { mappings, PropsMappings, ResponsivePropMapping } from './propsmapings';
 
 const propsMappingKeys = Object.keys(mappings) as (keyof PropsMappings)[];
@@ -163,9 +162,10 @@ function getCss(css: InlineCss, props: ThemedProps) {
 
 // TODO: perhaps this function could be written in prettier way?
 function getThemedCss(props: ThemedProps) {
-  //  if theme is not provided via theme provider or inline theme prop do return any css
+  //  if theme is not provided via theme provider or inline theme prop
+  // fall back to default theme
   if (!props.theme || !props.theme.components) {
-    return;
+    props = { ...props, theme: defaultBaseTheme };
   }
 
   const { defaultTheme, theme, variant, ...remainingProps } = props;

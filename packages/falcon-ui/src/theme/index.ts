@@ -1,13 +1,11 @@
 import CSS from 'csstype';
-import { theme } from './theme';
+import { defaultBaseTheme } from './theme';
 
 import { PropsMappings } from './propsmapings';
 import { mergeThemes } from './utils';
 
-const defaultTheme: Theme = theme;
-
 export function createTheme(themeOverride: RecursivePartial<Theme> = {}): Theme {
-  return mergeThemes(defaultTheme, themeOverride);
+  return mergeThemes(defaultBaseTheme, themeOverride);
 }
 
 // export themed component factory
@@ -102,45 +100,45 @@ export interface ThemedComponents {
 }
 type NumberOrStringValues<T> = { readonly [P in keyof T]: number | string };
 
-type Colors = typeof theme.colors;
+type Colors = typeof defaultBaseTheme.colors;
 
 export interface ThemeColors extends Colors {}
 
-type Breakpoints = NumberOrStringValues<typeof theme.breakpoints>;
+type Breakpoints = NumberOrStringValues<typeof defaultBaseTheme.breakpoints>;
 export interface ThemeBreakpoints extends Breakpoints {}
 
-type Spacing = NumberOrStringValues<typeof theme.spacing>;
+type Spacing = NumberOrStringValues<typeof defaultBaseTheme.spacing>;
 export interface ThemeSpacing extends Spacing {}
 
-type Fonts = typeof theme.fonts;
+type Fonts = typeof defaultBaseTheme.fonts;
 export interface ThemeFonts extends Fonts {}
 
-type FontSizes = NumberOrStringValues<typeof theme.fontSizes>;
+type FontSizes = NumberOrStringValues<typeof defaultBaseTheme.fontSizes>;
 export interface ThemeFontSizes extends FontSizes {}
 
-type FontWeights = typeof theme.fontWeights;
+type FontWeights = typeof defaultBaseTheme.fontWeights;
 export interface ThemeFontWeights extends FontWeights {}
 
-type LineHeights = NumberOrStringValues<typeof theme.lineHeights>;
+type LineHeights = NumberOrStringValues<typeof defaultBaseTheme.lineHeights>;
 export interface ThemeLineHeights extends LineHeights {}
 
-type LetterSpacings = NumberOrStringValues<typeof theme.letterSpacings>;
+type LetterSpacings = NumberOrStringValues<typeof defaultBaseTheme.letterSpacings>;
 export interface ThemeLetterSpacings extends LetterSpacings {}
 
-type Borders = typeof theme.borders;
+type Borders = typeof defaultBaseTheme.borders;
 export interface ThemeBorders extends Borders {}
 
-type BorderRadius = NumberOrStringValues<typeof theme.borderRadius>;
+type BorderRadius = NumberOrStringValues<typeof defaultBaseTheme.borderRadius>;
 export interface ThemeBorderRadius extends BorderRadius {}
 
-type BoxShadows = typeof theme.boxShadows;
+type BoxShadows = typeof defaultBaseTheme.boxShadows;
 export interface ThemeBoxShadows extends BoxShadows {}
 
-type EasingFunctions = typeof theme.easingFunctions;
+type EasingFunctions = typeof defaultBaseTheme.easingFunctions;
 export interface ThemeEasingFunctions extends EasingFunctions {}
 
-type TransitionDurations = typeof theme.transitionDurations;
+type TransitionDurations = typeof defaultBaseTheme.transitionDurations;
 export interface ThemeTransitionDurations extends TransitionDurations {}
 
-type ZIndex = typeof theme.zIndex;
+type ZIndex = typeof defaultBaseTheme.zIndex;
 export interface ThemeZIndex extends ZIndex {}
