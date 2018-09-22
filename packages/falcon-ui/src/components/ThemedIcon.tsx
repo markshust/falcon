@@ -2,12 +2,12 @@ import React from 'react';
 import { withCSSContext } from '@emotion/core';
 import { themed, PropsWithTheme, BaseProps, ThemedComponentProps } from '../theme';
 
-const SVGIcon = themed({
+const ThemedIconRenderer = themed({
   tag: 'svg',
 
   defaultTheme: {
-    svgIcon: {
-      size: 24,
+    themedIcon: {
+      size: 32,
       stroke: 'secondary'
     }
   }
@@ -24,5 +24,5 @@ export const ThemedIcon = withCSSContext((props: ThemedIconProps, context: Props
 
   const { icon, ...otherProps } = icons[src];
 
-  return <SVGIcon as={icon} {...otherProps as any} {...rest} />;
+  return <ThemedIconRenderer as={icon} {...otherProps as any} {...rest} />;
 }) as (props: ThemedIconProps) => JSX.Element;
