@@ -1,0 +1,88 @@
+---
+name: Details
+menu: Components
+---
+
+import { Playground } from 'docz';
+import { State, Toggle } from 'react-powerplug';
+import { Details, Summary, DetailsContent, Box } from '../';
+
+# Details
+
+### Example usage as accordion
+
+<Playground>
+  <State
+    initial={{
+      activeIndex: 0,
+      items: [
+        {
+          title: 'First',
+          description:
+            'Now that we know who you are, I know who I am. Im not a mistake! It all makes sense! you know how you can tell who the arch...'
+        },
+        {
+          title: 'Second',
+          description:
+            'In a comic you know how you can tell who the arch-villain s going to be? Hes the exact opposite of the hero'
+        }
+      ]
+    }}
+  >
+    {({ setState, state }) => (
+      <React.Fragment>
+        {state.items.map((item, index) => (
+          <Details key={index} open={state.activeIndex === index}>
+            <Summary
+              onClick={e => {
+                e.preventDefault();
+                setState(state => ({ activeIndex: state.activeIndex === index ? -1 : index }));
+              }}
+            >
+              {item.title}
+            </Summary>
+            <DetailsContent>{item.description}</DetailsContent>
+          </Details>
+        ))}
+      </React.Fragment>
+    )}
+  </State>
+</Playground>
+
+### Example usage with multiple items that opened at once
+
+<Playground>
+  <State
+    initial={{
+      items: [
+        {
+          title: 'First',
+          description:
+            'Now that we know who you are, I know who I am. Im not a mistake! It all makes sense! you know how you can tell who the arch...'
+        },
+        {
+          title: 'Second',
+          description:
+            'In a comic you know how you can tell who the arch-villain s going to be? Hes the exact opposite of the hero'
+        }
+      ]
+    }}
+  >
+    {({ state }) => (
+      <React.Fragment>
+        {state.items.map((item, index) => (
+          <Toggle initial={false}>
+            {({ on, toggle }) => (
+              <Details key={index} open={on}>
+                <Summary onClick={e => { e.preventDefault(); toggle();}}>
+                  {item.title}
+                </Summary>
+                <DetailsContent>{item.description}</DetailsContent>
+              </Details>
+            )}
+          </Toggle>
+        ))}
+      </React.Fragment>
+    )}
+  </State>
+</Playground>

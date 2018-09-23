@@ -1,0 +1,31 @@
+---
+name: Breadcrumbs
+menu: Components
+---
+
+import { Playground } from 'docz';
+import { Breadcrumbs, Breadcrumb, Link } from '../';
+
+# Breadcrumbs
+
+### Basic usage
+
+<Playground>
+  <Breadcrumbs>
+    <Breadcrumb>
+      <Link>One</Link>
+    </Breadcrumb>
+    <Breadcrumb>
+      <Link>Two</Link>
+    </Breadcrumb>
+    <Breadcrumb>
+      <Link>Three</Link>
+    </Breadcrumb>
+    <Breadcrumb>
+      <Link>Four</Link>
+    </Breadcrumb>
+    <Breadcrumb current>
+      <Link>Five</Link>
+    </Breadcrumb>
+  </Breadcrumbs>
+</Playground>
