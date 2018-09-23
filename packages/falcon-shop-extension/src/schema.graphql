@@ -227,14 +227,6 @@ type AggregationBucket {
   count: Int
 }
 
-type Pagination {
-  total: Int
-  perPage: Int
-  currentPage: Int
-  totalPages: Int
-  nextPage: Int
-}
-
 type Stock {
   isInStock: Boolean
   qty: Float!

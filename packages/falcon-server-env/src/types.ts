@@ -15,14 +15,25 @@ export interface ConfigurableConstructorParams<T = object> {
 
 export type ContextType = {
   isAuthRequired?: boolean;
+  didReceiveResult?: (result: any) => Promise<any>;
   [propName: string]: any;
 };
+
+export interface PaginationData {
+  totalPages: number | null;
+  totalItems: number;
+  perPage: number;
+  currentPage: number;
+  nextPage: number | null;
+  prevPage: number | null;
+}
 
 export interface ApiDataSourceConfig {
   host?: string;
   port?: number;
   protocol?: string;
   fetchUrlPriority?: number;
+  perPage?: number;
   [propName: string]: any;
 }
 
@@ -40,8 +51,10 @@ export type ContextFetchOptions = {
   cacheKey?: string;
   cacheOptions?:
     | ContextCacheOptions
-    | ((response: Response, request: Request) => ContextCacheOptions | undefined)
+    | ((response: ContextFetchResponse, request: ContextFetchRequest) => ContextCacheOptions | undefined)
 };
+
+export type ContextFetchRequest = Request & ContextData;
 
 export type ContextFetchResponse = Response & ContextData;
 

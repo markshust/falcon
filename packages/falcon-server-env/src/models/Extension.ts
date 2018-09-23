@@ -38,7 +38,7 @@ export default abstract class Extension<TApiConfig = object> {
     return {};
   }
 
-  abstract async fetchUrl(
+  async fetchUrl?(
     obj: object,
     args: any,
     context: any,

@@ -1,24 +1,28 @@
 import { DataSourceConfig } from 'apollo-datasource';
 import { RESTDataSource } from 'apollo-datasource-rest';
-import { Body } from 'apollo-datasource-rest/dist/RESTDataSource';
+import { Body, Request } from 'apollo-datasource-rest/dist/RESTDataSource';
 import ContextHTTPCache from '../cache/ContextHTTPCache';
 import {
   ApiDataSourceConfig,
   ApiDataSourceEndpoint,
   ConfigurableConstructorParams,
   ContextCacheOptions,
+  ContextFetchResponse,
+  ContextFetchRequest,
   ContextRequestInit,
-  ContextRequestOptions
+  ContextRequestOptions,
+  PaginationData
 } from '../types';
 import { URLSearchParamsInit } from 'apollo-server-env';
-import htmlHelpers, { ApiHelpers } from '../helpers/htmlHelpers';
 import { format } from 'url';
 
-export default abstract class ApiDataSource<TContext = any, THelpers = any> extends RESTDataSource<TContext> {
+export type PaginationValue = number | string | null;
+
+export default abstract class ApiDataSource<TContext = any> extends RESTDataSource<TContext> {
   public name: string;
   public config: ApiDataSourceConfig;
   public fetchUrlPriority: number = 1;
-  public helpers: THelpers | ApiHelpers = htmlHelpers;
+  public perPage: number = 10;
 
   /**
    * @param {ApiDataSourceConfig} config API DataSource config
@@ -38,9 +42,10 @@ export default abstract class ApiDataSource<TContext = any, THelpers = any> exte
       });
     }
 
-    if (this.config.fetchUrlPriority) {
-      this.fetchUrlPriority = this.config.fetchUrlPriority;
-    }
+    const { fetchUrlPriority, perPage } = this.config;
+
+    this.fetchUrlPriority = fetchUrlPriority || this.fetchUrlPriority;
+    this.perPage = perPage || this.perPage;
   }
 
   /**
@@ -66,6 +71,8 @@ export default abstract class ApiDataSource<TContext = any, THelpers = any> exte
   }
 
   async willSendRequest(req: ContextRequestOptions): Promise<void> {
+    // console.log({ req });
+
     const { context } = req;
     if (context && context.isAuthRequired) {
       await this.authorizeRequest(req);
@@ -74,10 +81,37 @@ export default abstract class ApiDataSource<TContext = any, THelpers = any> exte
 
   async authorizeRequest(req: ContextRequestOptions): Promise<void> {}
 
+  /**
+   * Calculates "pagination" data
+   * @param {PaginationValue} totalItems
+   * @param {PaginationValue} [currentPage=null]
+   * @param {PaginationValue} [perPage=null]
+   * @return {PaginationData} Calculated result
+   */
+  processPagination(
+    totalItems: PaginationValue,
+    currentPage: PaginationValue = null,
+    perPage: PaginationValue = null
+  ): PaginationData {
+    const _totalItems: number = parseInt(totalItems as string, 10) || 0;
+    const _perPage: number = parseInt(perPage as string, 10) || this.perPage;
+    const _currentPage: number = parseInt(currentPage as string, 10) || 1;
+    const _totalPages: number | null = _perPage ? Math.ceil(_totalItems / _perPage) : null;
+
+    return {
+      totalItems: _totalItems,
+      totalPages: _totalPages,
+      currentPage: _currentPage,
+      perPage: _perPage,
+      nextPage: _totalPages && _currentPage < _totalPages ? _currentPage + 1 : null,
+      prevPage: _currentPage > 1 ? _currentPage - 1 : null
+    };
+  }
+
   protected async get<TResult = any>(
     path: string,
     params?: URLSearchParamsInit,
-    init?: ContextRequestInit
+    init: ContextRequestInit = {}
   ): Promise<TResult> {
     this.ensureContextPassed(init);
     return super.get<TResult>(path, params, init);
@@ -86,7 +120,7 @@ export default abstract class ApiDataSource<TContext = any, THelpers = any> exte
   protected async post<TResult = any>(
     path: string,
     body?: Body,
-    init?: ContextRequestInit,
+    init: ContextRequestInit = {}
   ): Promise<TResult> {
     this.ensureContextPassed(init);
     return super.post<TResult>(path, body, init);
@@ -95,7 +129,7 @@ export default abstract class ApiDataSource<TContext = any, THelpers = any> exte
   protected async patch<TResult = any>(
     path: string,
     body?: Body,
-    init?: ContextRequestInit,
+    init: ContextRequestInit = {}
   ): Promise<TResult> {
     this.ensureContextPassed(init);
     return super.patch<TResult>(path, body, init);
@@ -104,7 +138,7 @@ export default abstract class ApiDataSource<TContext = any, THelpers = any> exte
   protected async put<TResult = any>(
     path: string,
     body?: Body,
-    init?: ContextRequestInit,
+    init: ContextRequestInit = {}
   ): Promise<TResult> {
     this.ensureContextPassed(init);
     return super.put<TResult>(path, body, init);
@@ -113,21 +147,36 @@ export default abstract class ApiDataSource<TContext = any, THelpers = any> exte
   protected async delete<TResult = any>(
     path: string,
     params?: URLSearchParamsInit,
-    init?: ContextRequestInit,
+    init: ContextRequestInit = {}
   ): Promise<TResult> {
     this.ensureContextPassed(init);
     return super.delete<TResult>(path, params, init);
   }
 
-  private ensureContextPassed(init?: ContextRequestInit): void {
-    if (init && init.context) {
-      if (!init.cacheOptions) {
-        init.cacheOptions = {};
-      }
+  protected async didReceiveResponse<TResult = any>(
+    res: ContextFetchResponse,
+    req: Request,
+  ): Promise<TResult> {
+    const result: TResult = await super.didReceiveResponse<TResult>(res, req);
+    const { context } = res;
 
-      if (typeof init.cacheOptions === 'object') {
-        (init.cacheOptions as ContextCacheOptions).context = init.context;
-      }
+    if (context && context.didReceiveResult) {
+      await context.didReceiveResult(result);
+    }
+    return result;
+  }
+
+  private ensureContextPassed(init?: ContextRequestInit): void {
+    init = init || {};
+
+    if (!init.context) {
+      init.context = {};
+    }
+    if (!init.cacheOptions) {
+      init.cacheOptions = {};
+    }
+    if (typeof init.cacheOptions === 'object') {
+      (init.cacheOptions as ContextCacheOptions).context = init.context;
     }
   }
 }

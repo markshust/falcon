@@ -1,7 +1,11 @@
+import 'jest-extended';
 import ApiDataSource from './ApiDataSource';
-import ContextHTTPCache from './ContextHTTPCache';
 import nock = require('nock');
-import { ContextRequestOptions } from '../types';
+import {
+  ContextRequestOptions,
+  ContextFetchRequest,
+  ContextFetchResponse
+} from '../types';
 
 class CustomApiDataSource extends ApiDataSource {
   async getInfo(): Promise<object> {
@@ -36,11 +40,6 @@ class CustomApiDataSource extends ApiDataSource {
 }
 
 describe('ApiDataSource', () => {
-
-  afterAll(() => {
-    nock.restore();
-  });
-
   it('Should create an instance of ApiDataSource', async () => {
     let customApiDataSource: CustomApiDataSource = new CustomApiDataSource({
       config: {}
@@ -59,49 +58,142 @@ describe('ApiDataSource', () => {
     expect(customApiDataSource.fetchUrlPriority).toBe(10);
   });
 
-  it('Should pass the provided "context"', async () => {
-    const basePath: string = '/api/info';
-    const fakeApi: nock.Scope = nock('http://example.com')
-      .get(basePath).reply(200, { foo: true })
-      .post(basePath).reply(200, { foo: true })
-      .put(basePath).reply(200, { foo: true })
-      .delete(basePath).reply(200, { foo: true })
-      .patch(basePath).reply(200, { foo: true })
-      .persist(true);
-
-    const customApi: CustomApiDataSource = new CustomApiDataSource({
-      config: { host: 'example.com' }
+  it('Should process "pagination" data', () => {
+    const customApiDataSource: CustomApiDataSource = new CustomApiDataSource({
+      config: {
+        perPage: 5
+      }
     });
-    const willSendRequestSpy: jest.SpyInstance = jest.spyOn(customApi, 'willSendRequest');
-    const didReceiveResponseSpy: jest.SpyInstance = jest.spyOn(customApi, 'didReceiveResponse');
+    expect(customApiDataSource.processPagination(100)).toEqual({
+      currentPage: 1,
+      nextPage: 2,
+      perPage: 5,
+      prevPage: null,
+      totalItems: 100,
+      totalPages: 20
+    });
+    expect(customApiDataSource.processPagination(20, 3, 2)).toEqual({
+      currentPage: 3,
+      nextPage: 4,
+      perPage: 2,
+      prevPage: 2,
+      totalItems: 20,
+      totalPages: 10
+    });
+    expect(customApiDataSource.processPagination(0)).toEqual({
+      currentPage: 1,
+      nextPage: null,
+      perPage: 5,
+      prevPage: null,
+      totalItems: 0,
+      totalPages: 0
+    });
+  });
 
-    await customApi.initialize({context: {}});
+  describe('Context', () => {
+    const basePath: string = '/api/info';
 
-    for (const method of [
-      async () => customApi.getInfo(),
-      async () => customApi.postInfo(),
-      async () => customApi.putInfo(),
-      async () => customApi.deleteInfo(),
-      async () => customApi.patchInfo()
-    ]) {
-      const result: any = await method();
-      expect(result).toEqual({foo: true});
-      expect(willSendRequestSpy).toHaveBeenCalled();
-      expect(didReceiveResponseSpy).toHaveBeenCalled();
+    beforeAll(() => {
+      nock('http://example.com')
+        .get(basePath).reply(200, { foo: true })
+        .post(basePath).reply(200, { foo: true })
+        .put(basePath).reply(200, { foo: true })
+        .delete(basePath).reply(200, { foo: true })
+        .patch(basePath).reply(200, { foo: true })
+        .persist(true);
+    });
 
-      willSendRequestSpy.mockClear();
-      didReceiveResponseSpy.mockClear();
-    }
+    afterAll(() => {
+      nock.restore();
+    });
 
-    await customApi.getInfo();
+    it('Should pass the provided "context" per request', async () => {
+      const customApi: CustomApiDataSource = new CustomApiDataSource({
+        config: { host: 'example.com' }
+      });
+      const willSendRequestSpy: jest.SpyInstance = jest.spyOn(customApi, 'willSendRequest');
+      const didReceiveResponseSpy: jest.SpyInstance = jest.spyOn(customApi, 'didReceiveResponse');
 
-    expect(willSendRequestSpy.mock.calls[0][0].context).toEqual({ bar: 1, isAuthRequired: true });
-    expect(didReceiveResponseSpy.mock.calls[0][0].context).toEqual({ bar: 1, isAuthRequired: true });
-    const requestObject = didReceiveResponseSpy.mock.calls[0][1];
-    const requestHeadersSymbol = Object.getOwnPropertySymbols(requestObject)[1];
-    expect(requestObject[requestHeadersSymbol].headers.get('foo')).toBe('bar');
+      await customApi.initialize({
+        context: {}
+      } as any);
 
-    willSendRequestSpy.mockRestore();
-    didReceiveResponseSpy.mockRestore();
+      for (const method of [
+        async () => customApi.getInfo(),
+        async () => customApi.postInfo(),
+        async () => customApi.putInfo(),
+        async () => customApi.deleteInfo(),
+        async () => customApi.patchInfo()
+      ]) {
+        const result: any = await method();
+        expect(result).toEqual({foo: true});
+        expect(willSendRequestSpy).toHaveBeenCalled();
+        expect(didReceiveResponseSpy).toHaveBeenCalled();
+
+        willSendRequestSpy.mockClear();
+        didReceiveResponseSpy.mockClear();
+      }
+
+      await customApi.getInfo();
+
+      expect(willSendRequestSpy.mock.calls[0][0].context).toEqual({ bar: 1, isAuthRequired: true });
+      expect(didReceiveResponseSpy.mock.calls[0][0].context).toEqual({ bar: 1, isAuthRequired: true });
+      const requestObject = didReceiveResponseSpy.mock.calls[0][1];
+      const requestHeadersSymbol = Object.getOwnPropertySymbols(requestObject)[1];
+      expect(requestObject[requestHeadersSymbol].headers.get('foo')).toBe('bar');
+
+      willSendRequestSpy.mockRestore();
+      didReceiveResponseSpy.mockRestore();
+    });
+
+    it('Should handle response data via context.didReceiveResult', async () => {
+      const CustomClass = class extends ApiDataSource {
+        async getCustomEntry<TResult = object>(): Promise<TResult> {
+          return this.get<TResult>('/api/info', {}, {
+            context: {
+              didReceiveResult: async (result: TResult) => {
+                delete result.foo;
+                result.bar = true;
+              }
+            }
+          });
+        }
+      }
+      const customApi = new CustomClass({
+        config: { host: 'example.com' }
+      });
+      await customApi.initialize({
+        context: {}
+      } as any);
+
+      const result: any = await customApi.getCustomEntry();
+      expect(result).toEqual({ bar: true });
+    });
+
+    it('Should ensure "context" object is passed', async () => {
+      const CustomClass = class extends ApiDataSource {
+        async getCustomEntry<TResult = object>(): Promise<TResult> {
+          return this.get<TResult>('/api/info');
+        }
+      }
+      const customApi = new CustomClass({
+        config: { host: 'example.com' }
+      });
+      const willSendRequestSpy: jest.SpyInstance = jest.spyOn(customApi, 'willSendRequest');
+      const didReceiveResponseSpy: jest.SpyInstance = jest.spyOn(customApi, 'didReceiveResponse');
+
+      await customApi.initialize({
+        context: {}
+      } as any);
+
+      const result: any = await customApi.getCustomEntry();
+      expect(result).toEqual({ foo: true });
+      expect(willSendRequestSpy.mock.calls[0][0].context).toEqual({});
+      expect(willSendRequestSpy.mock.calls[0][0].cacheOptions.context).toEqual({});
+      expect(didReceiveResponseSpy.mock.calls[0][0].context).toEqual({});
+
+      willSendRequestSpy.mockRestore();
+      didReceiveResponseSpy.mockRestore();
+    });
   });
 });

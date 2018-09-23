@@ -1,3 +1,4 @@
+import 'jest-extended';
 import Extension from './Extension';
 import ApiDataSource from './ApiDataSource';
 
