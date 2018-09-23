@@ -33,4 +33,4 @@ export * from './components/Details';
 export * from './components/Navbar';
 export * from './components/Dropdown';
 export * from './components/ThemeProvider';
-export * from './components/ThemedIcon';
+export * from './components/Icon';

@@ -1,6 +1,7 @@
 import React from 'react';
 import { themed, extractThemableProps } from '../theme';
 import { Box } from './Box';
+import { Icon } from './Icon';
 
 const RadioInnerDOM = (
   props: React.DetailedHTMLProps<React.InputHTMLAttributes<HTMLInputElement>, HTMLInputElement>
@@ -12,7 +13,7 @@ const RadioInnerDOM = (
     <Box {...themableProps} className={className}>
       <input {...rest} type="radio" />
       <div aria-hidden className="-inner-radio-frame">
-        <i className="-inner-radio-icon" />
+        <Icon className="-inner-radio-icon" src="radioCheckedIcon" fallback={<i className="-inner-radio-icon" />} />
       </div>
     </Box>
   );

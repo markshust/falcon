@@ -1,6 +1,7 @@
 import React from 'react';
 import { themed, extractThemableProps } from '../theme';
 import { Box } from './Box';
+import { Icon } from './Icon';
 
 const CheckboxInnerDOM = (
   props: React.DetailedHTMLProps<React.InputHTMLAttributes<HTMLInputElement>, HTMLInputElement>
@@ -12,9 +13,15 @@ const CheckboxInnerDOM = (
     <Box {...themableProps} className={className}>
       <input {...rest} type="checkbox" />
       <div aria-hidden className="-inner-checkbox-frame">
-        <svg className="-inner-checkbox-icon" viewBox="0 0 24 24">
-          <path fill="none" d="M6,11.3 L10.3,16 L18,6.2" />
-        </svg>
+        <Icon
+          src="checkboxCheckedIcon"
+          className="-inner-checkbox-icon"
+          fallback={
+            <svg className="-inner-checkbox-icon" viewBox="0 0 24 24">
+              <path fill="none" d="M6,11.3 L10.3,16 L18,6.2" />
+            </svg>
+          }
+        />
       </div>
     </Box>
   );
