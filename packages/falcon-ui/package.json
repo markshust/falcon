@@ -35,6 +35,7 @@
     "@babel/preset-env": "^7.0.0",
     "@babel/preset-react": "^7.0.0",
     "@babel/preset-typescript": "^7.0.0",
+    "@deity/falcon-theme-editor": "1.0.0",
     "@mdx-js/tag": "^0.15.0",
     "@types/deepmerge": "^2.1.0",
     "@types/react": "^16.4.14",

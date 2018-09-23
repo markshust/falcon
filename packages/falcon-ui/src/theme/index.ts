@@ -11,7 +11,7 @@ export function createTheme(themeOverride: RecursivePartial<Theme> = {}): Theme 
 // export themed component factory
 export * from './themed';
 
-export { extractThemableProps } from './utils';
+export * from './utils';
 
 // --- exported type definitions for theme  ----
 export interface Theme {

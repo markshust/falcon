@@ -1,10 +1,8 @@
 import React from 'react';
 import Provider from '@emotion/provider';
 import { Global } from '@emotion/core';
-
-import { createTheme, PropsWithTheme, Theme } from '../theme';
+import { createTheme, PropsWithTheme, CSSObject } from '../theme';
 import { Root } from './Root';
-import { mergeThemes } from '../theme/utils';
 
 // IMPORTANT: those styles get injected as global styles
 // every other reset style can be applied on Root component
@@ -16,50 +14,19 @@ const tinyNormalizeStyles = {
   }
 };
 
-type ThemeProviderState = {
-  activeTheme: Theme;
-};
 type ThemeProviderProps = Partial<PropsWithTheme> & {
-  editor?: React.ReactType;
+  normalizeStyles?: CSSObject;
   withoutRoot?: boolean;
 };
 
-export class ThemeProvider extends React.Component<ThemeProviderProps, ThemeProviderState> {
-  constructor(props: ThemeProviderProps) {
-    super(props);
-
-    this.state = {
-      activeTheme: props.theme || createTheme()
-    };
-  }
-
-  static getDerivedStateFromProps(props: ThemeProviderProps, state: ThemeProviderState) {
-    if (props.theme && props.theme !== state.activeTheme) {
-      return {
-        activeTheme: props.theme
-      };
-    }
-
-    return null;
-  }
-
-  updateTheme = (themeDiff: Partial<Theme>) => {
-    this.setState(state => ({
-      activeTheme: mergeThemes(state.activeTheme, themeDiff)
-    }));
-  };
-
-  render() {
-    const { theme, editor: Editor, ...rest } = this.props;
-
-    return (
-      <Provider theme={this.state.activeTheme}>
-        {!this.props.withoutRoot && <Global styles={tinyNormalizeStyles} />}
-
-        {this.props.withoutRoot ? this.props.children : <Root {...rest} />}
-
-        {Editor && <Editor theme={this.state.activeTheme} updateTheme={this.updateTheme} />}
-      </Provider>
-    );
-  }
-}
+export const ThemeProvider: React.SFC<ThemeProviderProps> = ({
+  theme = createTheme(),
+  normalizeStyles = tinyNormalizeStyles,
+  withoutRoot = false,
+  ...rest
+}) => (
+  <Provider theme={theme}>
+    <Global styles={normalizeStyles} />
+    {withoutRoot ? rest.children : <Root {...rest} />}
+  </Provider>
+);
