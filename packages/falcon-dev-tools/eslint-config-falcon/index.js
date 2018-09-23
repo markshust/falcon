@@ -21,7 +21,7 @@ module.exports = {
     'id-length': [
       1,
       {
-        exceptions: ['_', 'e', 't', 'x']
+        exceptions: ['_', 'e', 't', 'x', 'p', 'm']
       }
     ],
     'import/default': 'off',
@@ -31,7 +31,8 @@ module.exports = {
     'import/no-unresolved': 'off',
     'import/no-named-as-default': 'error',
     'import/extensions': ['off', 'never'],
-    'import/no-extraneous-dependencies': ['error'],
+    'import/no-extraneous-dependencies': ['error', { devDependencies: true }],
+    'import/prefer-default-export': 'off',
     'jsx-a11y/anchor-is-valid': [
       'off',
       {
@@ -84,6 +85,8 @@ module.exports = {
     // problem with redux-connect decorator so we cannot use required on props,
     // therefore everything would need to be defined in default props
     'react/require-default-props': ['off'],
+    'react/no-access-state-in-setstate': 'error',
+    'react/prop-types': 'off',
     'valid-jsdoc': [
       'error',
       {
