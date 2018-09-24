@@ -95,7 +95,7 @@ describe('ApiDataSource', () => {
 
     beforeAll(() => {
       nock('http://example.com')
-        .get(basePath).reply(200, { foo: true })
+        .get(uri => uri.indexOf(basePath) >= 0).reply(200, { foo: true })
         .post(basePath).reply(200, { foo: true })
         .put(basePath).reply(200, { foo: true })
         .delete(basePath).reply(200, { foo: true })
@@ -152,8 +152,10 @@ describe('ApiDataSource', () => {
           return this.get<TResult>('/api/info', {}, {
             context: {
               didReceiveResult: async (result: TResult) => {
-                delete result.foo;
-                result.bar = true;
+                // Performing data transformation...
+                return {
+                  bar: true
+                };
               }
             }
           });
@@ -194,6 +196,48 @@ describe('ApiDataSource', () => {
 
       willSendRequestSpy.mockRestore();
       didReceiveResponseSpy.mockRestore();
+    });
+
+    it('Should handle multi-level "params" URL object', async () => {
+      const CustomApi = class extends ApiDataSource {
+        async getEntry<TResult = object>(): Promise<TResult> {
+          return this.get<TResult>('/api/info', {
+            str: 'str',
+            foo: {
+              bar: true,
+              nested: {
+                foo: 1
+              }
+            },
+            arr: [1, 2]
+          });
+        }
+      }
+      const customApi = new CustomApi({
+        config: {
+          protocol: 'http',
+          host: 'example.com',
+          fetchUrlPriority: 10
+        }
+      });
+
+      const resolveURLSpy: jest.SpyInstance = jest.spyOn(customApi, 'resolveURL');
+      const didReceiveResponseSpy: jest.SpyInstance = jest.spyOn(customApi, 'didReceiveResponse');
+
+      customApi.initialize({ context: {} });
+      await customApi.getEntry();
+
+      expect(resolveURLSpy.mock.calls[0][0].path).toBe('/api/info');
+      expect(Array.from(resolveURLSpy.mock.calls[0][0].params.entries())).toEqual([
+        ['str', 'str'],
+        ['foo[bar]', 'true'],
+        ['foo[nested][foo]', '1'],
+        ['arr[]', '1'],
+        ['arr[]', '2']
+      ]);
+      expect(didReceiveResponseSpy.mock.calls[0][1].url).toEqual(
+        expect.stringContaining('?str=str&foo%5Bbar%5D=true&foo%5Bnested%5D%5Bfoo%5D=1&arr%5B%5D=1&arr%5B%5D=2')
+      );
     });
   });
 });

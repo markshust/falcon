@@ -50,7 +50,8 @@
     "apollo-datasource-rest": "^0.1.5",
     "graphql": "^14.0.2",
     "html-entities": "^1.2.1",
-    "striptags": "^3.1.1"
+    "striptags": "^3.1.1",
+    "qs": "^6.5.2"
   },
   "devDependencies": {
     "@types/node": "^10.10.1",
@@ -59,6 +60,7 @@
     "@types/graphql": "^14.0.0",
     "@types/html-entities": "^1.2.16",
     "@types/jest": "^23.3.2",
+    "@types/qs": "^6.5.1",
     "rimraf": "^2.6.2",
     "nock": "^10.0.0",
     "ts-jest": "^23.10.1"

@@ -15,7 +15,7 @@ export interface ConfigurableConstructorParams<T = object> {
 
 export type ContextType = {
   isAuthRequired?: boolean;
-  didReceiveResult?: (result: any) => Promise<any>;
+  didReceiveResult?: (result: any, res: ContextFetchResponse) => Promise<any>;
   [propName: string]: any;
 };
 

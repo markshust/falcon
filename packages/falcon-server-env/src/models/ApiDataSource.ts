@@ -13,8 +13,9 @@ import {
   ContextRequestOptions,
   PaginationData
 } from '../types';
-import { URLSearchParamsInit } from 'apollo-server-env';
+import { URL, URLSearchParams, URLSearchParamsInit } from 'apollo-server-env';
 import { format } from 'url';
+import qs = require('qs');
 
 export type PaginationValue = number | string | null;
 
@@ -70,12 +71,10 @@ export default abstract class ApiDataSource<TContext = any> extends RESTDataSour
     return [];
   }
 
-  async willSendRequest(req: ContextRequestOptions): Promise<void> {
-    // console.log({ req });
-
-    const { context } = req;
+  protected async willSendRequest(request: ContextRequestOptions): Promise<void> {
+    const { context } = request;
     if (context && context.isAuthRequired) {
-      await this.authorizeRequest(req);
+      await this.authorizeRequest(request);
     }
   }
 
@@ -114,7 +113,7 @@ export default abstract class ApiDataSource<TContext = any> extends RESTDataSour
     init: ContextRequestInit = {}
   ): Promise<TResult> {
     this.ensureContextPassed(init);
-    return super.get<TResult>(path, params, init);
+    return super.get<TResult>(path, this.preprocessParams(params), init);
   }
 
   protected async post<TResult = any>(
@@ -150,7 +149,7 @@ export default abstract class ApiDataSource<TContext = any> extends RESTDataSour
     init: ContextRequestInit = {}
   ): Promise<TResult> {
     this.ensureContextPassed(init);
-    return super.delete<TResult>(path, params, init);
+    return super.delete<TResult>(path, this.preprocessParams(params), init);
   }
 
   protected async didReceiveResponse<TResult = any>(
@@ -161,7 +160,7 @@ export default abstract class ApiDataSource<TContext = any> extends RESTDataSour
     const { context } = res;
 
     if (context && context.didReceiveResult) {
-      await context.didReceiveResult(result);
+      return await context.didReceiveResult(result, res);
     }
     return result;
   }
@@ -178,5 +177,14 @@ export default abstract class ApiDataSource<TContext = any> extends RESTDataSour
     if (typeof init.cacheOptions === 'object') {
       (init.cacheOptions as ContextCacheOptions).context = init.context;
     }
+  }
+
+  private preprocessParams(params?: URLSearchParamsInit): URLSearchParamsInit {
+    const searchString: string = qs.stringify(params, {
+      encodeValuesOnly: true,
+      arrayFormat: 'brackets'
+    });
+
+    return new URLSearchParams(searchString);
   }
 }
