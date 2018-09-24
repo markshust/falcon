@@ -467,7 +467,7 @@ module.exports = class Magento2Api extends Magento2ApiBase {
       throw new Error(`Unknown url entity type: ${type} in magento api.`);
     }
 
-    const reducedEntityData = reducer({ data: entityData }, currency);
+    const reducedEntityData = reducer.call(this, { data: entityData }, currency);
 
     response.data = Object.assign(reducedEntityData.data, { type });
 
@@ -511,5 +511,16 @@ module.exports = class Magento2Api extends Magento2ApiBase {
     this.convertCategoryData(response);
 
     return response;
+  }
+
+  /**
+   * Search for product with id
+   * @param {number} id = product id called by magento entity_id
+   * @return {Object} - product data
+   */
+  async fetchProductById({ id, storeCode, currency }) {
+    const urlPath = `catalog/product/view/id/${id}`;
+
+    return this.fetchUrl({ path: urlPath, loadEntityData: true, storeCode, currency });
   }
 };
