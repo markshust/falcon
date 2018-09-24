@@ -1,0 +1,30 @@
+---
+name: Sidebar
+menu: Components
+---
+
+import { Playground } from 'docz';
+import { Toggle } from 'react-powerplug';
+import { Button, GridLayout, Sidebar, Portal, H1, Text, Backdrop } from '../';
+
+# Sidebar
+
+### Basic usage
+
+<Playground>
+  <Toggle initial={false}>
+    {({ on, toggle }) => (
+      <React.Fragment>
+        <Button onClick={toggle}>Toggle sidebar</Button>
+        <Sidebar as={Portal} visible={on}>
+          <H1 p="lg">Hello!</H1>
+        </Sidebar>
+        <Backdrop
+          onClick={toggle}
+          as={Portal}
+          visible={on}
+        />
+      </React.Fragment>
+    )}
+  </Toggle>
+</Playground>

@@ -1,0 +1,42 @@
+---
+name: Navbar
+menu: Components
+---
+
+import { Playground } from 'docz';
+import { Navbar, Link, NavbarItem, NavbarItemMenu, Box, List, ListItem, Divider } from '../';
+
+# Navbar
+
+### Basic usage
+
+<Playground>
+  <Box height={300} css={{ overflow: 'hidden' }}>
+    <Navbar>
+      <NavbarItem>
+        <Link>Baking</Link>
+        <NavbarItemMenu>First: Any content</NavbarItemMenu>
+      </NavbarItem>
+      <NavbarItem>
+        <Link>Cooking</Link>
+        <NavbarItemMenu>Second: Any content</NavbarItemMenu>
+      </NavbarItem>
+      <NavbarItem>
+        <Link>Dining</Link>
+        <NavbarItemMenu>
+          <List>
+            <ListItem>Item</ListItem>
+            <ListItem>Another item</ListItem>
+            <ListItem>Last</ListItem>
+          </List>
+          <Divider />
+          <List>
+            <ListItem>Item</ListItem>
+            <ListItem>Another item</ListItem>
+            <ListItem>Last</ListItem>
+          </List>
+        </NavbarItemMenu>
+      </NavbarItem>
+    </Navbar>
+  </Box>
+</Playground>

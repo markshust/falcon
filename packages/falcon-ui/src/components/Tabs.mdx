@@ -1,0 +1,42 @@
+---
+name: Tabs
+menu: Components
+---
+
+import { Playground, PropsTable } from 'docz';
+import { State } from 'react-powerplug';
+import { Tabs, Tab } from '../';
+
+# Tabs
+
+### Basic usage 
+
+<Playground>
+  <State initial={{ activeIndex: 0, tabs: ['One', 'Two', 'Three'] }}>
+    {({ state, setState }) => (
+      <Tabs>
+        {state.tabs.map((tab, index) => (
+          <Tab active={index === state.activeIndex} onClick={() => setState({ activeIndex: index })}>
+            {tab}
+          </Tab>
+        ))}
+      </Tabs>
+    )}
+  </State>
+</Playground>
+
+### Variant secondary
+
+<Playground>
+  <State initial={{ activeIndex: 0, tabs: ['One', 'Two', 'Three'] }}>
+    {({ state, setState }) => (
+      <Tabs variant="secondary">
+        {state.tabs.map((tab, index) => (
+          <Tab variant="secondary" active={index === state.activeIndex} onClick={() => setState({ activeIndex: index })}>
+            {tab}
+          </Tab>
+        ))}
+      </Tabs>
+    )}
+  </State>
+</Playground>

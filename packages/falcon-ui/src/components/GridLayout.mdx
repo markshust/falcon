@@ -1,0 +1,35 @@
+---
+name: GridLayout
+menu: Components
+---
+
+import { Playground } from 'docz';
+
+import { GridLayout, Box } from '../';
+
+# Grid Layout
+
+### Basic usage
+
+<Playground>
+  <GridLayout gridTemplateColumns={{ xs: '1fr 2fr', md: '1fr 1fr 1fr' }} gridTemplateRows="1fr 50vh 1fr">
+    <Box boxShadow="xs" p="md">
+      c 1
+    </Box>
+    <Box boxShadow="xs" p="md">
+      c 2
+    </Box>
+    <Box boxShadow="xs" p="md">
+      c 3
+    </Box>
+    <Box boxShadow="xs" p="md">
+      c 4
+    </Box>
+    <Box boxShadow="xs" p="md">
+      c 5
+    </Box>
+    <Box boxShadow="xs" p="md">
+      c 6
+    </Box>
+  </GridLayout>
+</Playground>
