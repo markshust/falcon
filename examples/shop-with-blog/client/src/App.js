@@ -2,9 +2,12 @@ import { asyncComponent } from 'react-async-component';
 import React from 'react';
 import Route from 'react-router-dom/Route';
 import Switch from 'react-router-dom/Switch';
-import Home from 'src/pages/home/Home';
+import Home from 'src/pages/Home';
 import DynamicRoute from '@deity/falcon-client/src/components/DynamicRoute';
-import 'src/App.css';
+import { ThemeProvider } from '@deity/falcon-ui';
+
+import { AppLayout, Header } from './components';
+import { theme } from './theme';
 
 const components = {
   shop: asyncComponent({
@@ -16,10 +19,15 @@ const components = {
 };
 
 const App = () => (
-  <Switch>
-    <Route exact path="/" component={Home} />
-    <DynamicRoute components={components} />
-  </Switch>
+  <ThemeProvider theme={theme}>
+    <AppLayout>
+      <Header />
+      <Switch>
+        <Route exact path="/" component={Home} />
+        <DynamicRoute components={components} />
+      </Switch>
+    </AppLayout>
+  </ThemeProvider>
 );
 
 export default App;

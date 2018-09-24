@@ -36,6 +36,7 @@
   "dependencies": {
     "@deity/falcon-client": "1.0.0",
     "@deity/falcon-i18n": "1.0.0",
+    "@deity/falcon-ui": "1.0.0",
     "config": "^2.0.1",
     "graphql": "^0.13.2",
     "graphql-tag": "^2.9.2",
@@ -45,6 +46,7 @@
     "react-apollo": "^2.1.11",
     "react-async-component": "^2.0.0",
     "react-dom": "^16.4.2",
+    "react-feather": "^1.1.3",
     "react-i18next": "^7.11.0",
     "react-router-dom": "^4.3.1"
   },
