@@ -2,6 +2,7 @@ const path = require('path');
 const paths = require('./../paths');
 // eslint-disable-next-line import/no-extraneous-dependencies
 const FalconI18nLocalesPlugin = require('@deity/falcon-i18n-webpack-plugin');
+const razzlePluginTypescript = require('razzle-plugin-typescript');
 const makeLoaderFinder = require('razzle-dev-utils/makeLoaderFinder');
 
 function setEntryToFalconClient(config, target) {
@@ -32,14 +33,36 @@ function setEntryToFalconClient(config, target) {
   }
 }
 
-function makeFalconClientJsFileResolvedByWebpack(config) {
-  const babelLoaderFinder = makeLoaderFinder('babel-loader');
-  const babelLoader = config.module.rules.find(babelLoaderFinder);
-  if (!babelLoader) {
-    throw new Error(`'babel-loader' was erased from config, it is required to configure '@deity/falcon-client'`);
+function extendBabelInclude(includePaths = []) {
+  return config => {
+    const babelLoaderFinder = makeLoaderFinder('babel-loader');
+    const babelLoader = config.module.rules.find(babelLoaderFinder);
+    if (!babelLoader) {
+      throw new Error(`'babel-loader' was erased from config, it is required to configure '@deity/falcon-client'`);
+    }
+
+    babelLoader.include = [...babelLoader.include, ...includePaths];
+  };
+}
+
+function addTypeScript(config, { target, dev }, webpackObject) {
+  razzlePluginTypescript(config, { target, dev }, webpackObject, {
+    useBabel: true,
+    useEslint: true,
+    forkTsChecker: {
+      tslint: false
+    }
+  });
+
+  // use latest ts-Loader
+  const tsLoaderFinder = makeLoaderFinder('ts-loader');
+  const tsRule = config.module.rules.find(tsLoaderFinder);
+  if (!tsRule) {
+    throw new Error(`'ts-loader' was erased from config, it is required to configure '@deity/falcon-client'`);
   }
 
-  babelLoader.include.push(paths.falconClient.appSrc);
+  const indexOfTsLoader = tsRule.use.findIndex(tsLoaderFinder);
+  tsRule.use[indexOfTsLoader].loader = require.resolve('ts-loader');
 }
 
 function addVendorsBundle(modules = []) {
@@ -113,7 +136,7 @@ function addFalconI18nPlugin({ resourcePackages = [], filter }, config, dev) {
  * @param {{i18n: i18nPluginConfig }} appConfig webpack config
  * @returns {object} razzle plugin
  */
-module.exports = appConfig => (config, { target, dev } /* ,  webpackObject */) => {
+module.exports = appConfig => (config, { target, dev }, webpackObject) => {
   config.resolve.alias = {
     ...(config.resolve.alias || {}),
     public: path.join(paths.razzle.appPath, 'public'),
@@ -123,7 +146,10 @@ module.exports = appConfig => (config, { target, dev } /* ,  webpackObject */) =
   };
 
   setEntryToFalconClient(config, target);
-  makeFalconClientJsFileResolvedByWebpack(config);
+  extendBabelInclude([paths.falconClient.appSrc, path.join(paths.resolvePackageDir('@deity/falcon-ui'), 'src')])(
+    config
+  );
+  addTypeScript(config, { target, dev }, webpackObject);
 
   addVendorsBundle([
     'apollo-cache-inmemory',
