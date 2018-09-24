@@ -187,7 +187,7 @@ export class ThemeEditor extends React.Component<any, any> {
     e.preventDefault();
 
     this.setState((state: any) => {
-      const { openPanels } = state;
+      const openPanels = { ...state.openPanels };
 
       openPanels[key] = !openPanels[key];
       return {
