@@ -412,4 +412,104 @@ module.exports = class Magento2Api extends Magento2ApiBase {
 
     return response;
   }
+
+  /**
+   * Special endpoint to fetch any magento entity by it's url, for example product, cms page
+   * @param {Object} params - request params
+   * @param {String} [params.path] - request path to be checked against api urls
+   * @param {Boolean} [params.loadEntityData] - flag to mark whether endpoint should return entity data as well
+   * @return {Promise} - request promise
+   */
+  async fetchUrl(params) {
+    const { currency, storeCode, path, loadEntityData = false } = params;
+
+    const response = await this.get(
+      `/url/?request_path=${path}&load_entity_data=${loadEntityData}`,
+      {},
+      {
+        context: {
+          storeCode
+        }
+      }
+    );
+
+    return this.reduceUrl(response, currency);
+  }
+
+  /**
+   * Reduce url endpoint data.
+   * Find entity reducer and use it.
+   *
+   * @param {Object} response Api Response
+   * @param {String} [currency=null] currency code
+   * @return {Object} reduced data
+   */
+  reduceUrl(response, currency = null) {
+    const { data } = response;
+    const type = data.entity_type;
+    const entityData = data[type.replace('-', '_')];
+
+    if (entityData === null) {
+      response.data = { id: data.entity_id, type };
+
+      return response.data;
+    }
+
+    let reducer;
+
+    if (type === 'cms-page') {
+      reducer = this.reduceCmsPage;
+    } else if (type === 'product') {
+      reducer = this.reduceProduct;
+    } else if (type === 'category') {
+      reducer = this.reduceCategory;
+    } else {
+      throw new Error(`Unknown url entity type: ${type} in magento api.`);
+    }
+
+    const reducedEntityData = reducer({ data: entityData }, currency);
+
+    response.data = Object.assign(reducedEntityData.data, { type });
+
+    return response;
+  }
+
+  /**
+   * Reduce cms page data
+   * @param {Object} response - full api response
+   * @return {Object} - reduced response
+   */
+  reduceCmsPage(response) {
+    const { data } = response;
+    const { title, id } = data;
+    let { content } = data;
+
+    content = this.replaceLinks(content);
+    response.data = { id, content, title };
+
+    return response;
+  }
+
+  /**
+   * Reduce product data to what is needed.
+   * @param {Object} response - api response
+   * @param {String} [currency=null] - currency code
+   * @return {Object} - reduced data
+   */
+  reduceProduct(response, currency = null) {
+    this.convertProductData(response, currency);
+
+    return response;
+  }
+
+  /**
+   * Reduce category data
+   * @param {Object} response - api response
+   * @return {Object} reduced data
+   */
+  reduceCategory(response) {
+    this.convertCategoryData(response);
+
+    return response;
+  }
 };

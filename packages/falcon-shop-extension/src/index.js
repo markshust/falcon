@@ -117,4 +117,23 @@ module.exports = class Shop extends Extension {
       }
     };
   }
+
+  /**
+   * Get priority factor for the given path (how likely it is to be handled by this middleware)
+   * This method is used by {@link ApiServer#getUrlApis}
+   * @param {String} path - path to check
+   * @returns {Number} - priority factor
+   */
+  getFetchUrlPriority(path) {
+    if (path.endsWith('.html')) {
+      return 5;
+    }
+
+    return 20;
+  }
+
+  async fetchUrl(root, { path }, { session = {} }) {
+    const { language, storeCode, currency } = session;
+    return this.api.fetchUrl(path, language, storeCode, currency);
+  }
 };

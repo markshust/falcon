@@ -90,7 +90,7 @@ module.exports = class DynamicRouteExtension extends Extension {
         if (e.extensions && e.extensions.response && e.extensions.response.status === 404) {
           response = null;
         } else {
-          Logger.error(`Error while fetching dynamic route info: ${e.message}`);
+          Logger.error(`Error while fetching dynamic route info: ${e.stack}`);
           throw e;
         }
       }
@@ -126,9 +126,10 @@ module.exports = class DynamicRouteExtension extends Extension {
         }
       `
       ],
+
       resolvers: {
         Query: {
-          url: this.fetchUrl.bind(this)
+          url: async (...params) => this.fetchUrl(...params)
         }
       }
     };
