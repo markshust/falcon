@@ -28,6 +28,7 @@
     "packages/falcon-server",
     "packages/falcon-ui",
     "packages/falcon-theme-editor",
+    "packages/falcon-ecommerce-uikit",
     "packages/falcon-logger",
     "packages/falcon-shop-extension",
     "packages/falcon-blog-extension",

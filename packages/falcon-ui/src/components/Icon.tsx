@@ -18,7 +18,7 @@ const IconRenderer = themed({
   }
 });
 
-type IconProps = { src: string; fallback: React.ReactNode } & ThemedComponentProps & BaseProps<'svg'>;
+type IconProps = { src: string; fallback?: React.ReactNode } & ThemedComponentProps & BaseProps<'svg'>;
 
 export const Icon = withCSSContext((props: IconProps, context: PropsWithTheme) => {
   if (!context.theme || !context.theme.icons) return null;

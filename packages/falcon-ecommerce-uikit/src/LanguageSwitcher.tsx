@@ -1,12 +1,27 @@
 import React from 'react';
 import { Dropdown, DropdownLabel, DropdownMenu, DropdownMenuItem, Backdrop, Icon, Box, Portal } from '@deity/falcon-ui';
 
-export class LanguageSwitcher extends React.Component {
+type Language = {
+  name: string;
+  code: string;
+  active: boolean;
+};
+
+type LanguageSwitcherProps = {
+  languages: Language[];
+  onChange?: Function;
+};
+
+type LanguageSwitcherState = {
+  open: boolean;
+};
+
+export class LanguageSwitcher extends React.Component<LanguageSwitcherProps, LanguageSwitcherState> {
   state = {
     open: false
   };
 
-  onChange = lang => () => {
+  onChange = (lang: Language) => () => {
     if (!this.props.onChange) {
       return;
     }

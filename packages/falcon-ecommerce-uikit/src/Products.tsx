@@ -4,18 +4,11 @@ import gql from 'graphql-tag';
 
 import { themed, Image, Text, Button } from '@deity/falcon-ui';
 
-export const ProductsQuery = ({ children, variables }) => (
-  <Query
-    query={gql`
-      query {
-        products @client
-      }
-    `}
-    variables={variables}
-  >
-    {children}
-  </Query>
-);
+const GET_PRODUCTS = gql`
+  query {
+    products @client
+  }
+`;
 
 export const ProductCard = themed({
   tag: 'li',
@@ -49,9 +42,9 @@ export const ProductListLayout = themed({
   }
 });
 
-export const ProductsList = ({ products }) => (
+export const ProductsList: React.SFC<{ products: any }> = ({ products }) => (
   <ProductListLayout>
-    {products.map(product => (
+    {products.map((product: any) => (
       <ProductCard key={product.src}>
         <Image flex="1 1 0%" css={{ minHeight: 0 }} src={product.src} />
         <Text ellipsis fontWeight="bold">
@@ -68,12 +61,12 @@ export const ProductsList = ({ products }) => (
 );
 
 export const Products = () => (
-  <ProductsQuery>
+  <Query query={GET_PRODUCTS}>
     {({ loading, error, data }) => {
       if (loading) return null;
       if (error) return `Error!: ${error}`;
 
       return <ProductsList products={data.products} />;
     }}
-  </ProductsQuery>
+  </Query>
 );

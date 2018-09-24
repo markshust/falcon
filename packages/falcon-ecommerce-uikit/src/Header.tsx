@@ -4,19 +4,12 @@ import gql from 'graphql-tag';
 import { Link as RouterLink } from 'react-router-dom';
 import { themed, Navbar, NavbarItem, NavbarItemMenu, Link, List, ListItem, Icon } from '@deity/falcon-ui';
 
-export const HeaderQuery = ({ children, variables }) => (
-  <Query
-    query={gql`
-      query {
-        menuItems @client
-        bannerLinks @client
-      }
-    `}
-    variables={variables}
-  >
-    {children}
-  </Query>
-);
+const GET_HEADER_DATA = gql`
+  query {
+    menuItems @client
+    bannerLinks @client
+  }
+`;
 
 export const HeaderLayout = themed({
   tag: 'header',
@@ -25,9 +18,9 @@ export const HeaderLayout = themed({
   }
 });
 
-export const Banner = ({ items }) => (
+export const Banner: React.SFC<{ items: any }> = ({ items }) => (
   <List display="flex" bgFullWidth="primaryLight" justifyContent="flex-end">
-    {items.map(item => (
+    {items.map((item: any) => (
       <ListItem p="md" key={item.name}>
         <Link as={RouterLink} to={item.url}>
           {item.name}
@@ -37,15 +30,15 @@ export const Banner = ({ items }) => (
   </List>
 );
 
-export const Nav = ({ items }) => (
+export const Nav: React.SFC<{ items: any }> = ({ items }) => (
   <Navbar>
-    {items.map(item => (
+    {items.map((item: any) => (
       <NavbarItem key={item.name}>
         <Link>{item.name}</Link>
         {item.subMenu && (
           <NavbarItemMenu>
             <List>
-              {item.subMenu.map(subItem => (
+              {item.subMenu.map((subItem: any) => (
                 <ListItem key={subItem.name}>
                   <Link as={RouterLink} to="/">
                     {subItem.name}
@@ -84,7 +77,7 @@ export const Searchbar = () => (
 );
 
 export const Header = () => (
-  <HeaderQuery>
+  <Query query={GET_HEADER_DATA}>
     {({ loading, error, data }) => {
       if (loading) return null;
       if (error) return `Error!: ${error}`;
@@ -99,5 +92,5 @@ export const Header = () => (
         </HeaderLayout>
       );
     }}
-  </HeaderQuery>
+  </Query>
 );

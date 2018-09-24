@@ -2,6 +2,7 @@ import React from 'react';
 import { Query } from 'react-apollo';
 import gql from 'graphql-tag';
 import { Link as RouterLink } from 'react-router-dom';
+
 import {
   themed,
   H2,
@@ -17,22 +18,14 @@ import {
   ListItem,
   Box
 } from '@deity/falcon-ui';
+import { LanguageSwitcher } from './LanguageSwitcher';
 
-import { LanguageSwitcher } from './index';
-
-export const FooterQuery = ({ children, variables }) => (
-  <Query
-    query={gql`
-      query {
-        footerSections @client
-        languages @client
-      }
-    `}
-    variables={variables}
-  >
-    {children}
-  </Query>
-);
+const GET_FOOTER_DATA = gql`
+  query {
+    footerSections @client
+    languages @client
+  }
+`;
 
 export const FooterLayout = themed({
   tag: 'footer',
@@ -116,13 +109,13 @@ const FooterSectionsLayout = themed({
   }
 });
 
-export const FooterSections = ({ sections }) => (
+export const FooterSections: React.SFC<{ sections: any }> = ({ sections }) => (
   <FooterSectionsLayout>
-    {sections.map(section => (
+    {sections.map((section: any) => (
       <Box key={section.name} css={{ minWidth: 200 }}>
         <H3>{section.name}</H3>
         <List>
-          {section.links.map(item => (
+          {section.links.map((item: any) => (
             <ListItem p="sm" key={item.name}>
               <Link as={RouterLink} to={item.url}>
                 {item.name}
@@ -152,7 +145,7 @@ export const LanguageSection = themed({
 });
 
 export const Footer = () => (
-  <FooterQuery>
+  <Query query={GET_FOOTER_DATA}>
     {({ loading, error, data }) => {
       if (loading) return null;
       if (error) return `Error!: ${error}`;
@@ -168,5 +161,5 @@ export const Footer = () => (
         </FooterLayout>
       );
     }}
-  </FooterQuery>
+  </Query>
 );

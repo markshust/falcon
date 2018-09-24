@@ -6,7 +6,7 @@ import Home from 'src/pages/Home';
 import DynamicRoute from '@deity/falcon-client/src/components/DynamicRoute';
 import { ThemeProvider } from '@deity/falcon-ui';
 
-import { AppLayout, Header, Footer } from './components';
+import { AppLayout, Header, Footer } from '@deity/falcon-ecommerce-uikit';
 import { deityGreenTheme } from './theme';
 
 const components = {
