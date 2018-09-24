@@ -3,11 +3,7 @@ const { BaseSchema } = require('@deity/falcon-server');
 const { ApiDataSource } = require('@deity/falcon-server-env');
 const Blog = require('.');
 
-class CustomApi extends ApiDataSource {
-  async getBlogPosts() {
-    return [];
-  }
-}
+class CustomApi extends ApiDataSource {}
 
 const mocks = {
   BlogPost: () => ({
@@ -29,7 +25,7 @@ const QUERY_TEST_CASES = [
     name: 'post - should return correct post object',
     query: `
       query Post($path: String!) {
-        post(path: $path) {
+        blogPost(path: $path) {
           id
           title
           content
@@ -38,7 +34,9 @@ const QUERY_TEST_CASES = [
             url
           }
           related {
-            id
+            items {
+              id
+            }
           }
         }
       }
@@ -48,13 +46,15 @@ const QUERY_TEST_CASES = [
     },
     expected: {
       data: {
-        post: {
+        blogPost: {
           id: 1,
           title: 'Post title',
           content: 'Lorem ipsum',
           slug: 'sample-post',
           image: { url: 'image.png' },
-          related: [{ id: 1 }, { id: 1 }]
+          related: {
+            items: [{ id: 1 }, { id: 1 }]
+          }
         }
       }
     }
@@ -64,7 +64,7 @@ const QUERY_TEST_CASES = [
     name: 'posts - should return all posts',
     query: `
       query {
-        posts {
+        blogPosts {
           items {
             id
             title
@@ -74,7 +74,7 @@ const QUERY_TEST_CASES = [
     `,
     expected: {
       data: {
-        posts: {
+        blogPosts: {
           items: [
             {
               id: 1,
