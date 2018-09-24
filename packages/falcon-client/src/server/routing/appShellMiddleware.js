@@ -1,7 +1,7 @@
 import React from 'react';
 import { renderToString } from 'react-dom/server';
-import { extractI18nextState } from '../i18n/i18nServerFactory';
-import Html from '../components/Html';
+import { extractI18nextState } from '../../i18n/i18nServerFactory';
+import Html from '../../components/Html';
 
 /**
  * Application shell renderer middleware.

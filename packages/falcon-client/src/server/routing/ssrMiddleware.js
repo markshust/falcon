@@ -6,8 +6,8 @@ import Helmet from 'react-helmet';
 import { I18nextProvider } from 'react-i18next';
 import { AsyncComponentProvider, createAsyncContext } from 'react-async-component';
 import asyncBootstrapper from 'react-async-bootstrapper';
-import { filterResourceStoreByNs } from '../i18n/i18nServerFactory';
-import HtmlHead from './../components/HtmlHead';
+import { filterResourceStoreByNs } from '../../i18n/i18nServerFactory';
+import HtmlHead from '../../components/HtmlHead';
 
 /**
  * Server Side Rendering middleware.

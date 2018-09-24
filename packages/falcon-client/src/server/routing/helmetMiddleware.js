@@ -1,8 +1,8 @@
 import React from 'react';
 import { renderToString } from 'react-dom/server';
 import Helmet from 'react-helmet';
-import { APP_INIT } from '../graphql/config.gql';
-import HtmlHead from './../components/HtmlHead';
+import { APP_INIT } from '../../graphql/config.gql';
+import HtmlHead from '../../components/HtmlHead';
 
 /**
  * Head Rendering middleware.

@@ -1,5 +1,5 @@
 import { ApolloLink } from 'apollo-link';
-import ApolloClient from '../service/ApolloClient';
+import ApolloClient from '../../service/ApolloClient';
 
 /**
  * Apollo Client Provider middleware, sets ApolloClinet on ctx.state.client

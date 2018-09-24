@@ -1,5 +1,5 @@
 import koaI18next from 'koa-i18next';
-import i18nFactory from '../i18n/i18nServerFactory';
+import i18nFactory from '../../i18n/i18nServerFactory';
 
 /**
  * @typedef {object} Options
