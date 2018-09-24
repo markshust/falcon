@@ -1,19 +1,23 @@
-import { ConfigurableConstructorParams, FetchUrlResult } from '../types';
-import ApiDataSource from './ApiDataSource';
 import { GraphQLResolveInfo } from 'graphql';
+import ApiDataSource from './ApiDataSource';
+import { ConfigurableConstructorParams, FetchUrlResult, ExtensionContainer } from '../types';
 
 export default abstract class Extension<TApiConfig = object> {
   public config: object;
   public name: string;
   public api?: ApiDataSource;
   public apiConfig: TApiConfig | null = null;
+  private extensionContainer: ExtensionContainer;
+
   /**
    * @param {object} config Extension config object
+   * @param {ExtensionContainer} extensionContainer Instance of ExtensionContainer
    * @param {string} name Extension short-name
    */
-  constructor({ config = {}, name }: ConfigurableConstructorParams = {}) {
+  constructor({ config = {}, name }: ConfigurableConstructorParams, extensionContainer: ExtensionContainer) {
     this.name = name || this.constructor.name;
     this.config = config;
+    this.extensionContainer = extensionContainer;
   }
 
   /**
@@ -21,11 +25,10 @@ export default abstract class Extension<TApiConfig = object> {
    * Must return a result from "api.preInitialize()"
    * @return {Promise<TApiConfig|null>} API DataSource preInitialize result
    */
-  async initialize(): Promise<TApiConfig|null> {
-    if (!this.api) {
-      throw new Error(`"${this.name}" extension: API DataSource was not defined`);
+  async initialize(): Promise<TApiConfig | null> {
+    if (this.api) {
+      this.apiConfig = await this.api.preInitialize<TApiConfig>();
     }
-    this.apiConfig = await this.api.preInitialize<TApiConfig>();
 
     return this.apiConfig;
   }
@@ -38,12 +41,13 @@ export default abstract class Extension<TApiConfig = object> {
     return {};
   }
 
-  async fetchUrl?(
-    obj: object,
-    args: any,
-    context: any,
-    info: GraphQLResolveInfo
-  ): Promise<FetchUrlResult>;
+  /**
+   * Should be implemented if extension wants to deliver content for dynamic urls. It should return priority value for passed url.
+   * @param url - url for which the priority should be returned
+   */
+  getFetchUrlPriority?(url: string): number;
+
+  async fetchUrl?(obj: object, args: any, context: any, info: GraphQLResolveInfo): Promise<FetchUrlResult>;
 
   get fetchUrlPriority(): number {
     return (this.api as ApiDataSource).fetchUrlPriority;

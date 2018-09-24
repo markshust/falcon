@@ -1,0 +1,51 @@
+{
+  "name": "@deity/falcon-theme-editor",
+  "license": "OSL-3.0",
+  "version": "1.0.0",
+  "repository": "https://github.com/deity-io/falcon/tree/master/packages/falcon-theme-editor",
+  "main": "dist/falcon-theme-editor.cjs.js",
+  "module": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "source": "src/index.ts",
+  "sideEffects": false,
+  "files": [
+    "dist",
+    "src"
+  ],
+  "peerDependencies": {
+    "react": "^16.4.2",
+    "react-dom": "^16.4.2",
+    "@deity/falcon-ui": "^1.0.0"
+  },
+  "scripts": {
+    "clean": "rimraf dist",
+    "prepare": "npm run clean && npm run build:esm && npm run build:cjs && npm run build:tsDeclarations",
+    "build:tsDeclarations": "tsc",
+    "build:esm": "babel src -d dist -x .ts,.tsx -s",
+    "build:cjs": "rollup -c"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.0.0",
+    "@babel/core": "^7.0.0",
+    "@babel/plugin-proposal-class-properties": "^7.0.0",
+    "@babel/plugin-proposal-object-rest-spread": "^7.0.0",
+    "@babel/plugin-transform-runtime": "^7.0.0",
+    "@babel/preset-env": "^7.0.0",
+    "@babel/preset-react": "^7.0.0",
+    "@babel/preset-typescript": "^7.0.0",
+    "@types/react": "^16.4.14",
+    "@types/react-dom": "^16.0.7",
+    "babel-plugin-annotate-pure-calls": "^0.3.0",
+    "babel-plugin-module-resolver": "^3.1.1",
+    "react": "^16.5.2",
+    "react-dom": "^16.5.2",
+    "rimraf": "^2.6.1",
+    "rollup": "^0.66.2",
+    "rollup-plugin-babel": "^4.0.3",
+    "rollup-plugin-node-resolve": "^3.4.0",
+    "typescript": "^3.0.3"
+  },
+  "dependencies": {
+    "@babel/runtime": "^7.0.0"
+  }
+}

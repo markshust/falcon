@@ -1,20 +1,22 @@
+/* eslint-disable no-restricted-syntax, no-await-in-loop, import/no-extraneous-dependencies */
 import 'jest-extended';
 import ApiDataSource from './ApiDataSource';
+import { ContextRequestOptions, ContextFetchRequest, ContextFetchResponse } from '../types';
+
 import nock = require('nock');
-import {
-  ContextRequestOptions,
-  ContextFetchRequest,
-  ContextFetchResponse
-} from '../types';
 
 class CustomApiDataSource extends ApiDataSource {
   async getInfo(): Promise<object> {
-    return this.get<object>('/api/info', {}, {
-      context: {
-        isAuthRequired: true,
-        bar: 1
+    return this.get<object>(
+      '/api/info',
+      {},
+      {
+        context: {
+          isAuthRequired: true,
+          bar: 1
+        }
       }
-    });
+    );
   }
 
   async postInfo(): Promise<object> {
@@ -34,7 +36,6 @@ class CustomApiDataSource extends ApiDataSource {
   }
 
   async authorizeRequest(req: ContextRequestOptions): Promise<void> {
-    await super.authorizeRequest(req);
     req.headers.set('foo', 'bar');
   }
 }
@@ -95,11 +96,16 @@ describe('ApiDataSource', () => {
 
     beforeAll(() => {
       nock('http://example.com')
-        .get(uri => uri.indexOf(basePath) >= 0).reply(200, { foo: true })
-        .post(basePath).reply(200, { foo: true })
-        .put(basePath).reply(200, { foo: true })
-        .delete(basePath).reply(200, { foo: true })
-        .patch(basePath).reply(200, { foo: true })
+        .get(uri => uri.indexOf(basePath) >= 0)
+        .reply(200, { foo: true })
+        .post(basePath)
+        .reply(200, { foo: true })
+        .put(basePath)
+        .reply(200, { foo: true })
+        .delete(basePath)
+        .reply(200, { foo: true })
+        .patch(basePath)
+        .reply(200, { foo: true })
         .persist(true);
     });
 
@@ -126,7 +132,7 @@ describe('ApiDataSource', () => {
         async () => customApi.patchInfo()
       ]) {
         const result: any = await method();
-        expect(result).toEqual({foo: true});
+        expect(result).toEqual({ foo: true });
         expect(willSendRequestSpy).toHaveBeenCalled();
         expect(didReceiveResponseSpy).toHaveBeenCalled();
 
@@ -149,18 +155,21 @@ describe('ApiDataSource', () => {
     it('Should handle response data via context.didReceiveResult', async () => {
       const CustomClass = class extends ApiDataSource {
         async getCustomEntry<TResult = object>(): Promise<TResult> {
-          return this.get<TResult>('/api/info', {}, {
-            context: {
-              didReceiveResult: async (result: TResult) => {
-                // Performing data transformation...
-                return {
-                  bar: true
-                };
+          return this.get<TResult>(
+            '/api/info',
+            {},
+            {
+              context: {
+                didReceiveResult: async (result: TResult) =>
+                  // Performing data transformation...
+                  ({
+                    bar: true
+                  })
               }
             }
-          });
+          );
         }
-      }
+      };
       const customApi = new CustomClass({
         config: { host: 'example.com' }
       });
@@ -177,7 +186,7 @@ describe('ApiDataSource', () => {
         async getCustomEntry<TResult = object>(): Promise<TResult> {
           return this.get<TResult>('/api/info');
         }
-      }
+      };
       const customApi = new CustomClass({
         config: { host: 'example.com' }
       });
@@ -212,7 +221,7 @@ describe('ApiDataSource', () => {
             arr: [1, 2]
           });
         }
-      }
+      };
       const customApi = new CustomApi({
         config: {
           protocol: 'http',

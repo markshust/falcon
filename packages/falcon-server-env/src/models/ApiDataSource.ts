@@ -1,6 +1,9 @@
 import { DataSourceConfig } from 'apollo-datasource';
 import { RESTDataSource } from 'apollo-datasource-rest';
 import { Body, Request } from 'apollo-datasource-rest/dist/RESTDataSource';
+import { URL, URLSearchParams, URLSearchParamsInit } from 'apollo-server-env';
+import { stringify } from 'qs';
+import { format } from 'url';
 import ContextHTTPCache from '../cache/ContextHTTPCache';
 import {
   ApiDataSourceConfig,
@@ -13,9 +16,6 @@ import {
   ContextRequestOptions,
   PaginationData
 } from '../types';
-import { URL, URLSearchParams, URLSearchParamsInit } from 'apollo-server-env';
-import { format } from 'url';
-import qs = require('qs');
 
 export type PaginationValue = number | string | null;
 
@@ -54,7 +54,7 @@ export default abstract class ApiDataSource<TContext = any> extends RESTDataSour
    * for example - for fetching API backend configuration required for Server start up
    * @return {Promise<TResult|null>} Result object
    */
-  async preInitialize<TResult = any>(): Promise<TResult|null> {
+  async preInitialize<TResult = any>(): Promise<TResult | null> {
     return null;
   }
 
@@ -73,18 +73,18 @@ export default abstract class ApiDataSource<TContext = any> extends RESTDataSour
 
   protected async willSendRequest(request: ContextRequestOptions): Promise<void> {
     const { context } = request;
-    if (context && context.isAuthRequired) {
+    if (context && context.isAuthRequired && this.authorizeRequest) {
       await this.authorizeRequest(request);
     }
   }
 
-  async authorizeRequest(req: ContextRequestOptions): Promise<void> {}
+  async authorizeRequest?(req: ContextRequestOptions): Promise<void>;
 
   /**
    * Calculates "pagination" data
-   * @param {PaginationValue} totalItems
-   * @param {PaginationValue} [currentPage=null]
-   * @param {PaginationValue} [perPage=null]
+   * @param {PaginationValue} totalItems Total amount of entries
+   * @param {PaginationValue} [currentPage=null] Current page index
+   * @param {PaginationValue} [perPage=null] Limit entries per page
    * @return {PaginationData} Calculated result
    */
   processPagination(
@@ -92,10 +92,12 @@ export default abstract class ApiDataSource<TContext = any> extends RESTDataSour
     currentPage: PaginationValue = null,
     perPage: PaginationValue = null
   ): PaginationData {
+    /* eslint-disable no-underscore-dangle */
     const _totalItems: number = parseInt(totalItems as string, 10) || 0;
     const _perPage: number = parseInt(perPage as string, 10) || this.perPage;
     const _currentPage: number = parseInt(currentPage as string, 10) || 1;
     const _totalPages: number | null = _perPage ? Math.ceil(_totalItems / _perPage) : null;
+    /* eslint-enable no-underscore-dangle */
 
     return {
       totalItems: _totalItems,
@@ -116,29 +118,17 @@ export default abstract class ApiDataSource<TContext = any> extends RESTDataSour
     return super.get<TResult>(path, this.preprocessParams(params), init);
   }
 
-  protected async post<TResult = any>(
-    path: string,
-    body?: Body,
-    init: ContextRequestInit = {}
-  ): Promise<TResult> {
+  protected async post<TResult = any>(path: string, body?: Body, init: ContextRequestInit = {}): Promise<TResult> {
     this.ensureContextPassed(init);
     return super.post<TResult>(path, body, init);
   }
 
-  protected async patch<TResult = any>(
-    path: string,
-    body?: Body,
-    init: ContextRequestInit = {}
-  ): Promise<TResult> {
+  protected async patch<TResult = any>(path: string, body?: Body, init: ContextRequestInit = {}): Promise<TResult> {
     this.ensureContextPassed(init);
     return super.patch<TResult>(path, body, init);
   }
 
-  protected async put<TResult = any>(
-    path: string,
-    body?: Body,
-    init: ContextRequestInit = {}
-  ): Promise<TResult> {
+  protected async put<TResult = any>(path: string, body?: Body, init: ContextRequestInit = {}): Promise<TResult> {
     this.ensureContextPassed(init);
     return super.put<TResult>(path, body, init);
   }
@@ -152,15 +142,12 @@ export default abstract class ApiDataSource<TContext = any> extends RESTDataSour
     return super.delete<TResult>(path, this.preprocessParams(params), init);
   }
 
-  protected async didReceiveResponse<TResult = any>(
-    res: ContextFetchResponse,
-    req: Request,
-  ): Promise<TResult> {
+  protected async didReceiveResponse<TResult = any>(res: ContextFetchResponse, req: Request): Promise<TResult> {
     const result: TResult = await super.didReceiveResponse<TResult>(res, req);
     const { context } = res;
 
     if (context && context.didReceiveResult) {
-      return await context.didReceiveResult(result, res);
+      return context.didReceiveResult(result, res);
     }
     return result;
   }
@@ -180,7 +167,9 @@ export default abstract class ApiDataSource<TContext = any> extends RESTDataSour
   }
 
   private preprocessParams(params?: URLSearchParamsInit): URLSearchParamsInit {
-    const searchString: string = qs.stringify(params, {
+    // if params is plain object then convert it to URLSearchParam with help of qs.stringify - that way
+    // we can be sure that nested object will be converted correctly to search params
+    const searchString: string = stringify(params, {
       encodeValuesOnly: true,
       arrayFormat: 'brackets'
     });

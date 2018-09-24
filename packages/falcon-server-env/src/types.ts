@@ -37,6 +37,9 @@ export interface ApiDataSourceConfig {
   [propName: string]: any;
 }
 
+// todo: this is a temporary type just to have proper type checking in the Extension class. It needs to be improved.
+export type ExtensionContainer = object;
+
 export interface ContextData {
   context?: ContextType;
 }
@@ -51,7 +54,7 @@ export type ContextFetchOptions = {
   cacheKey?: string;
   cacheOptions?:
     | ContextCacheOptions
-    | ((response: ContextFetchResponse, request: ContextFetchRequest) => ContextCacheOptions | undefined)
+    | ((response: ContextFetchResponse, request: ContextFetchRequest) => ContextCacheOptions | undefined);
 };
 
 export type ContextFetchRequest = Request & ContextData;
@@ -61,5 +64,5 @@ export type ContextFetchResponse = Response & ContextData;
 export interface ApiDataSourceEndpoint {
   path: string;
   methods: string[];
-  handler: IMiddleware
+  handler: IMiddleware;
 }

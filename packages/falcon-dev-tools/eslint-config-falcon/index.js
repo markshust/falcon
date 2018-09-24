@@ -3,7 +3,11 @@ module.exports = {
   extends: ['eslint-config-airbnb', 'plugin:prettier/recommended'],
   plugins: ['react', 'import', 'prettier'],
   settings: {
-    'import/parser': 'babel-eslint'
+    'import/parser': 'babel-eslint',
+    'import/resolver': {
+      node: true,
+      'eslint-import-resolver-typescript': true
+    }
   },
   env: {
     browser: true,
@@ -17,7 +21,7 @@ module.exports = {
     'id-length': [
       1,
       {
-        exceptions: ['_', 'e', 't', 'x', 'i']
+        exceptions: ['_', 'e', 't', 'x', 'p', 'm', 'i', 'j']
       }
     ],
     'import/default': 'off',
@@ -27,12 +31,8 @@ module.exports = {
     'import/no-unresolved': 'off',
     'import/no-named-as-default': 'error',
     'import/extensions': ['off', 'never'],
-    'import/no-extraneous-dependencies': [
-      'error',
-      {
-        devDependencies: ['**/__tests__/*', '**/*.test.js', '**/webpack/*.js']
-      }
-    ],
+    'import/no-extraneous-dependencies': ['error', { devDependencies: true }],
+    'import/prefer-default-export': 'off',
     'jsx-a11y/anchor-is-valid': [
       'off',
       {
@@ -77,7 +77,7 @@ module.exports = {
     'react/jsx-filename-extension': [
       1,
       {
-        extensions: ['.js', '.jsx']
+        extensions: ['.js', '.jsx', '.tsx']
       }
     ],
     'react/no-danger': 'off',
@@ -85,6 +85,8 @@ module.exports = {
     // problem with redux-connect decorator so we cannot use required on props,
     // therefore everything would need to be defined in default props
     'react/require-default-props': ['off'],
+    'react/no-access-state-in-setstate': 'error',
+    'react/prop-types': 'off',
     'valid-jsdoc': [
       'error',
       {
@@ -99,5 +101,25 @@ module.exports = {
     __DEVTOOLS__: true,
     socket: true,
     webpackIsomorphicTools: true
-  }
+  },
+  overrides: [
+    {
+      files: ['**/*.ts', '**/*.tsx'],
+      parser: 'typescript-eslint-parser',
+      plugins: ['typescript'],
+      rules: {
+        'no-undef': 'off',
+        'no-unused-vars': 'off',
+        'no-restricted-globals': 'off',
+        'react/prefer-stateless-function': 'off',
+        'react/react-in-jsx-scope': 'off',
+        'no-use-before-define': 'off',
+        'no-continue': 'off',
+        'dot-notation': 'off',
+        'react/prop-types': 'off',
+        'import/prefer-default-export': 'off',
+        'import-name': [true, { react: 'React' }]
+      }
+    }
+  ]
 };

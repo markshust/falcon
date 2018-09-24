@@ -1,0 +1,21 @@
+---
+name: Input
+menu: Components
+---
+
+import { Playground } from 'docz';
+import { Input, Box, Label } from '../';
+
+# Input
+
+### Basic usage
+
+<Playground>
+  <Box>
+    <Input type="text" placeholder="Hello!" />
+    <Input mt="lg" type="password" placeholder="Password" />
+    <Input mt="lg" type="email" placeholder="Email" invalid />
+    <Label mt="lg">As textarea:</Label>
+    <Input as="textarea" placeholder="Hello!" />
+  </Box>
+</Playground>

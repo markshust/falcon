@@ -1,17 +1,32 @@
+// eslint-disable-next-line import/no-extraneous-dependencies
 import 'jest-extended';
+import { GraphQLResolveInfo } from 'graphql';
 import Extension from './Extension';
 import ApiDataSource from './ApiDataSource';
+import { FetchUrlResult } from '../types';
 
-class CustomExtension extends Extension {}
+class CustomExtension extends Extension {
+  getFetchUrlPriority(url: string): number {
+    return 0;
+  }
+
+  async fetchUrl(obj: object, args: any, context: any, info: GraphQLResolveInfo): Promise<FetchUrlResult> {
+    return Promise.resolve({ id: 1, type: 'post', path: 'foo' });
+  }
+}
+
 class CustomApiDataSource extends ApiDataSource {}
 
 describe('Extension', () => {
   let ext: CustomExtension;
 
   beforeEach(() => {
-    ext = new CustomExtension({
-      config: {}
-    });
+    ext = new CustomExtension(
+      {
+        config: {}
+      },
+      {}
+    );
   });
 
   it('Should create an instance of Extension', async () => {
@@ -19,14 +34,10 @@ describe('Extension', () => {
     expect(ext.name).toBe('CustomExtension');
   });
 
-  it('Should throw an error while initializing (with no assigned API DataSource instance)', async () => {
-    try {
+  it('Should not throw an error while initializing when there is no API DataSource assigned', async () => {
+    expect(async () => {
       await ext.initialize();
-      expect(false).toBeTrue();
-    } catch (error) {
-      expect(error).toBeInstanceOf(Error);
-      expect(error.message).toEqual(expect.stringContaining('API DataSource was not defined'));
-    }
+    }).not.toThrow();
   });
 
   it('Should initialize correctly (with the assigned API DataSource instance)', async () => {
@@ -34,12 +45,10 @@ describe('Extension', () => {
     const preInitializeSpy: jest.SpyInstance = jest.spyOn(api, 'preInitialize');
     ext.api = api;
 
-    try {
+    expect(async () => {
       await ext.initialize();
-      expect(preInitializeSpy).toHaveBeenCalled();
-    } catch (error) {
-      expect(false).toBeTrue();
-    }
+    }).not.toThrow();
+
     preInitializeSpy.mockRestore();
   });
 });

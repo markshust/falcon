@@ -8,7 +8,8 @@
     "prepush": "npm run test",
     "precommit": "lint-staged",
     "test": "lerna run test:coverage",
-    "prepare": "lerna run prepare",
+    "prepublish": "lerna run --scope=@deity/falcon-ui --stream prepare",
+    "prepare": "lerna run --stream prepare",
     "lint": "eslint ./"
   },
   "devDependencies": {
@@ -30,6 +31,7 @@
     "packages/falcon-server",
     "packages/falcon-server-env",
     "packages/falcon-ui",
+    "packages/falcon-theme-editor",
     "packages/falcon-logger",
     "packages/falcon-shop-extension",
     "packages/falcon-blog-extension",
@@ -37,7 +39,6 @@
     "packages/falcon-dynamic-route-extension",
     "packages/falcon-magento2-api",
     "packages/falcon-wordpress-api",
-    "packages/falcon-url-extension",
     "packages/falcon-i18n",
     "packages/falcon-dev-tools/eslint-config-falcon",
     "packages/falcon-dev-tools/falcon-i18n-webpack-plugin",

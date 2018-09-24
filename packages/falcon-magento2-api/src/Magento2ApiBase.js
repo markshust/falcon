@@ -29,6 +29,12 @@ module.exports = class Magento2ApiBase extends ApiDataSource {
     this.setupAdminTokenRefreshJob();
   }
 
+  async preInitialize() {
+    if (!this.context) {
+      this.initialize({ context: {} });
+    }
+  }
+
   /**
    * Setup cronjob to check if  admin token is valid and refresh it if required
    */
@@ -132,7 +138,7 @@ module.exports = class Magento2ApiBase extends ApiDataSource {
    */
   async resolveURL(req) {
     const { path } = req;
-    let storeCode = req.params.get('storeCode');
+    let { storeCode } = req.context || {};
     if (storeCode) {
       req.params.delete(storeCode);
     } else {
@@ -227,8 +233,11 @@ module.exports = class Magento2ApiBase extends ApiDataSource {
       return { data, meta };
     }
 
+    const { page_size: perPage = null, current_page: currentPage = 1 } = searchCriteria;
+    const { total_count: total } = data;
+
     // process search criteria
-    const pagination = this.processPagination(searchCriteria, data);
+    const pagination = this.processPagination(total, currentPage, perPage);
     return { data: { items: data.items, filters: data.filters || [], pagination }, meta };
   }
 
@@ -269,20 +278,6 @@ module.exports = class Magento2ApiBase extends ApiDataSource {
     }
 
     throw error;
-  }
-
-  // temporary helpers until pull request #9 is merged
-  get(path, params, init) {
-    if (!this.httpCache) {
-      this.initialize({});
-    }
-    return super.get(path, params, init);
-  }
-  post(path, body, init) {
-    if (!this.httpCache) {
-      this.initialize({});
-    }
-    return super.post(path, body, init);
   }
 
   /**

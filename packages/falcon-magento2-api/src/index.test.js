@@ -20,11 +20,12 @@ function createMagentoUrl(path) {
 describe('Magento2Api', () => {
   let api;
 
-  beforeAll(() => {
+  beforeAll(async () => {
     nock(URL)
       .post(createMagentoUrl('/integration/admin/token'))
       .reply(200, magentoResponses.adminToken.data);
     api = new Magento2Api(apiConfig);
+    await api.preInitialize();
   });
 
   afterAll(() => {

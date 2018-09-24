@@ -48,4 +48,8 @@ module.exports = class Blog extends Extension {
     const { language } = session;
     return this.api.fetchUrl(path, language);
   }
+
+  getFetchUrlPriority() {
+    return this.fetchUrlPriority;
+  }
 };
