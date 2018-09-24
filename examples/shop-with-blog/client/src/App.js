@@ -7,7 +7,7 @@ import DynamicRoute from '@deity/falcon-client/src/components/DynamicRoute';
 import { ThemeProvider } from '@deity/falcon-ui';
 
 import { AppLayout, Header } from './components';
-import { theme } from './theme';
+import { deityGreenTheme } from './theme';
 
 const components = {
   shop: asyncComponent({
@@ -19,7 +19,7 @@ const components = {
 };
 
 const App = () => (
-  <ThemeProvider theme={theme}>
+  <ThemeProvider theme={deityGreenTheme}>
     <AppLayout>
       <Header />
       <Switch>
