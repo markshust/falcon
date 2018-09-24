@@ -9,8 +9,7 @@ import { Root } from './Root';
 // but not body margin
 const tinyNormalizeStyles = {
   body: {
-    margin: 0,
-    overflowX: 'hidden'
+    margin: 0
   }
 };
 

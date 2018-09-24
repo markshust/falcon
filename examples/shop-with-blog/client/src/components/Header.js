@@ -7,7 +7,7 @@ import { themed, Navbar, NavbarItem, NavbarItemMenu, Link, List, ListItem, Icon 
 export const HeaderQuery = ({ children, variables }) => (
   <Query
     query={gql`
-      query menuItems {
+      query {
         menuItems @client
         bannerLinks @client
       }
@@ -21,18 +21,12 @@ export const HeaderQuery = ({ children, variables }) => (
 export const HeaderLayout = themed({
   tag: 'header',
   defaultTheme: {
-    header: {
-      px: 'md',
-      css: {
-        margin: '0 auto',
-        maxWidth: 1480
-      }
-    }
+    header: {}
   }
 });
 
 export const Banner = ({ items }) => (
-  <List display="flex" bgFullWidth="primary" justifyContent="flex-end">
+  <List display="flex" bgFullWidth="primaryLight" justifyContent="flex-end">
     {items.map(item => (
       <ListItem p="md" key={item.name}>
         <Link as={RouterLink} to={item.url}>
@@ -52,7 +46,11 @@ export const Nav = ({ items }) => (
           <NavbarItemMenu>
             <List>
               {item.subMenu.map(subItem => (
-                <ListItem key={subItem.name}>{subItem.name}</ListItem>
+                <ListItem key={subItem.name}>
+                  <Link as={RouterLink} to="/">
+                    {subItem.name}
+                  </Link>
+                </ListItem>
               ))}
             </List>
           </NavbarItemMenu>
@@ -69,7 +67,6 @@ export const SearchbarLayout = themed({
       display: 'grid',
       py: 'md',
       gridTemplateColumns: '1fr 50px 50px',
-
       css: {
         justifyItems: 'center',
         alignItems: 'center'
@@ -96,7 +93,9 @@ export const Header = () => (
         <HeaderLayout>
           <Banner items={data.bannerLinks} />
           <Searchbar />
-          <Nav items={data.menuItems} />
+          <nav>
+            <Nav items={data.menuItems} />
+          </nav>
         </HeaderLayout>
       );
     }}

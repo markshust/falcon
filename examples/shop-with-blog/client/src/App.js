@@ -6,7 +6,7 @@ import Home from 'src/pages/Home';
 import DynamicRoute from '@deity/falcon-client/src/components/DynamicRoute';
 import { ThemeProvider } from '@deity/falcon-ui';
 
-import { AppLayout, Header } from './components';
+import { AppLayout, Header, Footer } from './components';
 import { deityGreenTheme } from './theme';
 
 const components = {
@@ -20,12 +20,14 @@ const components = {
 
 const App = () => (
   <ThemeProvider theme={deityGreenTheme}>
+    <link href="https://fonts.googleapis.com/css?family=Roboto:400,700" rel="stylesheet" />
     <AppLayout>
       <Header />
       <Switch>
         <Route exact path="/" component={Home} />
         <DynamicRoute components={components} />
       </Switch>
+      <Footer />
     </AppLayout>
   </ThemeProvider>
 );

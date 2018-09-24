@@ -55,6 +55,7 @@ export const DropdownMenu = themed({
       p: 'none',
       borderRadius: 'xs',
       boxShadow: 'xs',
+      bg: 'white',
       css: ({ theme, open }) => ({
         position: 'absolute',
         zIndex: theme.zIndex.backdrop + 1,

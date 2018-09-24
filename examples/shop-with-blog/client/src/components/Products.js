@@ -7,7 +7,7 @@ import { themed, Image, Text, Button } from '@deity/falcon-ui';
 export const ProductsQuery = ({ children, variables }) => (
   <Query
     query={gql`
-      query products {
+      query {
         products @client
       }
     `}
@@ -23,10 +23,9 @@ export const ProductCard = themed({
     card: {
       display: 'flex',
       flexDirection: 'column',
-      p: 'md',
+      alignItems: 'center',
       css: {
         overflow: 'hidden',
-        textAlign: 'center',
         cursor: 'pointer'
       }
     }
@@ -39,8 +38,10 @@ export const ProductListLayout = themed({
     productListLayout: {
       display: 'grid',
       gridTemplateColumns: 'repeat(auto-fill,minmax(300px,1fr))',
-      gridAutoRows: '30vh',
+      gridAutoRows: '280px',
       gridGap: 'md',
+      m: 'none',
+      p: 'none',
       css: {
         listStyle: 'none'
       }
@@ -53,18 +54,12 @@ export const ProductsList = ({ products }) => (
     {products.map(product => (
       <ProductCard key={product.src}>
         <Image flex="1 1 0%" css={{ minHeight: 0 }} src={product.src} />
-        <Text ellipsis fontSize="md" fontWeight="bold">
+        <Text ellipsis fontWeight="bold">
           {product.name}
         </Text>
-        <Text fontSize="lg">€ {product.price}</Text>
+        <Text fontSize="md">€ {product.price}</Text>
 
-        <Button
-          width={150}
-          boxShadow="none"
-          bg="secondaryDark"
-          position=""
-          css={{ margin: '0 auto', textTransform: 'uppercase' }}
-        >
+        <Button width={150} mt="md" boxShadow="none" bg="secondaryDark">
           Shop Now
         </Button>
       </ProductCard>
