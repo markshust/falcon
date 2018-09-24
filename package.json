@@ -6,7 +6,7 @@
   "repository": "git@github.com:deity-io/falcon.git",
   "scripts": {
     "prepush": "npm run test",
-    "prepare": "lerna run --stream --sort prepare",
+    "prepare": "yarn workspace @deity/falcon-ui && lerna run --stream prepare",
     "precommit": "lint-staged",
     "test": "lerna run test:coverage",
     "lint": "eslint ./"
