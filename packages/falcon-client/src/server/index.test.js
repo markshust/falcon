@@ -6,8 +6,8 @@ import { Route, Switch } from 'react-router-dom';
 import { translate } from 'react-i18next';
 import Koa from 'koa';
 import supertest from 'supertest';
-import falconWebServer from './falcon-web-server';
-import DynamicRoute from './components/DynamicRoute';
+import webServer from './index';
+import DynamicRoute from '../components/DynamicRoute';
 
 describe('Server', () => {
   it('Should properly call eventHandlers', () => {
@@ -31,7 +31,7 @@ describe('Server', () => {
       onServerStarted: onServerStartedMock
     };
 
-    const serverApp = falconWebServer({
+    const server = webServer({
       App: () => <div />,
       configuration,
       clientApolloSchema: {
@@ -39,15 +39,15 @@ describe('Server', () => {
       },
       webpackAssets: {}
     });
-    serverApp.started();
+    server.started();
 
-    expect(serverApp.instance).toBeInstanceOf(Koa);
-    expect(onServerCreatedMock).toBeCalledWith(serverApp.instance);
+    expect(server.instance).toBeInstanceOf(Koa);
+    expect(onServerCreatedMock).toBeCalledWith(server.instance);
 
-    expect(onServerInitializedMock).toBeCalledWith(serverApp.instance);
+    expect(onServerInitializedMock).toBeCalledWith(server.instance);
     expect(onServerInitializedMock).toHaveBeenCalledAfter(onServerCreatedMock);
 
-    expect(onServerStartedMock).toBeCalledWith(serverApp.instance);
+    expect(onServerStartedMock).toBeCalledWith(server.instance);
     expect(onServerStartedMock).toHaveBeenCalledAfter(onServerInitializedMock);
   });
 
@@ -105,7 +105,7 @@ describe('Server', () => {
       }
     };
 
-    const serverHandler = falconWebServer({
+    const serverHandler = webServer({
       App,
       configuration,
       clientApolloSchema,

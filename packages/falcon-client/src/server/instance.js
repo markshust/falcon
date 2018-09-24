@@ -1,6 +1,6 @@
-import falconWebServer from './falcon-web-server';
-import App, { clientApolloSchema } from './clientApp';
-import configuration from './clientApp/configuration';
+import server from './index';
+import App, { clientApolloSchema } from './../clientApp';
+import configuration from '../clientApp/configuration';
 
 // eslint-disable-next-line
 const assetsManifest = require(process.env.RAZZLE_ASSETS_MANIFEST);
@@ -10,7 +10,7 @@ const assetsManifest = require(process.env.RAZZLE_ASSETS_MANIFEST);
  * @param {ServerAppConfig} props Application parameters
  * @return {WebServer} Falcon web server
  */
-export default falconWebServer({
+export default server({
   App,
   clientApolloSchema,
   configuration,

@@ -4,9 +4,9 @@ import helmet from 'koa-helmet';
 import Router from 'koa-router';
 import compress from 'koa-compress';
 import Logger from '@deity/falcon-logger';
-import error500 from './middlewares/error500Middleware';
-import serverTiming from './middlewares/serverTimingMiddleware';
-import { renderAppShell, renderApp } from './routing';
+import error500 from './../middlewares/error500Middleware';
+import serverTiming from './../middlewares/serverTimingMiddleware';
+import { renderAppShell, renderApp } from './../routing';
 
 /**
  * Creates an instance of Falcon web server
