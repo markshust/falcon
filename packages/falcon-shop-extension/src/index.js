@@ -134,6 +134,6 @@ module.exports = class Shop extends Extension {
 
   async fetchUrl(root, { path }, { session = {} }) {
     const { language, storeCode, currency } = session;
-    return this.api.fetchUrl(path, language, storeCode, currency);
+    return this.api.fetchUrl({ path, language, storeCode, currency });
   }
 };

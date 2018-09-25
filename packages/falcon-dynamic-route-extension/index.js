@@ -29,7 +29,7 @@ module.exports = class DynamicRouteExtension extends Extension {
   getDynamicRouteHandlers(path) {
     return this.extensionContainer
       .getExtensionsByCriteria(ext => ext.getFetchUrlPriority && ext.getFetchUrlPriority(path) > 0)
-      .sort((first, second) => first.getFetchUrlPriority(path) - second.getFetchUrlPriority(path));
+      .sort((first, second) => second.getFetchUrlPriority(path) - first.getFetchUrlPriority(path));
   }
 
   /**
