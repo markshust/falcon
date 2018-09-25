@@ -95,7 +95,7 @@ export default abstract class ApiDataSource<TContext = any> extends RESTDataSour
    * @param {PaginationValue} [perPage=null] Limit entries per page
    * @return {PaginationData} Calculated result
    */
-  processPagination(
+  protected processPagination(
     totalItems: PaginationValue,
     currentPage: PaginationValue = null,
     perPage: PaginationValue = null
