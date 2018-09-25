@@ -201,6 +201,32 @@ const languages = [
     active: true
   }
 ];
+const breadcrumbs = [
+  {
+    name: 'Home',
+    url: '/'
+  },
+  {
+    name: 'Cooking',
+    url: '/cooking'
+  },
+  {
+    name: 'Pots & Pans',
+    url: '/pots'
+  }
+];
+
+const sortOrders = [
+  {
+    name: 'Price ascending',
+    id: 'asc',
+    active: true
+  },
+  {
+    name: 'Price descending',
+    id: 'desc'
+  }
+];
 
 export default {
   defaults: {},
@@ -210,7 +236,9 @@ export default {
       bannerLinks: () => bannerLinks,
       products: () => products,
       footerSections: () => footerSections,
-      languages: () => languages
+      languages: () => languages,
+      breadcrumbs: () => breadcrumbs,
+      sortOrders: () => sortOrders
     }
   }
 };

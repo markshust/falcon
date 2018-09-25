@@ -6,7 +6,7 @@ import Home from 'src/pages/Home';
 import DynamicRoute from '@deity/falcon-client/src/components/DynamicRoute';
 import { ThemeProvider } from '@deity/falcon-ui';
 
-import { AppLayout, Header, Footer } from '@deity/falcon-ecommerce-uikit';
+import { AppLayout, Header, Footer, ProductsCategory } from '@deity/falcon-ecommerce-uikit';
 import { deityGreenTheme } from './theme';
 
 const components = {
@@ -25,6 +25,7 @@ const App = () => (
       <Header />
       <Switch>
         <Route exact path="/" component={Home} />
+        <Route exact path="/products" component={ProductsCategory} />
         <DynamicRoute components={components} />
       </Switch>
       <Footer />

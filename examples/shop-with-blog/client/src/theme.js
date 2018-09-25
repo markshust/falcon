@@ -1,6 +1,7 @@
 import React from 'react';
 import ShoppingCart from 'react-feather/dist/icons/shopping-cart';
 import ChevronDown from 'react-feather/dist/icons/chevron-down';
+import ChevronUp from 'react-feather/dist/icons/chevron-up';
 import User from 'react-feather/dist/icons/user';
 import { createTheme } from '@deity/falcon-ui';
 
@@ -38,8 +39,12 @@ export const deityGreenTheme = createTheme({
     user: {
       icon: User
     },
-    arrowDown: {
+    dropdownArrowDown: {
       icon: ChevronDown,
+      size: 22
+    },
+    dropdownArrowUp: {
+      icon: ChevronUp,
       size: 22
     }
   },
