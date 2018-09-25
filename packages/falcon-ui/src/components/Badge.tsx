@@ -7,9 +7,9 @@ export const Badge = themed({
     badge: {
       bg: 'secondary',
       color: 'secondaryText',
-      px: 'md',
+      px: 'sm',
       py: 'xs',
-      borderRadius: 'md',
+      borderRadius: 'lg',
 
       css: {
         display: 'inline-block',

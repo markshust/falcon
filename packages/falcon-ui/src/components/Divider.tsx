@@ -9,7 +9,8 @@ export const Divider = themed({
       my: 'md',
       border: 'light',
       borderColor: 'primaryDark',
-      opacity: 0.7
+      opacity: 0.7,
+      width: '100%'
     }
   }
 });
