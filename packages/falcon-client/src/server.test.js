@@ -6,8 +6,8 @@ import { Route, Switch } from 'react-router-dom';
 import { translate } from 'react-i18next';
 import Koa from 'koa';
 import supertest from 'supertest';
-import webServer from './index';
-import DynamicRoute from '../components/DynamicRoute';
+import webServer from './server';
+import DynamicRoute from './components/DynamicRoute';
 
 describe('Server', () => {
   it('Should properly call eventHandlers', () => {
