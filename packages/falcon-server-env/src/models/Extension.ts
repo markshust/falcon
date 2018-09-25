@@ -11,10 +11,14 @@ export default abstract class Extension<TApiConfig = object> {
 
   /**
    * @param {object} config Extension config object
-   * @param {ExtensionContainer} extensionContainer Instance of ExtensionContainer
    * @param {string} name Extension short-name
+   * @param {ExtensionContainer} extensionContainer Instance of ExtensionContainer
    */
-  constructor({ config = {}, name }: ConfigurableConstructorParams, extensionContainer: ExtensionContainer) {
+  constructor({
+    config = {},
+    name,
+    extensionContainer
+  }: ConfigurableConstructorParams & { extensionContainer: ExtensionContainer }) {
     this.name = name || this.constructor.name;
     this.config = config;
     this.extensionContainer = extensionContainer;

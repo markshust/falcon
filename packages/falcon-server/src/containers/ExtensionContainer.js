@@ -34,7 +34,11 @@ module.exports = class ExtensionContainer {
     extensions.forEach(extension => {
       try {
         const ExtensionClass = require(extension.package); // eslint-disable-line import/no-dynamic-require
-        const extensionInstance = new ExtensionClass({ config: extension.config || {}, name: extension.package }, this);
+        const extensionInstance = new ExtensionClass({
+          config: extension.config || {},
+          name: extension.package,
+          extensionContainer: this
+        });
 
         Logger.debug(`ExtensionContainer: "${extensionInstance.name}" added to the list of extensions`);
         const { api: apiName } = extension.config || {};

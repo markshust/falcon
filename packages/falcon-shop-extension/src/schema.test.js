@@ -82,7 +82,7 @@ describe('Falcon Shop Extension', () => {
     let schema;
     let server;
     beforeAll(() => {
-      const shop = new Shop();
+      const shop = new Shop({ extensionContainer: {} });
       shop.api = new CustomApi();
 
       // prepare server with mocks for tests

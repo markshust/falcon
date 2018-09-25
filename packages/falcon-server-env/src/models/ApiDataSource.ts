@@ -178,8 +178,7 @@ export default abstract class ApiDataSource<TContext = any> extends RESTDataSour
     // if params is plain object then convert it to URLSearchParam with help of qs.stringify - that way
     // we can be sure that nested object will be converted correctly to search params
     const searchString: string = stringify(params, {
-      encodeValuesOnly: true,
-      arrayFormat: 'brackets'
+      encodeValuesOnly: true
     });
 
     return new URLSearchParams(searchString);

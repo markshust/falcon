@@ -21,12 +21,10 @@ describe('Extension', () => {
   let ext: CustomExtension;
 
   beforeEach(() => {
-    ext = new CustomExtension(
-      {
-        config: {}
-      },
-      {}
-    );
+    ext = new CustomExtension({
+      config: {},
+      extensionContainer: {}
+    });
   });
 
   it('Should create an instance of Extension', async () => {

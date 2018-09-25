@@ -241,11 +241,11 @@ describe('ApiDataSource', () => {
         ['str', 'str'],
         ['foo[bar]', 'true'],
         ['foo[nested][foo]', '1'],
-        ['arr[]', '1'],
-        ['arr[]', '2']
+        ['arr[0]', '1'],
+        ['arr[1]', '2']
       ]);
-      expect(didReceiveResponseSpy.mock.calls[0][1].url).toEqual(
-        expect.stringContaining('?str=str&foo%5Bbar%5D=true&foo%5Bnested%5D%5Bfoo%5D=1&arr%5B%5D=1&arr%5B%5D=2')
+      expect(didReceiveResponseSpy.mock.calls[0][1].url).toBe(
+        'http://example.com/api/info?str=str&foo%5Bbar%5D=true&foo%5Bnested%5D%5Bfoo%5D=1&arr%5B0%5D=1&arr%5B1%5D=2'
       );
     });
   });
