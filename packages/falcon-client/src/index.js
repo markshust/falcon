@@ -46,17 +46,14 @@ httpServer.listen(process.env.PORT || 3000, error => {
 if (module.hot) {
   Logger.log('✅  Server-side HMR Enabled!');
 
-  module.hot.accept(
-    ['./server', './clientApp', './clientApp/configuration', process.env.RAZZLE_ASSETS_MANIFEST],
-    () => {
-      Logger.log('🔁  HMR Reloading server...');
+  module.hot.accept(['./server', './clientApp', './clientApp/configuration'], () => {
+    Logger.log('🔁  HMR Reloading server...');
 
-      httpServer.removeListener('request', currentWebServerHandler);
+    httpServer.removeListener('request', currentWebServerHandler);
 
-      const newHandler = falconWebServer().callback();
+    const newHandler = falconWebServer().callback();
 
-      httpServer.on('request', newHandler);
-      currentWebServerHandler = newHandler;
-    }
-  );
+    httpServer.on('request', newHandler);
+    currentWebServerHandler = newHandler;
+  });
 }
