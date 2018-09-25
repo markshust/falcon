@@ -1,15 +1,8 @@
 import React from 'react';
-import { Query } from 'react-apollo';
 import gql from 'graphql-tag';
 import { Link as RouterLink } from 'react-router-dom';
 import { themed, Navbar, NavbarItem, NavbarItemMenu, Link, List, ListItem, Icon } from '@deity/falcon-ui';
-
-const GET_HEADER_DATA = gql`
-  query {
-    menuItems @client
-    bannerLinks @client
-  }
-`;
+import { Query } from './Query';
 
 export const HeaderLayout = themed({
   tag: 'header',
@@ -76,21 +69,23 @@ export const Searchbar = () => (
   </SearchbarLayout>
 );
 
+const GET_HEADER_DATA = gql`
+  query {
+    menuItems @client
+    bannerLinks @client
+  }
+`;
+
 export const Header = () => (
   <Query query={GET_HEADER_DATA}>
-    {({ loading, error, data }) => {
-      if (loading) return null;
-      if (error) return `Error!: ${error}`;
-
-      return (
-        <HeaderLayout>
-          <Banner items={data.bannerLinks} />
-          <Searchbar />
-          <nav>
-            <Nav items={data.menuItems} />
-          </nav>
-        </HeaderLayout>
-      );
-    }}
+    {data => (
+      <HeaderLayout>
+        <Banner items={data.bannerLinks} />
+        <Searchbar />
+        <nav>
+          <Nav items={data.menuItems} />
+        </nav>
+      </HeaderLayout>
+    )}
   </Query>
 );

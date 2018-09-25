@@ -1,14 +1,7 @@
 import React from 'react';
-import { Query } from 'react-apollo';
 import gql from 'graphql-tag';
-
 import { themed, Image, Text, Button } from '@deity/falcon-ui';
-
-const GET_PRODUCTS = gql`
-  query {
-    products @client
-  }
-`;
+import { Query } from './Query';
 
 export const ProductCard = themed({
   tag: 'li',
@@ -59,14 +52,10 @@ export const ProductsList: React.SFC<{ products: any }> = ({ products }) => (
     ))}
   </ProductListLayout>
 );
+const GET_PRODUCTS = gql`
+  query {
+    products @client
+  }
+`;
 
-export const Products = () => (
-  <Query query={GET_PRODUCTS}>
-    {({ loading, error, data }) => {
-      if (loading) return null;
-      if (error) return `Error!: ${error}`;
-
-      return <ProductsList products={data.products} />;
-    }}
-  </Query>
-);
+export const Products = () => <Query query={GET_PRODUCTS}>{data => <ProductsList products={data.products} />}</Query>;

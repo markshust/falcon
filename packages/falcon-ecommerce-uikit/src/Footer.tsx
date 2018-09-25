@@ -1,8 +1,6 @@
 import React from 'react';
-import { Query } from 'react-apollo';
 import gql from 'graphql-tag';
 import { Link as RouterLink } from 'react-router-dom';
-
 import {
   themed,
   H2,
@@ -18,14 +16,9 @@ import {
   ListItem,
   Box
 } from '@deity/falcon-ui';
-import { LanguageSwitcher } from './LanguageSwitcher';
 
-const GET_FOOTER_DATA = gql`
-  query {
-    footerSections @client
-    languages @client
-  }
-`;
+import { Query } from './Query';
+import { LanguageSwitcher } from './LanguageSwitcher';
 
 export const FooterLayout = themed({
   tag: 'footer',
@@ -143,23 +136,24 @@ export const LanguageSection = themed({
     }
   }
 });
+const GET_FOOTER_DATA = gql`
+  query {
+    footerSections @client
+    languages @client
+  }
+`;
 
 export const Footer = () => (
   <Query query={GET_FOOTER_DATA}>
-    {({ loading, error, data }) => {
-      if (loading) return null;
-      if (error) return `Error!: ${error}`;
-
-      return (
-        <FooterLayout>
-          <Newsletter />
-          <FooterSections sections={data.footerSections} />
-          <LanguageSection>
-            <LanguageSwitcher languages={data.languages} />
-          </LanguageSection>
-          <CopyrightLayout>© Copyright {new Date().getFullYear()}</CopyrightLayout>
-        </FooterLayout>
-      );
-    }}
+    {data => (
+      <FooterLayout>
+        <Newsletter />
+        <FooterSections sections={data.footerSections} />
+        <LanguageSection>
+          <LanguageSwitcher languages={data.languages} />
+        </LanguageSection>
+        <CopyrightLayout>© Copyright {new Date().getFullYear()}</CopyrightLayout>
+      </FooterLayout>
+    )}
   </Query>
 );
