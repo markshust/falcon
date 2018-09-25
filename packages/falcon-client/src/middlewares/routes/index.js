@@ -55,7 +55,7 @@ export function renderApp({ configuration, clientApolloSchema, App, webpackAsset
       }
     }),
     i18next({ ...i18n }),
-    serverSideRendering && ssr({ App }),
+    serverSideRendering ? ssr({ App }) : helmet(),
     appShell({ webpackAssets })
   ].filter(x => x);
 }
