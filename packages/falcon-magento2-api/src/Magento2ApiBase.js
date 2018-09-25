@@ -233,38 +233,12 @@ module.exports = class Magento2ApiBase extends ApiDataSource {
       return { data, meta };
     }
 
+    const { page_size: perPage = null, current_page: currentPage = 1 } = searchCriteria;
+    const { total_count: total } = data;
+
     // process search criteria
-    const pagination = this.processPagination(searchCriteria, data);
+    const pagination = this.processPagination(total, currentPage, perPage);
     return { data: { items: data.items, filters: data.filters || [], pagination }, meta };
-  }
-
-  /**
-   * Prepare pagination object
-   * @param {Object} searchCriteria - returned search criteria data
-   * @param {Number} searchCriteria.page_size - number of items per page
-   * @param {Number} searchCriteria.current_page - current page
-   * @param {Object} data - response data
-   * @param {Number} data.total_count - total number of items
-   * @return {Object} - pagination data
-   */
-  processPagination(searchCriteria, data) {
-    let { page_size: perPage = null, current_page: currentPage = 1 } = searchCriteria;
-    let { total_count: total } = data;
-
-    total = parseInt(total, 10);
-    perPage = parseInt(perPage, 10);
-    currentPage = parseInt(currentPage, 10);
-    // perPage might be unset (means - get all records at once, no pagination)
-    const totalPages = perPage ? Math.ceil(total / perPage) : null;
-
-    return {
-      total,
-      perPage,
-      currentPage,
-      totalPages,
-      nextPage: currentPage < totalPages ? currentPage + 1 : null,
-      prevPage: currentPage > 1 ? currentPage - 1 : null
-    };
   }
 
   didEncounterError(error) {

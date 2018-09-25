@@ -1,15 +1,12 @@
 const { mockServer } = require('graphql-tools');
+const { BaseSchema } = require('@deity/falcon-server');
 const { ApiDataSource } = require('@deity/falcon-server-env');
 const Blog = require('.');
 
-class CustomApi extends ApiDataSource {
-  async getPosts() {
-    return [];
-  }
-}
+class CustomApi extends ApiDataSource {}
 
 const mocks = {
-  Post: () => ({
+  BlogPost: () => ({
     id: 1,
     title: 'Post title',
     content: 'Lorem ipsum',
@@ -17,7 +14,7 @@ const mocks = {
     slug: 'sample-post'
   }),
 
-  PostImage: () => ({
+  BlogPostImage: () => ({
     url: 'image.png',
     description: 'post image'
   })
@@ -28,7 +25,7 @@ const QUERY_TEST_CASES = [
     name: 'post - should return correct post object',
     query: `
       query Post($path: String!) {
-        post(path: $path) {
+        blogPost(path: $path) {
           id
           title
           content
@@ -37,7 +34,9 @@ const QUERY_TEST_CASES = [
             url
           }
           related {
-            id
+            items {
+              id
+            }
           }
         }
       }
@@ -47,13 +46,15 @@ const QUERY_TEST_CASES = [
     },
     expected: {
       data: {
-        post: {
+        blogPost: {
           id: 1,
           title: 'Post title',
           content: 'Lorem ipsum',
           slug: 'sample-post',
           image: { url: 'image.png' },
-          related: [{ id: 1 }, { id: 1 }]
+          related: {
+            items: [{ id: 1 }, { id: 1 }]
+          }
         }
       }
     }
@@ -63,7 +64,7 @@ const QUERY_TEST_CASES = [
     name: 'posts - should return all posts',
     query: `
       query {
-        posts {
+        blogPosts {
           items {
             id
             title
@@ -73,7 +74,7 @@ const QUERY_TEST_CASES = [
     `,
     expected: {
       data: {
-        posts: {
+        blogPosts: {
           items: [
             {
               id: 1,
@@ -100,12 +101,8 @@ describe('Falcon Blog Extension', () => {
 
       // prepare server with mocks for tests
       ({ schema } = await blog.getGraphQLConfig());
-      schema.push('type Query { _: Boolean }');
+      schema.push(BaseSchema);
       server = mockServer(schema, mocks);
-    });
-
-    it('Correctly passes Query params to API resolver', async () => {
-      server.query();
     });
 
     it('Should have valid type definitions', async () => {

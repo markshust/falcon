@@ -90,16 +90,11 @@ class FalconServer {
 
     /* eslint-disable no-underscore-dangle */
     // Removing "placeholder" (_) fields from the Type definitions
-    delete apolloServerConfig.schema._queryType._fields._;
     delete apolloServerConfig.schema._mutationType._fields._;
     delete apolloServerConfig.schema._subscriptionType._fields._;
 
     // If there were no other fields defined for Type by any other extension
     // - we need to remove it completely in order to comply with GraphQL specification
-    if (!Object.keys(apolloServerConfig.schema._queryType._fields).length) {
-      apolloServerConfig.schema._queryType = undefined;
-      delete apolloServerConfig.schema._typeMap.Query;
-    }
     if (!Object.keys(apolloServerConfig.schema._mutationType._fields).length) {
       apolloServerConfig.schema._mutationType = undefined;
       delete apolloServerConfig.schema._typeMap.Mutation;

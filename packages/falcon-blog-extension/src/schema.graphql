@@ -1,43 +1,34 @@
 extend type Query {
-  post(path: String!): Post
-  posts(query: BlogPageQuery): PostListing
+  blogPost(path: String!): BlogPost
+  blogPosts(query: BlogPageQuery, pagination: PaginationInput): BlogPostListing
 }
 
 input BlogPageQuery {
-  perPage: Int
-  page: Int
+  category: String
 }
 
-type PostListing {
-  items: [Post]
-  pagination: BlogPagination
+type BlogPostListing {
+  items: [BlogPost]
+  pagination: Pagination
 }
 
-type PostImage {
+type BlogPostImage {
   url: String
   description: String
 }
 
-type BlogPagination {
-  totalPages: Int!
-  totalItems: Int!
-  perPage: Int!
-  currentPage: Int!
-  nextPage: Int
-  prevPage: Int
-}
-
-type Post {
+type BlogPost {
   id: Int!
+  date: String
+  modified: String
   title: String
   content: String
-  # list of sections with products
-  sectionWithProducts: [String]
-  # list of product skus used in content widgets
-  products: [String]
-  # short content for use on post lists
+  """
+  Short content for use on post lists
+  """
   excerpt: String
   slug: String
-  image: PostImage
-  related: [Post]
+  status: String
+  image: BlogPostImage
+  related: BlogPostListing
 }

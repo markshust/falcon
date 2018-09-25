@@ -37,13 +37,8 @@ module.exports = class Blog extends Extension {
       },
       resolvers: {
         Query: {
-          post: async (root, { path }, { session }) => {
-            // todo this can break with category/post url hierarchy
-            const slug = path.replace('/', '');
-
-            return this.api.getPost({ slug, language: session.language });
-          },
-          posts: (root, params, { session }) => this.api.getPosts({ language: session.language })
+          blogPost: async (...params) => this.api.blogPost(...params),
+          blogPosts: async (...params) => this.api.blogPosts(...params)
         }
       }
     };

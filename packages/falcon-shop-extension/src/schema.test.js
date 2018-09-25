@@ -1,6 +1,7 @@
 const { mockServer } = require('graphql-tools');
 const { ApiDataSource } = require('@deity/falcon-server-env');
 const Shop = require('.');
+const { BaseSchema } = require('@deity/falcon-server');
 
 class CustomApi extends ApiDataSource {
   async getPosts() {
@@ -86,8 +87,7 @@ describe('Falcon Shop Extension', () => {
 
       // prepare server with mocks for tests
       ({ schema } = shop.getGraphQLConfig());
-      schema.push('type Query { _: Boolean }');
-      schema.push('type Mutation { _: Boolean }');
+      schema.push(BaseSchema);
       server = mockServer(schema, mocks);
     });
 

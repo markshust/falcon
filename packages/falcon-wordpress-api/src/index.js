@@ -3,10 +3,8 @@ const qs = require('qs');
 const pick = require('lodash/pick');
 const isEmpty = require('lodash/isEmpty');
 const isObject = require('lodash/isObject');
-const uniq = require('lodash/uniq');
 const Logger = require('@deity/falcon-logger');
 const url = require('url');
-const cheerio = require('cheerio');
 
 module.exports = class WordpressApi extends ApiDataSource {
   async authorizeRequest(req) {
@@ -29,10 +27,37 @@ module.exports = class WordpressApi extends ApiDataSource {
     if (language) {
       // for base lang do not add prefix
       const languagePrefix = language && language !== baseLanguage ? `/${language}` : '';
-      prefix = `${languagePrefix}/${prefix}`;
+      prefix = `${languagePrefix}${prefix}`;
     }
 
     return super.resolveURL({ path: `${prefix}/${path}` });
+  }
+
+  /**
+   * Parses response and returns data in format accepted by falcon-blog-extension
+   * @param {object} res object
+   * @param {object} req native request object
+   * @return {object} parsed response
+   */
+  async didReceiveResponse(res, req) {
+    const data = await super.didReceiveResponse(res, req);
+    const { headers } = res;
+
+    const totalItems = headers.get('x-wp-total');
+    const totalPages = headers.get('x-wp-totalpages');
+
+    if (!totalItems && !totalPages) {
+      return data;
+    }
+
+    // remove everything before '?' and parse the rest
+    const query = qs.parse(req.url.replace(/.*?\?/, ''));
+    const { per_page: perPage = 10, page: currentPage = 1 } = query;
+
+    return {
+      items: data,
+      pagination: this.processPagination(totalItems, currentPage, perPage)
+    };
   }
 
   async preInitialize() {
@@ -44,97 +69,102 @@ module.exports = class WordpressApi extends ApiDataSource {
 
   /**
    * Fetch single published post by slug
-   * @param {String} slug post slug
-   * @param {String} [language] post language
+   * @query
+   * @param {object} root GraphQL root object
+   * @param {string} path WP "slug" value
+   * @param {object} session Web-server session object
    * @return {Object} Post data
    */
-  async getPost({ slug, language }) {
-    let query = {};
+  async blogPost(root, { path }, { session }) {
+    const slug = path.replace('/', '');
+    const { language } = session;
 
-    if (slug) {
-      query = { ...query, slug };
-    }
+    const query = {
+      slug,
+      'include-gallery': 1,
+      'include-related': 1,
+      'count-visit': 1
+    };
 
-    query['include-gallery'] = 1;
-    query['include-related'] = 1;
-    query['count-visit'] = 1;
-
-    const response = await this.getPosts({ language, query });
-
-    const post = response[0];
-
-    return this.extractProducts(post);
+    return this.get('posts', query, {
+      context: {
+        language,
+        didReceiveResult: (result, res) => {
+          // WP API returns "post" entry as an array, the following code removes extra-headers
+          if (res && res.headers && res.headers.has('x-wp-total')) {
+            res.headers.delete('x-wp-total');
+            res.headers.delete('x-wp-totalpages');
+          }
+          return result ? this.processPost(result[0]) : null;
+        }
+      }
+    });
   }
 
   /**
    * Fetch published posts.
-   * @param {String} [language] post langauge
-   * @param {Object} [query] rest api query
+   * @query
+   * @param {object} root GraphQL root object
+   * @param {object} query Query object
+   * @param {object} session Web-server session data
    * @return {Object[]} posts data
    */
-  async getPosts({ language, query = {} } = {}) {
-    if (language) {
-      query.language = language;
-    }
-    const response = await this.get('posts', query);
-
-    const { data } = response;
-
-    if (!data.items) {
-      return [];
-    }
-
-    return data.items.map(item => this.reducePost({ data: item }).data);
+  async blogPosts(root, { query }, { session }) {
+    const { language } = session;
+    return this.get('posts', query, {
+      context: {
+        language,
+        didReceiveResult: result =>
+          result && Array.isArray(result) ? result.map(entry => this.processPost(entry)) : result
+      }
+    });
   }
 
   /**
-   * Parses response and returns data in format accedpted by falcon-blog-extension
-   * @param {object} res object
-   * @param {object} req native request object
-   * @return {object} parsed response
+   * @private
+   * @param {object} post Post object
+   * @return {object} Processed Post object
    */
-  async didReceiveResponse(res, req) {
-    const data = await super.didReceiveResponse(res, req);
-    const { language } = res.context || {};
-    const languagePrefix = language && language !== this.config.language ? `/${language}` : '';
-    const { headers } = res;
+  processPost(post) {
+    if (!post) {
+      return post;
+    }
+    const image = post && post.featured_image;
 
-    let totalItems = headers.get('x-wp-total');
-    let totalPages = headers.get('x-wp-totalpages');
-    const responseTags = headers.get('x-cache-tags');
-
-    const meta = {
-      languagePrefix,
-      language: language !== this.language ? language : null
-    };
-
-    if (responseTags) {
-      meta.tags = responseTags.split(',');
+    if (image) {
+      post.image = this.reduceFeaturedImage(image);
     }
 
-    if (!totalItems && !totalPages) {
-      return { data, meta };
+    if (post.related_posts) {
+      post.related = post.related_posts.map(this.reduceRelatedPost);
+    } else {
+      post.related = [];
     }
 
-    // remove everything before '?' and parse the rest
-    const query = qs.parse(req.url.replace(/.*?\?/, ''));
-    let { per_page: perPage = 10, page: currentPage = 1 } = query;
+    if (post.title && post.title.rendered) {
+      post.title = htmlHelpers.stripHtmlEntities(post.title.rendered);
+    }
 
-    totalPages = parseInt(totalPages, 10);
-    totalItems = parseInt(totalItems, 10);
-    perPage = parseInt(perPage, 10);
-    currentPage = parseInt(currentPage, 10);
+    if (post.content) {
+      const excerpt =
+        (post.acf && post.acf.short_description) ||
+        (post.toolset_types && post.toolset_types['custom-text']) ||
+        post.content;
+      let length;
 
-    const pagination = {
-      totalPages,
-      totalItems,
-      perPage,
-      currentPage,
-      nextPage: currentPage < totalPages ? currentPage + 1 : null,
-      prevPage: currentPage > 1 ? currentPage - 1 : null
-    };
+      if (post.acf && post.acf.short_description) {
+        length = 250;
+      }
 
-    return { items: data, pagination, meta };
+      this.reduceAcf(post.acf);
+
+      post.excerpt = this.prepareExcerpt(excerpt, length);
+    }
+
+    post.content = post.content && post.content.rendered;
+    post.title = htmlHelpers.stripHtmlTags(post.title);
+
+    return post;
   }
 
   /**
@@ -179,14 +209,6 @@ module.exports = class WordpressApi extends ApiDataSource {
     return finalItem;
   }
 
-  returnFirstItem(response) {
-    const { data } = response;
-
-    response.data = data && data.items ? data.items[0] : null;
-
-    return response;
-  }
-
   reducePage(response) {
     const { data: item } = response;
 
@@ -212,46 +234,10 @@ module.exports = class WordpressApi extends ApiDataSource {
     const category = response.data || {};
 
     if (category.promoted_posts) {
-      category.promoted_posts = category.promoted_posts.map(item => this.reducePost({ data: item }).data);
+      category.promoted_posts = category.promoted_posts.map(item => this.processPost({ data: item }).data);
     }
 
     return response;
-  }
-
-  // todo make sure that product feature will work on SSR
-  extractProducts(post) {
-    const { has_products_in: hasProductsIn } = post;
-
-    post.products = [];
-    post.sectionWithProducts = [];
-
-    if (hasProductsIn) {
-      Object.keys(hasProductsIn).forEach(key => {
-        // TODO: Hardcoded solution for now
-        if (key === 'carousel' && post.carousel) {
-          post.carousel.forEach(item => {
-            if (item.content) {
-              const contentHtml = cheerio.load(item.content);
-              const productWidgets = contentHtml('li.deity-product');
-
-              if (productWidgets) {
-                productWidgets.map((index, el) => post.products.push(contentHtml(el).text()));
-              }
-            }
-          });
-        } else {
-          const contentHtml = cheerio.load(post[key]);
-          // To reduce HTML size which keeps state just overwrite content with flag
-          post.sectionWithProducts.push(key);
-
-          contentHtml('li.deity-product').map((index, el) => post.products.push(contentHtml(el).text()));
-        }
-      });
-
-      post.products = uniq(post.products);
-    }
-
-    return post;
   }
 
   reduceRelatedPost(post) {
@@ -261,7 +247,7 @@ module.exports = class WordpressApi extends ApiDataSource {
     return post;
   }
 
-  prepareExcerpt(data = {}, lenght = 145) {
+  prepareExcerpt(data = {}, length = 145) {
     let content = '';
 
     if (isObject(data) && data.rendered) {
@@ -272,7 +258,7 @@ module.exports = class WordpressApi extends ApiDataSource {
 
     content = htmlHelpers.stripHtmlEntities(content);
 
-    return htmlHelpers.generateExcerpt(content, lenght);
+    return htmlHelpers.generateExcerpt(content, length);
   }
 
   reduceFeaturedImage(image) {
@@ -298,48 +284,6 @@ module.exports = class WordpressApi extends ApiDataSource {
    */
   reduceAcf(content) {}
   /* eslint-enable no-unused-vars */
-
-  reducePost(response) {
-    const post = response.data || {};
-    const image = post && post.featured_image;
-
-    if (image) {
-      post.image = this.reduceFeaturedImage(image);
-    }
-
-    if (post.related_posts) {
-      post.related = post.related_posts.map(this.reduceRelatedPost);
-    } else {
-      post.related = [];
-    }
-
-    if (post.title && post.title.rendered) {
-      post.title = htmlHelpers.stripHtmlEntities(post.title.rendered);
-    }
-
-    if (post.content) {
-      const excerpt =
-        (post.acf && post.acf.short_description) ||
-        (post.toolset_types && post.toolset_types['custom-text']) ||
-        post.content;
-      let length;
-
-      if (post.acf && post.acf.short_description) {
-        length = 250;
-      }
-
-      this.reduceAcf(post.acf);
-
-      post.excerpt = this.prepareExcerpt(excerpt, length);
-    }
-
-    post.content = post.content && post.content.rendered;
-    post.title = htmlHelpers.stripHtmlTags(post.title);
-
-    response.data = post;
-
-    return response;
-  }
 
   isDraft(link) {
     return link && link.indexOf('preview/') === 0;
@@ -424,7 +368,7 @@ module.exports = class WordpressApi extends ApiDataSource {
     // todo rename to post
     // todo remove what is not used ?
     if (type === 'wp-post') {
-      reducer = notReducedData => this.extractProducts(this.reducePost(notReducedData));
+      reducer = notReducedData => this.processPost(notReducedData);
     } else if (type === 'wp-page') {
       reducer = this.reducePage;
     } else if (type === 'wp-category') {

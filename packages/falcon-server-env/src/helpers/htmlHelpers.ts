@@ -14,7 +14,7 @@ export interface ApiHelpers {
   stripHtml: (html: string) => string;
   stripHtmlEntities: (html: string) => string;
   stripHtmlTags: (html: string) => string;
-  generateExcerpt: (html: string, length: number) => string;
+  generateExcerpt: (html: string, length?: number) => string;
 }
 
 const helpers: ApiHelpers = {

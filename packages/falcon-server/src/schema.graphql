@@ -1,23 +1,36 @@
-type Query {
-  _: Boolean
-}
-
-type Mutation {
-  _: Boolean
-}
-
-type Subscription {
-  _: Boolean
-}
-
 schema {
   query: Query
   mutation: Mutation
   subscription: Subscription
 }
 
+type Mutation {
+  """
+  Temporary placeholder field
+  """
+  _: Boolean
+}
+
+type Subscription {
+  """
+  Temporary placeholder field
+  """
+  _: Boolean
+}
+
+type Query {
+  backendConfig: BackendConfig
+}
+
 """
-Pagination type
+Returns a compiled config object for all supported backends
+"""
+type BackendConfig {
+  languages: [String!]
+}
+
+"""
+Pagination type (used for listing the response data)
 """
 type Pagination {
   """
@@ -44,4 +57,12 @@ type Pagination {
   Prevoius page index (if not the first one)
   """
   prevPage: Int
+}
+
+"""
+Pagination input (used for quering the data)
+"""
+input PaginationInput {
+  page: Int
+  perPage: Int
 }

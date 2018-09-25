@@ -1,13 +1,17 @@
+// eslint-disable-next-line import/no-extraneous-dependencies
+import 'jest-extended';
+import { GraphQLResolveInfo } from 'graphql';
 import Extension from './Extension';
 import ApiDataSource from './ApiDataSource';
 import { FetchUrlResult } from '../types';
-import { GraphQLResolveInfo } from 'graphql';
 
 class CustomExtension extends Extension {
-  getFetchUrlPriority(url: string): number { return 0; }
+  getFetchUrlPriority(url: string): number {
+    return 0;
+  }
 
   async fetchUrl(obj: object, args: any, context: any, info: GraphQLResolveInfo): Promise<FetchUrlResult> {
-    return Promise.resolve({id: 1, type: 'post', path: 'foo'});
+    return Promise.resolve({ id: 1, type: 'post', path: 'foo' });
   }
 }
 
@@ -17,9 +21,12 @@ describe('Extension', () => {
   let ext: CustomExtension;
 
   beforeEach(() => {
-    ext = new CustomExtension({
-      config: {}
-    }, {});
+    ext = new CustomExtension(
+      {
+        config: {}
+      },
+      {}
+    );
   });
 
   it('Should create an instance of Extension', async () => {
