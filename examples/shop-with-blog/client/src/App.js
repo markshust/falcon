@@ -20,8 +20,8 @@ const HeadMetaTags = () => (
     <meta property="og:title" content="Deity Shop with Blog" />
     <meta property="og:type" content="website" />
     <meta property="og:description" content="This is example of Shop with Blog powered by Deity Falcon" />
-    <meta property="og:image" content={logo} />
     <meta property="og:url" content="/" />
+    <meta property="og:image" content={logo} />
     <meta property="og:image:width" content="300" />
     <meta property="og:image:height" content="107" />
   </Helmet>
