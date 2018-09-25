@@ -24,6 +24,7 @@
     "build:cjs": "rollup -c",
     "size": "size-limit",
     "start": "docz dev",
+    "watch": "babel src -d dist -x .ts,.tsx -s --watch",
     "docs": "rimraf .docz && docz build"
   },
   "devDependencies": {
