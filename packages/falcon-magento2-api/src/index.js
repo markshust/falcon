@@ -523,4 +523,241 @@ module.exports = class Magento2Api extends Magento2ApiBase {
 
     return this.fetchUrl({ path: urlPath, loadEntityData: true, storeCode, currency });
   }
+
+  /**
+   * Add product to cart
+   *
+   * @param {Object} input - product data
+   * @param {String} input.sku - added product sku
+   * @param {Number} input.qty - added product qty
+   * @param {Object} params - request params
+   * @param {Object} params.customerToken - customer token
+   * @param {String} params.storeCode - selected store code
+   * @param {String} params.currency - current customer currency
+   * @return {Promise<Object>} - cart item data
+   */
+  async addToCart(input, params = {}) {
+    const { storeCode, customerToken = {} } = params;
+
+    const cartData = await this.ensureCart(params);
+    const cartPath = this.getCartPath(params);
+
+    const product = {
+      cart_item: {
+        sku: input.sku,
+        qty: input.qty,
+        quote_id: cartData.quoteId
+      }
+    };
+
+    if (input.configurableOptions) {
+      product.cart_item.product_option = {
+        extension_attributes: {
+          configurable_item_options: input.configurableOptions.map(item => ({
+            option_id: item.optionId,
+            option_value: item.value
+          }))
+        }
+      };
+    }
+
+    if (input.bundleOptions) {
+      product.cart_item.product_option = {
+        extension_attributes: {
+          bundle_options: input.bundleOptions
+        }
+      };
+    }
+
+    try {
+      const { data: cartItem } = await this.post(`${cartPath}/items`, product, {
+        context: {
+          storeCode,
+          customerToken
+        }
+      });
+
+      this.convertKeys(cartItem);
+      this.processPrice(cartItem, ['price']);
+
+      return cartItem;
+    } catch (e) {
+      // Pass only helpful message to end user
+      if (e.statusCode === 400) {
+        // this is working as long as Magento doesn't translate error message - which seems not the case as of 2.2
+        if (e.message.match(/^We don't have as many/)) {
+          e.code = 'STOCK_TOO_LOW';
+          e.userMessage = true;
+          e.noLogging = true;
+        }
+      }
+
+      throw e;
+    }
+  }
+
+  /**
+   * Ensure customer has cart in the session.
+   * Creates if not exists.
+   * @param {Object} session - sessions
+   * @param {String} session.cart - cart data
+   * @param {(String|Number)} session.cart.quoteId - cart id
+   * @param {String} session.customerToken - customer token
+   * @returns {Object} - new cart data
+   */
+  async ensureCart(session) {
+    const { cart, customerToken: { token } = {} } = session;
+
+    if (cart && cart.quoteId) {
+      return cart;
+    }
+
+    const shouldUseCustomerToken = Boolean(token);
+    const cartPath = token ? '/carts/mine' : '/guest-carts';
+    const response = await this.forwardAction(cartPath, {}, 'post', {}, session, shouldUseCustomerToken);
+
+    session.cart = { quoteId: response.data };
+
+    return session.cart;
+  }
+
+  /**
+   * Forward action with common magento api params.
+   * @param {String} path Api path
+   * @param {Object} params Api params
+   * @param {String} method Api method
+   * @param {Object} [data] Api data
+   * @param {Object} session session content
+   * @param {Boolean} [shouldUseCustomerToken = false] if customer token should be used
+   * @return {Promise} Api request promise
+   */
+  async forwardAction(path, params, method, data, session, shouldUseCustomerToken = false) {
+    const { storeCode, customerToken = {} } = session;
+    const customer = {};
+
+    if (shouldUseCustomerToken) {
+      customer.customerToken = customerToken;
+    }
+
+    return this[method](path, method === 'get' ? {} : data, {
+      context: {
+        storeCode,
+        ...customer
+      }
+    });
+  }
+
+  /**
+   * Generate prefix for path to cart
+   * @param {Object} session - session data
+   * @param {Object} session.cart - current cart data
+   * @param {(String|Number)} session.cart.quoteId - cart id
+   * @param {String} session.customerToken - customer token
+   * @returns {string} - prefix for cart endpoints
+   */
+  getCartPath(session) {
+    const { cart, customerToken = {} } = session;
+
+    if (!customerToken.token && !cart) {
+      throw new Error('No cart in session for not registered user.');
+    }
+
+    return customerToken.token ? '/carts/mine' : `/guest-carts/${cart.quoteId}`;
+  }
+
+  /**
+   * Make sure price fields are float
+   * @param {Object} object - object to process
+   * @param {Array.<String>} fieldsToProcess - array with field names
+   * @return {Object} - updated object
+   */
+  processPrice(object = {}, fieldsToProcess = []) {
+    fieldsToProcess.forEach(field => {
+      object[field] = parseFloat(object[field]);
+    });
+
+    return object;
+  }
+
+  /**
+   * Get cart data
+   * @param {Object} params - data for the cart requst
+   * @return {Promise<Object>} - customer cart data
+   */
+  async fetchCart(params) {
+    const { storeCode, customerToken = {} } = params;
+    const quoteId = params.cart && params.cart.quoteId;
+
+    if (!quoteId) {
+      throw Error('Trying to fetch cart data without quoteId param');
+    }
+
+    // todo avoid calling both endpoints if not necessary
+    const cartPath = this.getCartPath(params);
+    // const cartRequest = { path: cartPath, storeCode, customerToken };
+    // const totalsRequest = { path: `${cartPath}/totals`, storeCode, customerToken };
+    const [{ data: quoteData }, { data: totalsData }] = await Promise.all([
+      // this.request(cartRequest),
+      // this.request(totalsRequest)
+      this.get(cartPath, {}, { context: { storeCode, customerToken } }),
+      this.get(`${cartPath}/totals`, {}, { context: { storeCode, customerToken } })
+    ]);
+
+    const [quote, totals] = this.convertKeys([quoteData, totalsData]);
+
+    return this.convertCartData(quote, totals);
+  }
+
+  /**
+   * Process and merge cart and totals response
+   *
+   * @param {Object} quoteData - data from cart endpoint
+   * @param {Object} totalsData - data from cart totals endpoint
+   * @return {Object} - object with merged data
+   */
+  convertCartData(quoteData, totalsData) {
+    quoteData.active = quoteData.isActive;
+    quoteData.virtual = quoteData.isVirtual;
+    quoteData.quoteCurrency = totalsData.quoteCurrencyCode;
+    quoteData.couponCode = totalsData.couponCode;
+
+    // prepare totals
+    quoteData.totals = totalsData.totalSegments.map(segment => ({
+      ...this.processPrice(segment, ['value'], quoteData.quoteCurrency)
+    }));
+
+    // merge items data
+    quoteData.items = quoteData.items.map(item => {
+      const totalsDataItem = totalsData.items.find(totalDataItem => totalDataItem.itemId === item.itemId);
+      const { extensionAttributes } = totalsDataItem;
+      delete totalsDataItem.extensionAttributes;
+
+      this.processPrice(
+        totalsDataItem,
+        [
+          'price',
+          'priceInclTax',
+          'rowTotalInclTax',
+          'rowTotalWithDiscount',
+          'taxAmount',
+          'discountAmount',
+          'weeeTaxAmount'
+        ],
+        quoteData.quoteCurrency
+      );
+
+      extensionAttributes.availableQty = parseFloat(extensionAttributes.availableQty);
+
+      item.link = `/${extensionAttributes.urlKey}.html`;
+
+      if (totalsDataItem.options) {
+        totalsDataItem.itemOptions =
+          typeof totalsDataItem.options === 'string' ? JSON.parse(totalsDataItem.options) : totalsDataItem.options;
+      }
+
+      return { ...item, ...totalsDataItem, ...extensionAttributes };
+    });
+
+    return quoteData;
+  }
 };
