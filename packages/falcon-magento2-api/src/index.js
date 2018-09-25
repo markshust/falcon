@@ -423,36 +423,35 @@ module.exports = class Magento2Api extends Magento2ApiBase {
   async fetchUrl(params) {
     const { currency, storeCode, path, loadEntityData = false } = params;
 
-    const response = await this.get(
-      `/url/?request_path=${path}&load_entity_data=${loadEntityData}`,
-      {},
+    return this.get(
+      '/url/',
+      {
+        request_path: path,
+        load_entity_data: loadEntityData
+      },
       {
         context: {
-          storeCode
+          storeCode,
+          didReceiveResult: result => this.reduceUrl(result, currency)
         }
       }
     );
-
-    return this.reduceUrl(response, currency);
   }
 
   /**
    * Reduce url endpoint data.
    * Find entity reducer and use it.
    *
-   * @param {Object} response Api Response
+   * @param {Object} data - parsed response Api Response
    * @param {String} [currency=null] currency code
    * @return {Object} reduced data
    */
-  reduceUrl(response, currency = null) {
-    const { data } = response;
+  reduceUrl(data, currency = null) {
     const type = data.entity_type;
     const entityData = data[type.replace('-', '_')];
 
     if (entityData === null) {
-      response.data = { id: data.entity_id, type };
-
-      return response.data;
+      return { id: data.entity_id, type };
     }
 
     let reducer;
@@ -469,9 +468,7 @@ module.exports = class Magento2Api extends Magento2ApiBase {
 
     const reducedEntityData = reducer.call(this, { data: entityData }, currency);
 
-    response.data = Object.assign(reducedEntityData.data, { type });
-
-    return response;
+    return Object.assign(reducedEntityData.data, { type });
   }
 
   /**
