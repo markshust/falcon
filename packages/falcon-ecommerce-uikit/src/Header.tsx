@@ -33,7 +33,7 @@ export const Nav: React.SFC<{ items: any }> = ({ items }) => (
             <List>
               {item.subMenu.map((subItem: any) => (
                 <ListItem key={subItem.name}>
-                  <Link as={RouterLink} to="/">
+                  <Link as={RouterLink} to="/products">
                     {subItem.name}
                   </Link>
                 </ListItem>
@@ -61,9 +61,15 @@ export const SearchbarLayout = themed({
   }
 });
 
+export const Logo = () => (
+  <Link as={RouterLink} to="/" justifySelf="start" css={{ cursor: 'pointer' }}>
+    <Icon src="logo" />
+  </Link>
+);
+
 export const Searchbar = () => (
   <SearchbarLayout>
-    <Icon justifySelf="start" src="logo" />
+    <Logo />
     <Icon src="user" />
     <Icon src="cart" />
   </SearchbarLayout>
