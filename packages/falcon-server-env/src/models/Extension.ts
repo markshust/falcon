@@ -43,13 +43,12 @@ export default abstract class Extension<TApiConfig = object> {
 
   /**
    * Should be implemented if extension wants to deliver content for dynamic urls. It should return priority value for passed url.
-   * @param url - url for which the priority should be returned
+   * @param {string} url - url for which the priority should be returned
+   * @return {number|null} Priority index or null (if "dynamic URL" is not supported)
    */
-  getFetchUrlPriority?(url: string): number;
+  getFetchUrlPriority(url: string): number | null {
+    return this.api && this.api.getFetchUrlPriority ? this.api.getFetchUrlPriority(url) : null;
+  }
 
   async fetchUrl?(obj: object, args: any, context: any, info: GraphQLResolveInfo): Promise<FetchUrlResult>;
-
-  get fetchUrlPriority(): number {
-    return (this.api as ApiDataSource).fetchUrlPriority;
-  }
 }

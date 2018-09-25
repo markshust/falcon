@@ -64,6 +64,14 @@ export default abstract class ApiDataSource<TContext = any> extends RESTDataSour
   }
 
   /**
+   * Should be implemented if ApiDataSource wants to deliver content via dynamic URLs.
+   * It should return priority value for passed url.
+   * @param url - url for which the priority should be returned
+   * @return {number} Priority index
+   */
+  getFetchUrlPriority?(url: string): number;
+
+  /**
    * Returns a list of REST endpoints to be handled by this module
    * @return {ApiDataSourceEndpoint[]} List of API routes (endpoints)
    */
