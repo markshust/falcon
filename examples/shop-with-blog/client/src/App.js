@@ -9,8 +9,8 @@ import DynamicRoute from '@deity/falcon-client/src/components/DynamicRoute';
 import isOnline from '@deity/falcon-client/src/components/isOnline';
 import 'src/App.css';
 import logo from 'src/assets/logo.png';
-import { AppLayout, Header } from './components';
-import { theme } from './theme';
+import { AppLayout, Header, Footer, Category } from '@deity/falcon-ecommerce-uikit';
+import { deityGreenTheme } from './theme';
 
 const HeadMetaTags = () => (
   <Helmet defaultTitle="Deity Shop with Blog" titleTemplate="%s | Deity Shop with Blog">
@@ -25,19 +25,21 @@ const HeadMetaTags = () => (
     <meta property="og:image" content={logo} />
     <meta property="og:image:width" content="300" />
     <meta property="og:image:height" content="107" />
+    <link href="https://fonts.googleapis.com/css?family=Roboto:400,700" rel="stylesheet" />
   </Helmet>
 );
-const NotFound = () => <p>Not Found</p>;
+
+// const NotFound = () => <p>Not Found</p>;
 
 const App = ({ online }) => (
-  <ThemeProvider theme={theme}>
+  <ThemeProvider theme={deityGreenTheme}>
     <HeadMetaTags />
     <AppLayout>
       <Header />
       {!online && <p>your are offline.</p>}
       <Switch>
         <Route exact path="/" component={Home} />
-        <Route exact path="/not-found" component={NotFound} />
+        <Route exact path="/products" component={Category} />
         <Route
           exact
           path="/*"
@@ -56,6 +58,7 @@ const App = ({ online }) => (
           )}
         />
       </Switch>
+      <Footer />
     </AppLayout>
   </ThemeProvider>
 );

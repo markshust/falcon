@@ -19,9 +19,10 @@ export const Input = themed({
 
   defaultTheme: {
     input: {
-      p: 'sm',
+      py: 'sm',
+      px: 'md',
       border: 'regular',
-      borderRadius: 'xs',
+      borderRadius: 'xl',
 
       css: ({ invalid, theme }) => ({
         ...placeholder({

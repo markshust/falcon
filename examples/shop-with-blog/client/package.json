@@ -65,6 +65,7 @@
   },
   "devDependencies": {
     "@deity/eslint-config-falcon": "1.0.0",
+    "@deity/falcon-ecommerce-uikit": "1.0.0",
     "cross-env": "^5.2.0",
     "eslint": "^4.13.1",
     "jest-transform-graphql": "^2.1.0",

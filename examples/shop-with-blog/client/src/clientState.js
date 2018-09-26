@@ -64,7 +64,8 @@ const products = [
   {
     src:
       'https://www.hartsofstur.com/media/catalog/product/cache/e3c1c5e5f4f6c7872a68d3422aa97082/J/C/JC85-Judge-Induction-Stove-Top-Kettle-Green.jpg',
-    name: 'Judge Induction Green Kettle 1.5L'
+    name: 'Judge Induction Green Kettle 1.5L',
+    price: 99
   },
   {
     src:
@@ -122,13 +123,122 @@ const products = [
   }
 ];
 
+const footerSections = [
+  {
+    name: 'Customer service',
+    links: [
+      {
+        name: 'Track order',
+        url: '/'
+      },
+      {
+        name: 'Return policy',
+        url: '/'
+      },
+      {
+        name: 'FAQs',
+        url: '/'
+      },
+      {
+        name: 'Terms',
+        url: '/'
+      }
+    ]
+  },
+  {
+    name: 'About us',
+    links: [
+      {
+        name: 'Blog',
+        url: '/'
+      },
+      {
+        name: 'Cookies',
+        url: '/'
+      },
+      {
+        name: 'About us',
+        url: '/'
+      },
+      {
+        name: 'Jobs',
+        url: '/'
+      }
+    ]
+  },
+  {
+    name: 'Terms',
+    links: [
+      {
+        name: 'Blog',
+        url: '/'
+      },
+      {
+        name: 'Cookies',
+        url: '/'
+      },
+      {
+        name: 'About us',
+        url: '/'
+      },
+      {
+        name: 'Jobs',
+        url: '/'
+      }
+    ]
+  }
+];
+
+const languages = [
+  {
+    name: 'English',
+    code: 'en',
+    active: false
+  },
+  {
+    name: 'Netherlands',
+    code: 'ne',
+    active: true
+  }
+];
+const breadcrumbs = [
+  {
+    name: 'Home',
+    url: '/'
+  },
+  {
+    name: 'Cooking',
+    url: '/cooking'
+  },
+  {
+    name: 'Pots & Pans',
+    url: '/pots'
+  }
+];
+
+const sortOrders = [
+  {
+    name: 'Price ascending',
+    id: 'asc',
+    active: true
+  },
+  {
+    name: 'Price descending',
+    id: 'desc'
+  }
+];
+
 export default {
   defaults: {},
   resolvers: {
     Query: {
       menuItems: () => menuItems,
       bannerLinks: () => bannerLinks,
-      products: () => products
+      products: () => products,
+      footerSections: () => footerSections,
+      languages: () => languages,
+      breadcrumbs: () => breadcrumbs,
+      sortOrders: () => sortOrders
     }
   }
 };

@@ -18,6 +18,7 @@
     "declaration": true,
     "skipLibCheck": true,
     "declarationDir": "dist",
+    "declarationMap": true,
     "forceConsistentCasingInFileNames": true
   }
 }

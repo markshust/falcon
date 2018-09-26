@@ -216,10 +216,8 @@ module.exports = appConfig => (config, { target, dev }, webpackObject) => {
     config
   );
   addTypeScript(config, { target, dev }, webpackObject);
-
   fixUrlLoaderFallback(config, target);
   fixAssetsWebpackPlugin(config, target);
-
   addVendorsBundle([
     'apollo-cache-inmemory',
     'apollo-client',
@@ -240,9 +238,7 @@ module.exports = appConfig => (config, { target, dev }, webpackObject) => {
     'react-i18next',
     'react-router-dom'
   ])(config, { target, dev });
-
   excludeIcoFromFileLoader(config);
-
   addGraphQLTagLoader(config);
   addFalconI18nPlugin(appConfig.i18n)(config, target);
   addWebManifest(config, target);

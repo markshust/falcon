@@ -22,7 +22,8 @@
     "prepare": "npm run clean && npm run build:esm && npm run build:cjs && npm run build:tsDeclarations",
     "build:tsDeclarations": "tsc",
     "build:esm": "babel src -d dist -x .ts,.tsx -s",
-    "build:cjs": "rollup -c"
+    "build:cjs": "rollup -c",
+    "watch": "babel src -d dist -x .ts,.tsx -s --watch"
   },
   "devDependencies": {
     "@babel/cli": "^7.0.0",
