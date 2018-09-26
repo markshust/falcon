@@ -33,7 +33,6 @@ class ServerLogger {
         format: format.combine(
           format.colorize(),
           this.timestampFormat(),
-          format.align(),
           format.printf(info => `${info.timestamp} ${info.level}: ${info.message}`)
         ),
         level: this.logLevel

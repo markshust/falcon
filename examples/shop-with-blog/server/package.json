@@ -1,5 +1,5 @@
 {
-  "name": "@deity/shop-with-blog-server",
+  "name": "@deity/example-shop-with-blog-server",
   "license": "OSL-3.0",
   "main": "index.js",
   "version": "1.0.0",
@@ -9,8 +9,12 @@
     "start:prod": "cross-env NODE_ENV=production node index.js"
   },
   "dependencies": {
+    "@deity/falcon-blog-extension": "1.0.0",
+    "@deity/falcon-dynamic-route-extension": "1.0.0",
+    "@deity/falcon-magento2-api": "1.0.0",
     "@deity/falcon-server": "1.0.0",
     "@deity/falcon-shop-extension": "1.0.0",
+    "@deity/falcon-wordpress-api": "1.0.0",
     "config": "^2.0.1",
     "cross-env": "^5.2.0"
   },
