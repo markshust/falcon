@@ -343,23 +343,19 @@ module.exports = class WordpressApi extends ApiDataSource {
       context: {
         authRequired: this.isDraft(path),
         language,
-        didReceiveResult: result => this.reduceUrl(result, path)
+        didReceiveResult: result => this.reduceUrl(result, path, language)
       }
     });
   }
 
-  reduceUrl(result, path) {
-    const {
-      data,
-      meta: { languagePrefix }
-    } = result;
-
-    const type = `blog-${data.type}`;
-    const languageUrl = this.replaceLanguagePrefix(data.url, languagePrefix);
+  reduceUrl(result, path, language) {
+    const { data, type, url: entityUrl } = result;
+    const languageUrl = this.replaceLanguagePrefix(entityUrl, language);
 
     return {
-      url: languageUrl,
-      type,
+      id: data && data.id,
+      path: languageUrl,
+      type: `blog-${type}`,
       redirect: this.isEntityRedirect(this.preparePathname(languageUrl), this.preparePathname(path))
     };
   }

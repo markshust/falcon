@@ -25,18 +25,19 @@ describe('WordPress API', () => {
     nock('https://example.com')
       .get(uri => uri.indexOf('url?path'))
       .reply(200, {
+        type: 'post',
+        url: '/foo/',
         data: {
-          type: 'post',
-          url: '/foo/'
-        },
-        meta: { languagePrefix: null }
+          id: 1
+        }
       });
 
     await wpApi.initialize({ context: {} });
 
     const result = await wpApi.fetchUrl('/foo/');
     expect(result).toEqual({
-      url: '/foo/',
+      id: 1,
+      path: '/foo/',
       type: 'blog-post',
       redirect: false
     });
