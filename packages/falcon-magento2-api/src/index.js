@@ -449,9 +449,11 @@ module.exports = class Magento2Api extends Magento2ApiBase {
   reduceUrl(data, currency = null) {
     const type = data.entity_type;
     const entityData = data[type.replace('-', '_')];
+    // unify the types so client receives 'shop-page, 'shop-product', 'shop-category, etc.
+    const unifiedType = `shop-${type.replace('cms-', '')}`;
 
     if (entityData === null) {
-      return { id: data.entity_id, type };
+      return { id: data.entity_id, type: unifiedType };
     }
 
     let reducer;
@@ -468,7 +470,7 @@ module.exports = class Magento2Api extends Magento2ApiBase {
 
     const reducedEntityData = reducer.call(this, { data: entityData }, currency);
 
-    return Object.assign(reducedEntityData.data, { type });
+    return Object.assign(reducedEntityData.data, { type: unifiedType });
   }
 
   /**
