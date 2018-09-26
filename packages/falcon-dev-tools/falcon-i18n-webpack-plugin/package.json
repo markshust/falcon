@@ -4,8 +4,8 @@
   "license": "OSL-3.0",
   "main": "index.js",
   "repository": "https://github.com/deity-io/falcon/tree/master/packages/falcon-dev-tools/falcon-i18n-webpack-plugin",
-  "peerDependencies": {
-    "deepmerge": "~2.1.1",
-    "fs-extra": "~7.0.0"
+  "dependencies": {
+    "deepmerge": "^2.1.1",
+    "fs-extra": "^7.0.0"
   }
 }

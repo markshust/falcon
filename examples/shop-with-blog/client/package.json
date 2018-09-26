@@ -3,9 +3,7 @@
   "private": true,
   "license": "OSL-3.0",
   "version": "1.0.0",
-  "license": "OSL-3.0",
   "repository": "https://github.com/deity-io/falcon/tree/master/examples/shop-with-blog/client",
-  "private": true,
   "jest": {
     "coverageReporters": [
       "html",
@@ -61,6 +59,7 @@
     "react-async-component": "^2.0.0",
     "react-dom": "^16.4.2",
     "react-feather": "^1.1.3",
+    "react-helmet": "^5.2.0",
     "react-i18next": "^7.11.0",
     "react-router-dom": "^4.3.1"
   },

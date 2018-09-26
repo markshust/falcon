@@ -1,9 +1,17 @@
+/* eslint-disable import/no-extraneous-dependencies */
 const path = require('path');
-const paths = require('./../paths');
-// eslint-disable-next-line import/no-extraneous-dependencies
 const FalconI18nLocalesPlugin = require('@deity/falcon-i18n-webpack-plugin');
 const razzlePluginTypescript = require('razzle-plugin-typescript');
-const makeLoaderFinder = require('razzle-dev-utils/makeLoaderFinder');
+const WebpackConfigHelpers = require('razzle-dev-utils/WebpackConfigHelpers');
+const AssetsPlugin = require('assets-webpack-plugin');
+const paths = require('./../paths');
+
+const webpackConfigHelper = new WebpackConfigHelpers(paths.razzle.appPath);
+function getPluginIndexByName(config, name) {
+  return webpackConfigHelper
+    .getPlugins(config)
+    .findIndex(x => x.plugin && x.plugin.constructor && x.plugin.constructor.name === name);
+}
 
 function setEntryToFalconClient(config, target) {
   if (target === 'web') {
@@ -33,9 +41,25 @@ function setEntryToFalconClient(config, target) {
   }
 }
 
+function excludeIcoFromFileLoader(config) {
+  const fileLoaderFinder = webpackConfigHelper.makeLoaderFinder('file-loader');
+  const fileLoader = config.module.rules.find(fileLoaderFinder);
+  fileLoader.exclude.push(/\.(ico)$/);
+}
+
+function fixUrlLoaderFallback(config, target) {
+  const urlLoaderFinder = webpackConfigHelper.makeLoaderFinder('url-loader');
+  const urlLoader = config.module.rules.find(urlLoaderFinder);
+  urlLoader.options.fallback = require.resolve('file-loader');
+
+  urlLoader.options.limit = -1; // always fallback to file-loader
+  urlLoader.options.emitFile = target === 'web';
+  urlLoader.test.push(/\.(ico)$/);
+}
+
 function extendBabelInclude(includePaths = []) {
   return config => {
-    const babelLoaderFinder = makeLoaderFinder('babel-loader');
+    const babelLoaderFinder = webpackConfigHelper.makeLoaderFinder('babel-loader');
     const babelLoader = config.module.rules.find(babelLoaderFinder);
     if (!babelLoader) {
       throw new Error(`'babel-loader' was erased from config, it is required to configure '@deity/falcon-client'`);
@@ -55,7 +79,7 @@ function addTypeScript(config, { target, dev }, webpackObject) {
   });
 
   // use latest ts-Loader
-  const tsLoaderFinder = makeLoaderFinder('ts-loader');
+  const tsLoaderFinder = webpackConfigHelper.makeLoaderFinder('ts-loader');
   const tsRule = config.module.rules.find(tsLoaderFinder);
   if (!tsRule) {
     throw new Error(`'ts-loader' was erased from config, it is required to configure '@deity/falcon-client'`);
@@ -91,10 +115,10 @@ function addVendorsBundle(modules = []) {
 }
 
 function addGraphQLTagLoader(config) {
-  const fileLoaderFinder = makeLoaderFinder('file-loader');
-  const fileLoader = config.module.rules.find(fileLoaderFinder);
-  if (fileLoader) {
-    fileLoader.exclude.push(/\.(graphql|gql)$/);
+  const fileLoaderFinder = webpackConfigHelper.makeLoaderFinder('file-loader');
+  const mediaFilesRule = config.module.rules.find(fileLoaderFinder);
+  if (mediaFilesRule) {
+    mediaFilesRule.exclude.push(/\.(graphql|gql)$/);
   }
 
   config.module.rules.push({
@@ -119,16 +143,60 @@ function addGraphQLTagLoader(config) {
  * @param {boolean} dev is dev?
  * @returns {void}
  */
-function addFalconI18nPlugin({ resourcePackages = [], filter }, config, dev) {
-  config.plugins = [
-    ...config.plugins,
-    new FalconI18nLocalesPlugin({
-      mainSource: path.join(paths.razzle.appPath, 'i18n'),
-      defaultSources: resourcePackages.map(x => paths.resolvePackageDir(x)).map(x => path.join(x, 'i18n')),
-      output: dev ? 'public/i18n' : 'build/public/i18n',
-      filter
-    })
-  ];
+function addFalconI18nPlugin({ resourcePackages = [], filter }) {
+  return (config, target) => {
+    if (target === 'web') {
+      config.plugins.unshift(
+        new FalconI18nLocalesPlugin({
+          mainSource: path.join(paths.razzle.appPath, 'i18n'),
+          defaultSources: resourcePackages.map(x => paths.resolvePackageDir(x)).map(x => path.join(x, 'i18n')),
+          output: 'build/i18n',
+          filter
+        })
+      );
+    }
+  };
+}
+
+/**
+ * fixing issue https://github.com/ztoben/assets-webpack-plugin/issues/41
+ * @param {object} config webpack config
+ * @param {'web'|'node'} target webpack config
+ */
+function fixAssetsWebpackPlugin(config, target) {
+  if (target === 'web') {
+    const indexOfAssetsWebpackPlugin = getPluginIndexByName(config, 'AssetsWebpackPlugin');
+    config.plugins[indexOfAssetsWebpackPlugin] = new AssetsPlugin({
+      path: paths.razzle.appBuild,
+      filename: 'assets.json',
+      includeAllFileTypes: true,
+      prettyPrint: true
+    });
+  }
+}
+
+function addWebManifest(config, target) {
+  if (target === 'web') {
+    const fileLoaderFinder = webpackConfigHelper.makeLoaderFinder('file-loader');
+    const mediaFilesRule = config.module.rules.find(fileLoaderFinder);
+    if (mediaFilesRule) {
+      mediaFilesRule.exclude.push(/\.(webmanifest|browserconfig)$/);
+    }
+
+    config.module.rules.push({
+      test: /(manifest\.webmanifest|browserconfig\.xml)$/,
+      use: [
+        {
+          loader: require.resolve('file-loader'),
+          options: {
+            name: 'static/[name].[hash:8].[ext]',
+            emitFile: true
+          }
+        },
+        { loader: require.resolve('app-manifest-loader') }
+      ]
+    });
+  }
 }
 
 /**
@@ -139,9 +207,7 @@ function addFalconI18nPlugin({ resourcePackages = [], filter }, config, dev) {
 module.exports = appConfig => (config, { target, dev }, webpackObject) => {
   config.resolve.alias = {
     ...(config.resolve.alias || {}),
-    public: path.join(paths.razzle.appPath, 'public'),
     src: paths.razzle.appSrc,
-
     'app-path': paths.razzle.appPath
   };
 
@@ -150,6 +216,9 @@ module.exports = appConfig => (config, { target, dev }, webpackObject) => {
     config
   );
   addTypeScript(config, { target, dev }, webpackObject);
+
+  fixUrlLoaderFallback(config, target);
+  fixAssetsWebpackPlugin(config, target);
 
   addVendorsBundle([
     'apollo-cache-inmemory',
@@ -172,8 +241,11 @@ module.exports = appConfig => (config, { target, dev }, webpackObject) => {
     'react-router-dom'
   ])(config, { target, dev });
 
+  excludeIcoFromFileLoader(config);
+
   addGraphQLTagLoader(config);
-  addFalconI18nPlugin(appConfig.i18n, config, dev);
+  addFalconI18nPlugin(appConfig.i18n)(config, target);
+  addWebManifest(config, target);
 
   return config;
 };

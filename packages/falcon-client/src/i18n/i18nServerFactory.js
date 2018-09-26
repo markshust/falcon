@@ -1,4 +1,3 @@
-import path from 'path';
 import i18next from 'i18next';
 import Backend from 'i18next-sync-fs-backend';
 
@@ -44,11 +43,12 @@ export default ({
       escapeValue: false
     },
     backend: {
-      loadPath: path.resolve(path.join(process.env.RAZZLE_PUBLIC_DIR, 'i18n/{{lng}}/{{ns}}.json')),
+      loadPath: 'build/i18n/{{lng}}/{{ns}}.json',
       jsonIndent: 2
     }
   });
 };
+
 export function filterResourceStoreByNs(storeData, namespaces) {
   const i18nResourceStore = {};
   Object.keys(storeData).forEach(lng => {
@@ -64,4 +64,15 @@ export function filterResourceStoreByNs(storeData, namespaces) {
   });
 
   return i18nResourceStore;
+}
+
+export function extractI18nextState(ctx) {
+  if (ctx.i18next) {
+    return {
+      language: ctx.i18next.language,
+      data: ctx.state.i18nextFilteredStore
+    };
+  }
+
+  return {};
 }
