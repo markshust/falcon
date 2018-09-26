@@ -2,11 +2,11 @@ import React from 'react';
 import renderer from 'react-test-renderer';
 import { Switch, Route } from 'react-router-dom';
 import gql from 'graphql-tag';
-import { FalconClientMock } from './../test-utils';
-import { wait } from '../../../test/helpers';
-import DynamicRoute from './components/DynamicRoute';
+import { FalconClientMock } from '../../test-utils';
+import { wait } from '../../../../test/helpers';
+import DynamicRoute from './DynamicRoute';
 
-describe('falcon-client', () => {
+describe('DynamicRoute', () => {
   it('Should render DynamicRoute content', async () => {
     const mocks = [
       {
