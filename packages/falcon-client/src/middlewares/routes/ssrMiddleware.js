@@ -2,17 +2,17 @@ import React from 'react';
 import { renderToString } from 'react-dom/server';
 import { StaticRouter } from 'react-router-dom';
 import { ApolloProvider, getDataFromTree } from 'react-apollo';
+import Helmet from 'react-helmet';
 import { I18nextProvider } from 'react-i18next';
 import { AsyncComponentProvider, createAsyncContext } from 'react-async-component';
 import asyncBootstrapper from 'react-async-bootstrapper';
-import { filterResourceStoreByNs } from '../i18n/i18nServerFactory';
+import { filterResourceStoreByNs } from '../../i18n/i18nServerFactory';
+import HtmlHead from '../../components/HtmlHead';
 
 /**
  * Server Side Rendering middleware.
- * @async
- * @param {string} ctx - Koa context, if ctx.state.prerenderedApp exists then prerendered app will be injected.
- * @param {string} next - Koa next.
- * @returns {Promise<void>} - next middleware or redirect
+ * @param {{App: React.Component}} App - React Component to render
+ * @return {function(ctx: object, next: function): Promise<void>} Koa middleware
  */
 export default ({ App }) => async (ctx, next) => {
   const { client, serverTiming } = ctx.state;
@@ -31,7 +31,10 @@ export default ({ App }) => async (ctx, next) => {
           }}
         >
           <StaticRouter context={context} location={ctx.url}>
-            <App />
+            <React.Fragment>
+              <HtmlHead htmlLang={i18next.language} />
+              <App />
+            </React.Fragment>
           </StaticRouter>
         </I18nextProvider>
       </AsyncComponentProvider>
@@ -48,10 +51,12 @@ export default ({ App }) => async (ctx, next) => {
   await serverTiming.profile(async () => getDataFromTree(markup), 'getDataFromTree() #2');
 
   await serverTiming.profile(() => {
-    ctx.state.prerenderedApp = renderToString(markup);
+    renderToString(markup);
   }, 'SSR renderToString()');
 
+  ctx.state.AppMarkup = markup;
   ctx.state.asyncContext = asyncContext.getState();
+  ctx.state.helmetContext = Helmet.renderStatic();
   ctx.state.i18nextFilteredStore = filterResourceStoreByNs(i18next.services.resourceStore.data, i18nextUsedNamespaces);
 
   return context.url ? ctx.redirect(context.url) : next();
