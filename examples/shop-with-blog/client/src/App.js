@@ -7,7 +7,6 @@ import Helmet from 'react-helmet';
 import { ThemeProvider } from '@deity/falcon-ui';
 import DynamicRoute from '@deity/falcon-client/src/components/DynamicRoute';
 import isOnline from '@deity/falcon-client/src/components/isOnline';
-import 'src/App.css';
 import logo from 'src/assets/logo.png';
 import { AppLayout, Header, Footer, Category } from '@deity/falcon-ecommerce-uikit';
 import { deityGreenTheme } from './theme';
