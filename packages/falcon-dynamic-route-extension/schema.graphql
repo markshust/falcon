@@ -1,5 +1,5 @@
 extend type Query {
-  url(path: String): Url
+  url(path: String!): Url
 }
 
 type Url {
