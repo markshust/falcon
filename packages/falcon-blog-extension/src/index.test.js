@@ -96,7 +96,7 @@ describe('Falcon Blog Extension', () => {
     let schema;
     let server;
     beforeAll(async () => {
-      const blog = new Blog();
+      const blog = new Blog({ extensionContainer: {} });
       blog.api = new CustomApi();
 
       // prepare server with mocks for tests

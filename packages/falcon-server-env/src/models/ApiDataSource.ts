@@ -64,6 +64,14 @@ export default abstract class ApiDataSource<TContext = any> extends RESTDataSour
   }
 
   /**
+   * Should be implemented if ApiDataSource wants to deliver content via dynamic URLs.
+   * It should return priority value for passed url.
+   * @param url - url for which the priority should be returned
+   * @return {number} Priority index
+   */
+  getFetchUrlPriority?(url: string): number;
+
+  /**
    * Returns a list of REST endpoints to be handled by this module
    * @return {ApiDataSourceEndpoint[]} List of API routes (endpoints)
    */
@@ -87,7 +95,7 @@ export default abstract class ApiDataSource<TContext = any> extends RESTDataSour
    * @param {PaginationValue} [perPage=null] Limit entries per page
    * @return {PaginationData} Calculated result
    */
-  processPagination(
+  protected processPagination(
     totalItems: PaginationValue,
     currentPage: PaginationValue = null,
     perPage: PaginationValue = null
@@ -170,8 +178,7 @@ export default abstract class ApiDataSource<TContext = any> extends RESTDataSour
     // if params is plain object then convert it to URLSearchParam with help of qs.stringify - that way
     // we can be sure that nested object will be converted correctly to search params
     const searchString: string = stringify(params, {
-      encodeValuesOnly: true,
-      arrayFormat: 'brackets'
+      encodeValuesOnly: true
     });
 
     return new URLSearchParams(searchString);

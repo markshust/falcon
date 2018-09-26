@@ -52,7 +52,7 @@
     "@deity/falcon-i18n": "1.0.0",
     "@deity/falcon-ui": "1.0.0",
     "config": "^2.0.1",
-    "graphql": "^0.13.2",
+    "graphql": "^14.0.2",
     "graphql-tag": "^2.9.2",
     "i18next": "^11.6.0",
     "prop-types": "15.6.2",

@@ -3,7 +3,6 @@ const qs = require('qs');
 const pick = require('lodash/pick');
 const isEmpty = require('lodash/isEmpty');
 const isObject = require('lodash/isObject');
-const Logger = require('@deity/falcon-logger');
 const url = require('url');
 
 module.exports = class WordpressApi extends ApiDataSource {
@@ -330,61 +329,38 @@ module.exports = class WordpressApi extends ApiDataSource {
   /**
    * Fetch wordpress url based on pathname and check if it contains any redirect.
    * Convert response based on data type (page | post | category )
-   *
-   * @param {Object} params request params
-   * @param {String} params.path - pathname of wordpress url
-   * @param {String} [params.language] - wordpress language
-   * @param {Object} [params.headers] - for request todo find usage ? draft ?
+   * @param {String} path - pathname of wordpress url
+   * @param {String} language - wordpress language
    * @return {Object} response - with reduced and converted data
    */
-  //  async fetchUrl({ path, headers = {}, language }) {
-  async fetchUrl(path, language) {
+  async fetchUrl(path, language = null) {
     const params = { path };
     if (language) {
       params.language = language;
     }
 
-    const response = await this.get(
-      'url',
-      { path },
-      {
-        context: {
-          authRequired: this.isDraft(path),
-          language
-        }
+    return this.get('url', params, {
+      context: {
+        authRequired: this.isDraft(path),
+        language,
+        didReceiveResult: result => this.reduceUrl(result, path)
       }
-    );
+    });
+  }
 
+  reduceUrl(result, path) {
     const {
       data,
       meta: { languagePrefix }
-    } = response;
+    } = result;
 
-    const type = `wp-${data.type}`;
-    data.url = this.replaceLanguagePrefix(data.url, languagePrefix);
-    const redirect = this.isEntityRedirect(this.preparePathname(data.url), this.preparePathname(path));
-    let reducer;
+    const type = `blog-${data.type}`;
+    const languageUrl = this.replaceLanguagePrefix(data.url, languagePrefix);
 
-    // todo rename to post
-    // todo remove what is not used ?
-    if (type === 'wp-post') {
-      reducer = notReducedData => this.processPost(notReducedData);
-    } else if (type === 'wp-page') {
-      reducer = this.reducePage;
-    } else if (type === 'wp-category') {
-      reducer = this.reduceCategory;
-    } else {
-      Logger.warn(`No reducer defined for Wordpress entity: ${type} `);
-    }
-
-    let responseData = {};
-
-    if (reducer) {
-      responseData = reducer(data).data;
-    }
-
-    response.data = Object.assign(responseData, { url: data.url, redirect, type });
-
-    return response;
+    return {
+      url: languageUrl,
+      type,
+      redirect: this.isEntityRedirect(this.preparePathname(languageUrl), this.preparePathname(path))
+    };
   }
 };
