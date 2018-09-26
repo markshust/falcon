@@ -19,8 +19,8 @@ export const defaultBaseTheme = {
 
   breakpoints: {
     xs: 0,
-    sm: 600,
-    md: 960,
+    sm: 640,
+    md: 860,
     lg: 1280,
     xl: 1920
   },
