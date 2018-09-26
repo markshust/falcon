@@ -20,6 +20,11 @@ export const deityGreenTheme = createTheme({
     secondaryText: '#fff',
     error: '#E74C3C'
   },
+
+  fonts: {
+    sans: '"Roboto", sans-serif'
+  },
+
   borderRadius: {
     none: 0,
     xs: 0,
@@ -35,7 +40,8 @@ export const deityGreenTheme = createTheme({
       width: 'auto'
     },
     loader: {
-      icon: props => <img src={loader} alt="loader" {...props} />
+      icon: props => <img src={loader} alt="loader" {...props} />,
+      size: 50
     },
     cart: {
       icon: ShoppingCart
