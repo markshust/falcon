@@ -4,9 +4,8 @@ import ChevronDown from 'react-feather/dist/icons/chevron-down';
 import ChevronUp from 'react-feather/dist/icons/chevron-up';
 import User from 'react-feather/dist/icons/user';
 import { createTheme } from '@deity/falcon-ui';
-
-const logo = require('../public/logo.svg');
-const loader = require('../public/loader.svg');
+import logo from './assets/logo.svg';
+import loader from './assets/loader.svg';
 
 export const deityGreenTheme = createTheme({
   colors: {

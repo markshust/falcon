@@ -1,0 +1,58 @@
+{
+  "debug": false,
+  "port": 4000,
+  "apis": [
+    {
+      "name": "api-wordpress",
+      "package": "@deity/falcon-wordpress-api",
+      "config": {
+        "host": "snapshot.deity.io",
+        "protocol": "https",
+        "apiPrefix": "/blog-api",
+        "apiSuffix": "/wp/v2"
+      }
+    },
+    {
+      "name": "api-magento2",
+      "package": "@deity/falcon-magento2-api",
+      "config": {
+        "host": "snapshot.deity.io",
+        "protocol": "https",
+        "username": "node-api",
+        "password": "3de3f3a262"
+      }
+    }
+  ],
+  "extensions": [
+    {
+      "package": "@deity/falcon-blog-extension",
+      "config": {
+        "api": "api-wordpress"
+      }
+    },
+    {
+      "package": "@deity/falcon-shop-extension",
+      "config": {
+        "api": "api-magento2"
+      }
+    },
+    {
+      "package": "@deity/falcon-dynamic-route-extension",
+      "config": {
+        "allowedExtensions": [".html"]
+      }
+    }
+  ],
+  "session": {
+    "keys": ["secret key"],
+    "options": {
+      "key": "session-key",
+      "maxAge": 86400000,
+      "overwrite": true,
+      "httpOnly": true,
+      "signed": true,
+      "rolling": false,
+      "renew": false
+    }
+  }
+}
