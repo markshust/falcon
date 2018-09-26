@@ -1,38 +1,52 @@
 import React from 'react';
 import renderer from 'react-test-renderer';
-import { MockedProvider } from 'react-apollo/test-utils';
-import { MemoryRouter, Switch } from 'react-router-dom';
+import { Switch, Route } from 'react-router-dom';
+import gql from 'graphql-tag';
+import { FalconClientMock } from './../test-utils';
 import { wait } from '../../../test/helpers';
 import DynamicRoute from './components/DynamicRoute';
-import { GET_URL } from './graphql/url.gql';
 
 describe('falcon-client', () => {
   it('Should render DynamicRoute content', async () => {
     const mocks = [
       {
         request: {
-          query: GET_URL,
-          variables: { url: '/test' }
+          query: gql`
+            query URL($path: String!) {
+              url(path: $path) {
+                id
+                path
+                type
+              }
+            }
+          `,
+          variables: { path: 'test' }
         },
         result: {
           data: {
-            getUrl: { type: 'foo', url: '/test' }
+            url: { id: 100, type: 'foo', path: 'test' }
           }
         }
       }
     ];
 
-    const Foo = () => <p>Bar</p>;
-    const components = { foo: Foo };
-
     const App = renderer.create(
-      <MockedProvider mocks={mocks} addTypename={false}>
-        <MemoryRouter initialEntries={['/test']}>
-          <Switch>
-            <DynamicRoute components={components} />
-          </Switch>
-        </MemoryRouter>
-      </MockedProvider>
+      <FalconClientMock apollo={{ mocks }} router={{ initialEntries: ['/test'] }}>
+        <Switch>
+          <Route
+            exact
+            path="/*"
+            component={({ match }) => (
+              <DynamicRoute
+                match={match}
+                components={{
+                  foo: () => <p>Bar</p>
+                }}
+              />
+            )}
+          />
+        </Switch>
+      </FalconClientMock>
     );
 
     const tree = App.toJSON();
