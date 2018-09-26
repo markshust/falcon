@@ -1,0 +1,35 @@
+---
+name: Table
+menu: Components
+---
+
+import { Playground } from 'docz';
+import { Table, Thead, Tr, Th, Td, Tbody } from '../';
+
+# Table
+
+### Basic usage
+
+<Playground>
+  <Table>
+    <Thead>
+      <Tr>
+        <Th>Property</Th>
+        <Th>Type</Th>
+        <Th>Description</Th>
+      </Tr>
+    </Thead>
+    <Tbody>
+      <Tr key="0">
+        <Td>key</Td>
+        <Td>string</Td>
+        <Td>fancy description</Td>
+      </Tr>
+      <Tr key="1">
+        <Td>variant</Td>
+        <Td>string</Td>
+        <Td>variant description</Td>
+      </Tr>
+    </Tbody>
+  </Table>
+</Playground>

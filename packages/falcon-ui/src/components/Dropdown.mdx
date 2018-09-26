@@ -1,0 +1,39 @@
+---
+name: Dropdown
+menu: Components
+---
+
+import { Playground } from 'docz';
+import { State } from 'react-powerplug';
+import { Box, Backdrop, Portal, Dropdown, DropdownLabel, DropdownMenu, DropdownMenuItem } from '../';
+
+# Dropdown
+
+### Basic usage
+
+<Playground>
+    <State initial={{ activeIndex: 0, open: false, items: [{name: 'Popular'}, {name:'Ascending'}, {name:'Descending'}] }}>
+    {({ setState, state }) => (
+        <Box width={180} height={200}>
+        <Dropdown>
+            <DropdownLabel active={state.open} onClick={()=>setState(state => ({open: !state.open}))}>
+                <span>
+                Sort by:
+                 {state.items[state.activeIndex].name} 
+                </span>
+                <span>▾</span>
+            </DropdownLabel>
+
+            <DropdownMenu open={state.open}>
+                {state.items.map((item, index) => (
+                <DropdownMenuItem key={index} onClick={()=>{setState({activeIndex: index, open: false})}}>
+                    {item.name}
+                </DropdownMenuItem>
+                ))}
+            </DropdownMenu>
+        </Dropdown>
+        <Backdrop variant="transparent"  onClick={()=>setState(state=> ({open: !state.open}))} visible={state.open} />
+        </Box>
+    )}
+    </State>
+</Playground>

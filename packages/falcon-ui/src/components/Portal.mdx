@@ -1,0 +1,22 @@
+---
+name: Portal
+menu: Components
+---
+
+import { Playground } from 'docz';
+
+import { Portal, Button } from '../';
+import { PropsTable } from '../../docs';
+
+# Portal
+
+### Basic usage
+
+<Playground>
+  <Portal>
+    <Button bg={{ xs: 'primary', md: 'secondary' }}>Hello!</Button>
+    <Button ml="md" variant="secondary">
+      Secondary
+    </Button>
+  </Portal>
+</Playground>

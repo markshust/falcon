@@ -1,5 +1,7 @@
+// eslint-disable-next-line import/no-extraneous-dependencies
 import 'jest-extended';
 import React from 'react';
+// eslint-disable-next-line import/no-extraneous-dependencies
 import Helmet from 'react-helmet';
 import { asyncComponent } from 'react-async-component';
 import { Route, Switch } from 'react-router-dom';

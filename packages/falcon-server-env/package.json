@@ -1,0 +1,69 @@
+{
+  "name": "@deity/falcon-server-env",
+  "license": "OSL-3.0",
+  "version": "1.0.0",
+  "repository": "https://github.com/deity-io/falcon/tree/master/packages/falcon-server-env",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "source": "src/index.ts",
+  "files": [
+    "dist",
+    "src"
+  ],
+  "jest": {
+    "globals": {
+      "ts-jest": {
+        "diagnostics": false
+      }
+    },
+    "collectCoverageFrom": [
+      "src/**/*.ts",
+      "!src/index.ts"
+    ],
+    "coverageReporters": [
+      "html",
+      "text",
+      "text-summary"
+    ],
+    "transform": {
+      "^.+\\.ts$": "ts-jest"
+    },
+    "testRegex": "(/__tests__/.*|(\\.|/)(test|spec))\\.ts$",
+    "moduleFileExtensions": [
+      "ts",
+      "js",
+      "json",
+      "node"
+    ]
+  },
+  "scripts": {
+    "prebuild": "rimraf dist",
+    "build": "tsc",
+    "prepare": "npm run build",
+    "test": "jest --watch",
+    "test:coverage": "jest --ci --coverage"
+  },
+  "dependencies": {
+    "@deity/falcon-logger": "^1.0.0",
+    "apollo-datasource": "^0.1.3",
+    "apollo-datasource-rest": "^0.1.5",
+    "apollo-server-env": "^2.0.3",
+    "graphql": "^14.0.2",
+    "html-entities": "^1.2.1",
+    "striptags": "^3.1.1",
+    "qs": "^6.5.2"
+  },
+  "devDependencies": {
+    "@types/node": "^10.10.1",
+    "@types/nock": "^9.3.0",
+    "@types/koa-router": "^7.0.32",
+    "@types/graphql": "^14.0.1",
+    "@types/html-entities": "^1.2.16",
+    "@types/jest": "^23.3.2",
+    "@types/qs": "^6.5.1",
+    "rimraf": "^2.6.2",
+    "koa-router": "^7.4.0",
+    "nock": "^10.0.0",
+    "ts-jest": "^23.10.1"
+  }
+}

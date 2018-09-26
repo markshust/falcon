@@ -1,0 +1,31 @@
+---
+name: NumberInput
+menu: Components
+---
+
+import { Playground } from 'docz';
+import { Value } from 'react-powerplug';
+import { NumberInput, ThemeProvider, FlexLayout, H4 } from '../';
+
+# NumberInput
+
+### Basic usage
+
+<Playground>
+  <FlexLayout mb="lg" flexDirection="column" alignItems="flex-start">
+    <H4>Uncontrolled:</H4>
+    <NumberInput defaultValue={4} mb="md" />
+    <NumberInput defaultValue={400} step={2} mb="md" />
+    <NumberInput defaultValue={4} min={2} max={6} height="40" width="170" />
+  </FlexLayout>
+
+  <FlexLayout mb="lg" flexDirection="column" alignItems="flex-start">
+    <H4>Controlled:</H4>
+
+    <Value initial={5}>
+      {({ value, set }) => (
+        <NumberInput value={value} onChange={(e)=>set(e.target.value)} />
+      )}
+    </Value>
+  </FlexLayout>
+</Playground>

@@ -1,3 +1,4 @@
+dist/
 node_modules/
 coverage/
 .DS_Store
@@ -5,6 +6,7 @@ coverage/
 yarn.lock
 yarn-error.log
 package-lock.json
+yarn-error.log
 
 .vscode/
 */**/jsconfig.json
@@ -13,6 +15,7 @@ package-lock.json
 *.swp
 *.swo
 
+packages/**/dist/
 examples/**/build/
 examples/**/public/i18n/
 
@@ -21,3 +24,7 @@ examples/**/static/dist/
 examples/**/static/manifest.json
 examples/**/webpack-assets.json
 examples/**/webpack-stats.json
+
+examples/**/config/*
+!examples/**/config/custom-environment-variables.*
+!examples/**/config/default.*

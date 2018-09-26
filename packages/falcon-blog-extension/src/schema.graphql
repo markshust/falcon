@@ -1,0 +1,34 @@
+extend type Query {
+  blogPost(path: String!): BlogPost
+  blogPosts(query: BlogPageQuery, pagination: PaginationInput): BlogPostListing
+}
+
+input BlogPageQuery {
+  category: String
+}
+
+type BlogPostListing {
+  items: [BlogPost]
+  pagination: Pagination
+}
+
+type BlogPostImage {
+  url: String
+  description: String
+}
+
+type BlogPost {
+  id: Int!
+  date: String
+  modified: String
+  title: String
+  content: String
+  """
+  Short content for use on post lists
+  """
+  excerpt: String
+  slug: String
+  status: String
+  image: BlogPostImage
+  related: BlogPostListing
+}
