@@ -6,6 +6,7 @@ import User from 'react-feather/dist/icons/user';
 import { createTheme } from '@deity/falcon-ui';
 
 const logo = require('../public/logo.svg');
+const loader = require('../public/loader.svg');
 
 export const deityGreenTheme = createTheme({
   colors: {
@@ -33,6 +34,9 @@ export const deityGreenTheme = createTheme({
       height: 70,
       width: 'auto'
     },
+    loader: {
+      icon: props => <img src={loader} alt="loader" {...props} />
+    },
     cart: {
       icon: ShoppingCart
     },
@@ -41,11 +45,13 @@ export const deityGreenTheme = createTheme({
     },
     dropdownArrowDown: {
       icon: ChevronDown,
-      size: 22
+      size: 22,
+      ml: 'xs'
     },
     dropdownArrowUp: {
       icon: ChevronUp,
-      size: 22
+      size: 22,
+      ml: 'xs'
     }
   },
   components: {
