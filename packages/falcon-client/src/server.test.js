@@ -7,34 +7,49 @@ import { Route, Switch } from 'react-router-dom';
 import { translate } from 'react-i18next';
 import Koa from 'koa';
 import supertest from 'supertest';
-import server from './server';
+import webServer from './server';
 import DynamicRoute from './components/DynamicRoute';
 
 describe('Server', () => {
   it('Should properly call eventHandlers', () => {
     const onServerCreatedMock = jest.fn();
     const onServerInitializedMock = jest.fn();
+    const onServerStartedMock = jest.fn();
+    const config = {
+      serverSideRendering: true,
+      useWebManifest: true,
+      logLevel: 'error'
+    };
     const configuration = {
-      config: {
-        serverSideRendering: true,
-        logLevel: 'error'
+      config,
+      configSchema: {
+        defaults: {
+          config
+        }
       },
       onServerCreated: onServerCreatedMock,
-      onServerInitialized: onServerInitializedMock
+      onServerInitialized: onServerInitializedMock,
+      onServerStarted: onServerStartedMock
     };
 
-    const serverApp = server({
+    const server = webServer({
       App: () => <div />,
       configuration,
       clientApolloSchema: {
         defaults: {}
-      }
+      },
+      webpackAssets: {}
     });
+    server.started();
 
-    expect(serverApp).toBeInstanceOf(Koa);
-    expect(onServerCreatedMock).toBeCalledWith(serverApp);
-    expect(onServerInitializedMock).toBeCalledWith(serverApp);
+    expect(server.instance).toBeInstanceOf(Koa);
+    expect(onServerCreatedMock).toBeCalledWith(server.instance);
+
+    expect(onServerInitializedMock).toBeCalledWith(server.instance);
     expect(onServerInitializedMock).toHaveBeenCalledAfter(onServerCreatedMock);
+
+    expect(onServerStartedMock).toBeCalledWith(server.instance);
+    expect(onServerStartedMock).toHaveBeenCalledAfter(onServerInitializedMock);
   });
 
   it('Should render Home page (SSR)', async () => {
@@ -65,12 +80,13 @@ describe('Server', () => {
     const config = {
       logLevel: 'error',
       serverSideRendering: true,
-      usePwaManifest: true,
+      useWebManifest: true,
       googleTagManager: {
         id: null
       },
-      language: {
-        default: 'en'
+      i18n: {
+        lng: 'en',
+        resources: { en: { common: { key: 'foo bar baz' } } }
       }
     };
     const configuration = {
@@ -90,11 +106,11 @@ describe('Server', () => {
       }
     };
 
-    const serverHandler = server({
+    const serverHandler = webServer({
       App,
       configuration,
       clientApolloSchema,
-      i18nResources: { en: { common: { key: 'foo bar baz' } } }
+      webpackAssets: {}
     }).callback();
     const response = await supertest(serverHandler).get('/');
 

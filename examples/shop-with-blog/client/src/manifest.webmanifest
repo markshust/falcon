@@ -1,0 +1,19 @@
+{
+  "name": "Deity Shop with Blog",
+  "short_name": "Deity Falcon",
+  "description": "This is example of Shop with Blog powered by Deity Falcon",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#ffffff",
+  "icons": [
+    { "src": "./assets/logo.svg", "sizes": "48x48", "type": "image/svg" },
+    { "src": "./assets/logo.svg", "sizes": "72x72", "type": "image/svg" },
+    { "src": "./assets/logo.svg", "sizes": "96x96", "type": "image/svg" },
+    { "src": "./assets/logo.svg", "sizes": "144x144", "type": "image/svg" },
+    { "src": "./assets/logo.svg", "sizes": "168x168", "type": "image/svg" },
+    { "src": "./assets/logo.svg", "sizes": "192x192", "type": "image/svg" },
+    { "src": "./assets/logo.svg", "sizes": "384x384", "type": "image/svg" },
+    { "src": "./assets/logo.svg", "sizes": "512x512", "type": "image/svg" }
+  ]
+}

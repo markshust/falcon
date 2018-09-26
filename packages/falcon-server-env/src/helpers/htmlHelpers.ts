@@ -6,6 +6,7 @@
  */
 
 import { AllHtmlEntities } from 'html-entities';
+
 import stripTags = require('striptags');
 
 const entities: AllHtmlEntities = new AllHtmlEntities();
@@ -39,7 +40,7 @@ const helpers: ApiHelpers = {
     if (html && typeof html === 'string') {
       return stripTags(html);
     }
-     return '';
+    return '';
   },
   generateExcerpt(text: string, length: number = 140): string {
     if (!text) {

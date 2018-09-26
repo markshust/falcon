@@ -6,7 +6,7 @@ const config = deepMerge(
     __typename: 'Config',
     logLevel: 'error',
     serverSideRendering: true,
-    usePwaManifest: true,
+    useWebManifest: true,
     googleTagManager: {
       __typename: 'GoogleTagManager',
       id: null

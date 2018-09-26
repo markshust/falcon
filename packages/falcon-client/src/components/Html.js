@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import Helmet from 'react-helmet';
 import GoogleTagManager from '../google/GoogleTagManager';
 import SerializeState from './SerializeState';
 
@@ -15,7 +14,7 @@ import SerializeState from './SerializeState';
  */
 export default class Html extends Component {
   renderGtm(noScript = false) {
-    const { googleTagManager } = this.props.config;
+    const { googleTagManager } = this.props;
 
     if (googleTagManager.id) {
       return <GoogleTagManager gtmId={googleTagManager.id} noScript={noScript} />;
@@ -25,48 +24,45 @@ export default class Html extends Component {
   }
 
   render() {
-    const { assets, asyncContext, state, i18nextState, content, config } = this.props;
-    const head = Helmet.rewind();
+    const { assets, children, helmetContext, state, asyncContext, i18nextState } = this.props;
 
     return (
-      <html lang="en-US">
+      <html lang="en" {...helmetContext.htmlAttributes.toComponent()}>
         <head>
-          {this.renderGtm()}
-          {head.base.toComponent()}
-          {head.title.toComponent()}
-          {head.meta.toComponent()}
-          {head.link.toComponent()}
-          {head.script.toComponent()}
-          {config.usePwaManifest && <link rel="manifest" href="/manifest.json" />}
-          <link rel="shortcut icon" href="/favicon.ico" />
+          <meta charSet="utf-8" />
           <meta name="viewport" content="width=device-width, initial-scale=1" />
-          <meta name="theme-color" content="#fff" />
-          <meta name="format-detection" content="telephone=no" />
-          {assets.client.css && (
-            <link
-              rel="stylesheet"
-              href={assets.client.css}
-              type="text/css"
-              media="screen, projection"
-              charSet="UTF-8"
-            />
+          {helmetContext.base.toComponent()}
+          {helmetContext.title.toComponent()}
+          {helmetContext.meta.toComponent()}
+
+          {this.renderGtm()}
+
+          <link rel="shortcut icon" href="/favicon.ico" />
+          {assets.webmanifest && <link rel="manifest" href={assets.webmanifest} type="application/manifest+json" />}
+          {assets.clientCss && (
+            <link rel="stylesheet" href={assets.clientCss} type="text/css" media="screen, projection" charSet="UTF-8" />
           )}
+          {helmetContext.link.toComponent()}
+          {helmetContext.script.toComponent()}
         </head>
-        <body>
+        <body {...helmetContext.bodyAttributes.toComponent()}>
           {this.renderGtm(true)}
-          <div id="root" dangerouslySetInnerHTML={{ __html: content }} />
+
+          <div id="root">{children}</div>
+
           <SerializeState variable="__APOLLO_STATE__" value={state} />
           <SerializeState variable="ASYNC_COMPONENTS_STATE" value={asyncContext} />
           <SerializeState variable="I18NEXT_STATE" value={i18nextState} />
+
           {process.env.NODE_ENV === 'production' ? (
-            <script src={assets.vendors.js} charSet="UTF-8" async />
+            <script src={assets.vendorsJs} charSet="UTF-8" async />
           ) : (
-            <script src={assets.vendors.js} charSet="UTF-8" async crossOrigin="true" />
+            <script src={assets.vendorsJs} charSet="UTF-8" async crossOrigin="true" />
           )}
           {process.env.NODE_ENV === 'production' ? (
-            <script src={assets.client.js} charSet="UTF-8" async />
+            <script src={assets.clientJs} charSet="UTF-8" async />
           ) : (
-            <script src={assets.client.js} charSet="UTF-8" async crossOrigin="true" />
+            <script src={assets.clientJs} charSet="UTF-8" async crossOrigin="true" />
           )}
         </body>
       </html>
@@ -75,33 +71,27 @@ export default class Html extends Component {
 }
 
 Html.propTypes = {
+  children: PropTypes.node,
+  helmetContext: PropTypes.shape({}).isRequired,
   assets: PropTypes.shape({
-    client: PropTypes.shape({
-      js: PropTypes.string,
-      css: PropTypes.string
-    }),
-    vendors: PropTypes.shape({
-      js: PropTypes.string
-    })
+    clientJs: PropTypes.string,
+    clientCss: PropTypes.string,
+    vendorsJs: PropTypes.string,
+    webmanifest: PropTypes.string
   }),
-  asyncContext: PropTypes.shape({}),
   state: PropTypes.shape({}),
-  i18nextState: PropTypes.shape({}),
-  content: PropTypes.string,
-  config: PropTypes.shape({
-    usePwaManifest: PropTypes.bool,
-    googleTagManager: PropTypes.shape({})
-  })
+  asyncContext: PropTypes.shape({}),
+  i18nextState: PropTypes.shape({
+    language: PropTypes.string,
+    data: PropTypes.shape({})
+  }),
+  googleTagManager: PropTypes.shape({})
 };
 
 Html.defaultProps = {
-  assets: {
-    client: { js: '', css: '' },
-    vendors: { js: '' }
-  },
+  assets: { clientJs: '', clientCss: '', vendorsJs: '', webmanifest: '' },
   asyncContext: {},
   state: {},
   i18nextState: {},
-  content: '',
-  config: {}
+  googleTagManager: {}
 };
