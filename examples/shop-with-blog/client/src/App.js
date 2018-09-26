@@ -4,9 +4,9 @@ import Route from 'react-router-dom/Route';
 import Switch from 'react-router-dom/Switch';
 import Home from 'src/pages/Home';
 import DynamicRoute from '@deity/falcon-client/src/components/DynamicRoute';
-import { ThemeProvider } from '@deity/falcon-ui';
 
-import { AppLayout, Header, Footer, ProductsCategory } from '@deity/falcon-ecommerce-uikit';
+import { ThemeProvider } from '@deity/falcon-ui';
+import { AppLayout, Header, Footer, Category } from '@deity/falcon-ecommerce-uikit';
 import { deityGreenTheme } from './theme';
 
 const components = {
@@ -25,7 +25,7 @@ const App = () => (
       <Header />
       <Switch>
         <Route exact path="/" component={Home} />
-        <Route exact path="/products" component={ProductsCategory} />
+        <Route exact path="/products" component={Category} />
         <DynamicRoute components={components} />
       </Switch>
       <Footer />

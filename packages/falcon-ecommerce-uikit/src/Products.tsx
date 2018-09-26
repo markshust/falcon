@@ -43,11 +43,7 @@ export const ProductsList: React.SFC<{ products: any }> = ({ products }) => (
         <Text ellipsis fontWeight="bold">
           {product.name}
         </Text>
-        <Text fontSize="md">€ {product.price}</Text>
-
-        <Button width={150} mt="md" boxShadow="none" bg="secondaryDark">
-          Shop Now
-        </Button>
+        <Text fontSize="lg">€ {product.price}</Text>
       </ProductCard>
     ))}
   </ProductListLayout>
