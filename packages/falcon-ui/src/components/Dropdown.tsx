@@ -105,13 +105,14 @@ export const DropdownMenu = themed({
       borderRadius: 'sm',
       boxShadow: 'xs',
       bg: 'white',
-      css: {
+      css: ({ theme }) => ({
         position: 'absolute',
         listStyle: 'none',
         top: 'calc(100% + 1px)',
         left: 0,
-        right: 0
-      }
+        right: 0,
+        zIndex: theme.zIndex.dropDownMenu
+      })
     }
   }
 });

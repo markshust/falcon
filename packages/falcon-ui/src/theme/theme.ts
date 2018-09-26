@@ -103,6 +103,7 @@ export const defaultBaseTheme = {
   },
 
   zIndex: {
+    dropDownMenu: 600,
     backdrop: 800,
     sidebar: 1000
   },
