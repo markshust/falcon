@@ -1,6 +1,7 @@
 const { Extension } = require('@deity/falcon-server-env');
 const Logger = require('@deity/falcon-logger');
-const { extname } = require('path');
+const { resolve, extname } = require('path');
+const { readFileSync } = require('fs');
 
 /**
  * Dynamic Route Extension extension.
@@ -113,20 +114,7 @@ module.exports = class DynamicRouteExtension extends Extension {
 
   getGraphQLConfig() {
     return {
-      schema: [
-        `
-        extend type Query {
-            url(path: String): Url
-        }
-
-        type Url {
-          id: Int!
-          path: String!
-          type: String!
-        }
-      `
-      ],
-
+      schema: readFileSync(resolve(__dirname, './schema.graphql'), 'utf8'),
       resolvers: {
         Query: {
           url: async (...params) => this.fetchUrl(...params)

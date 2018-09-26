@@ -1,0 +1,10 @@
+extend type Query {
+  url(path: String): Url
+}
+
+type Url {
+  id: Int!
+  path: String!
+  type: String!
+  redirect: Boolean
+}
