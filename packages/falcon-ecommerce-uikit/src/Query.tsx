@@ -18,6 +18,7 @@ export const LoaderLayout = themed({
 export const Query: React.SFC<{
   children: (data: any) => any;
   query: any;
+  variables?: {};
 }> = ({ children, query, ...rest }) => (
   <ApolloQuery query={query} {...rest}>
     {({ loading, error, data }) => {
