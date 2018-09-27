@@ -43,12 +43,12 @@ const App = ({ online }) => (
 
         <DynamicRoute
           components={{
-            'cms-page': import(/* webpackChunkName: "shop/cms" */ './pages/shop/Cms'),
-            product: import(/* webpackChunkName: "shop/product" */ './pages/shop/Product'),
-            category: import(/* webpackChunkName: "shop/category" */ './pages/shop/Category'),
-            'wp-post': null,
-            'wp-page': null,
-            'wp-category': null
+            'shop-page': import(/* webpackChunkName: "shop/cms" */ './pages/shop/Cms'),
+            'shop-product': import(/* webpackChunkName: "shop/product" */ './pages/shop/Product'),
+            'shop-category': import(/* webpackChunkName: "shop/category" */ './pages/shop/Category'),
+            'blog-post': null,
+            'blog-page': null,
+            'blog-category': null
           }}
         />
 
