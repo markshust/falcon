@@ -1,16 +1,21 @@
 import React from 'react';
 import gql from 'graphql-tag';
-import { themed, Image, Text, Button } from '@deity/falcon-ui';
+import { Link } from 'react-router-dom';
+import { themed, Image, Text } from '@deity/falcon-ui';
 import { Query } from './Query';
 
-export const ProductCard = themed({
-  tag: 'li',
+export const ProductCardLayout = themed({
+  tag: Link,
   defaultTheme: {
     card: {
       display: 'flex',
       flexDirection: 'column',
       alignItems: 'center',
+      height: '100%',
+      color: 'primaryText',
+
       css: {
+        textDecoration: 'none',
         overflow: 'hidden',
         cursor: 'pointer'
       }
@@ -38,13 +43,15 @@ export const ProductListLayout = themed({
 export const ProductsList: React.SFC<{ products: any }> = ({ products }) => (
   <ProductListLayout>
     {products.map((product: any) => (
-      <ProductCard key={product.id}>
-        <Image flex="1 1 0%" css={{ minHeight: 0 }} src={product.thumbnail} />
-        <Text ellipsis fontWeight="bold">
-          {product.name}
-        </Text>
-        <Text fontSize="lg">€ {product.price}</Text>
-      </ProductCard>
+      <li key={product.id}>
+        <ProductCardLayout to={product.urlPath}>
+          <Image css={{ flex: 1, minHeight: '0%' }} src={product.thumbnail} />
+
+          <Text ellipsis>{product.name}</Text>
+
+          <Text fontSize="lg">€ {product.price}</Text>
+        </ProductCardLayout>
+      </li>
     ))}
   </ProductListLayout>
 );
@@ -57,6 +64,7 @@ const GET_PRODUCTS = gql`
         name
         price
         thumbnail
+        urlPath
       }
     }
   }

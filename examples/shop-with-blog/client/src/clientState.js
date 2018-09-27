@@ -228,6 +228,53 @@ const sortOrders = [
   }
 ];
 
+const Product = {
+  title: 'KitchenAid Artisan 175 Candy Apple Food Mixer With FREE Gifts',
+  price: '€ 99',
+  sku: 'KSM175PSCA',
+  description:
+    'The KitchenAid Classic food mixer like the Artisan mixer features an original planetary action eliminating the need to rotate the bowl when mixing by spinning the beater clockwise and the shaft counter clockwise, moving the beater to the edge of the bowl in 67 different points ensuring quick, complete mixing. 2 year domestic guarantee.',
+
+  images: [
+    {
+      thumb:
+        'https://www.hartsofstur.com/media/catalog/product/cache/278b263457593076ca6065f245675a67/K/S/KSM175PSCA-KitchenAid-Artisan-Food-Mixer-Candy-Apple-60132-GWP.jpg',
+      url:
+        'https://www.hartsofstur.com/media/catalog/product/cache/a2ab128dd7882d54c4899772914c19b3/K/S/KSM175PSCA-KitchenAid-Artisan-Food-Mixer-Candy-Apple-60132-GWP.jpg'
+    },
+    {
+      thumb:
+        'https://www.hartsofstur.com/media/catalog/product/cache/278b263457593076ca6065f245675a67/K/S/KSM175PSCA-KitchenAid-Artisan-Mixer-Candy-Apple-1.jpg',
+      url:
+        'https://www.hartsofstur.com/media/catalog/product/cache/a2ab128dd7882d54c4899772914c19b3/K/S/KSM175PSCA-KitchenAid-Artisan-Mixer-Candy-Apple-1.jpg'
+    },
+    {
+      thumb:
+        'https://www.hartsofstur.com/media/catalog/product/cache/278b263457593076ca6065f245675a67/K/S/KSM175PSCA-KitchenAid-Artisan-Mixer-Candy-Apple-2.jpg',
+      url:
+        'https://www.hartsofstur.com/media/catalog/product/cache/a2ab128dd7882d54c4899772914c19b3/K/S/KSM175PSCA-KitchenAid-Artisan-Mixer-Candy-Apple-2.jpg'
+    }
+  ],
+
+  meta: [
+    {
+      name: 'Description',
+      content:
+        'Chasseur Cookware - since its introduction to the UK in 1994, Chasseur has established itself as a serious player in the cast iron cookware market. Chasseurs focus is to supply top quality enamelled cast iron cookware at the best possible price. Chasseur cast iron cookware is manufacture in the Ardennes region of France from top quality materials by skilled craftsmen using time honoured techniques that have been honed to perfection over the last 70 years. Every stage of manufacture is checked by hand, polished, enamelled and finished by hand to ensure that every piece meets the highest quality standard.'
+    },
+    {
+      name: 'Delivery',
+      content:
+        'our delivery when and where you want it!, DPD convenient one hour delivery window notified on the morning of your delivery, choose your preferred delivery day up two weeks in advance via our integrated check out, (Saturday, Sunday & AM deliveries charge extra), or choose to have your parcel delivered to your nearest DPD click & collect Pick Up Point. FREE DELIVERY TO MAINLAND U.K. on all orders £50 and over in value by DPD Courier on weekdays during normal working hours. £4.99 charge for all orders below £50 in value (delivery by DPD Courier) £2.00 charge for all orders below £25 in value (delivery by Royal Mail 3-7 working days). (Excludes Kitchen Trolleys For Delivery To Scottish Highlands) '
+    },
+    {
+      name: 'Returns',
+      content:
+        'UK Mainland customers who are not delighted with their purchases for any reason whatsoever may return their products within 28 days and request a full no-quibble refund. (In accordance with the terms below) Upon receipt of the purchases we will give you a full refund of the amount paid or an exchange credit as required.'
+    }
+  ]
+};
+
 export default {
   defaults: {},
   resolvers: {
@@ -238,7 +285,8 @@ export default {
       footerSections: () => footerSections,
       languages: () => languages,
       breadcrumbs: () => breadcrumbs,
-      sortOrders: () => sortOrders
+      sortOrders: () => sortOrders,
+      product: () => Product
     }
   }
 };

@@ -8,7 +8,7 @@ import { ThemeProvider } from '@deity/falcon-ui';
 import DynamicRoute from '@deity/falcon-client/src/components/DynamicRoute';
 import isOnline from '@deity/falcon-client/src/components/isOnline';
 import logo from 'src/assets/logo.png';
-import { AppLayout, Header, Footer, Category } from '@deity/falcon-ecommerce-uikit';
+import { AppLayout, Header, Footer, Category, Product } from '@deity/falcon-ecommerce-uikit';
 import { deityGreenTheme } from './theme';
 
 const HeadMetaTags = () => (
@@ -38,6 +38,7 @@ const App = ({ online }) => (
       {!online && <p>your are offline.</p>}
       <Switch>
         <Route exact path="/" component={Home} />
+        <Route exact path="/product" component={Product} />
         <Route exact path="/products" component={Category} />
 
         <DynamicRoute

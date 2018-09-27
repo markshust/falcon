@@ -1,13 +1,10 @@
 import React from 'react';
-import { Link as RouterLink } from 'react-router-dom';
+
 import gql from 'graphql-tag';
 import {
   themed,
   H1,
   Text,
-  Breadcrumbs,
-  Breadcrumb,
-  Link,
   Divider,
   Button,
   Box,
@@ -20,6 +17,7 @@ import {
 
 import { Query } from './Query';
 import { ProductsList } from './Products';
+import { Breadcrumbs } from './Breadcrumbs';
 
 const CategoryLayout = themed({
   tag: 'div',
@@ -35,18 +33,6 @@ const CategoryLayout = themed({
     }
   }
 });
-
-export const BreadcrumbsSection: React.SFC<{ breadcrumbs: any }> = ({ breadcrumbs }) => (
-  <Breadcrumbs>
-    {breadcrumbs.map((breadcrumb: any, index: number) => (
-      <Breadcrumb key={breadcrumb.name} current={breadcrumbs.length - 1 === index}>
-        <Link as={RouterLink} to={breadcrumb.url}>
-          {breadcrumb.name}
-        </Link>
-      </Breadcrumb>
-    ))}
-  </Breadcrumbs>
-);
 
 export const SortOrderDropdown: React.SFC<any> = ({ sortOrders, onChange }) => {
   const activeSortOrder = sortOrders.filter((sortOrder: any) => sortOrder.active)[0];
@@ -95,7 +81,7 @@ export const Category = () => (
   <Query query={GET_PRODUCTS}>
     {data => (
       <CategoryLayout>
-        <BreadcrumbsSection breadcrumbs={data.breadcrumbs} />
+        <Breadcrumbs breadcrumbs={data.breadcrumbs} />
         <H1>Pots & Pans</H1>
         <CategoryToolbar sortOrders={data.sortOrders} />
         <Divider />
