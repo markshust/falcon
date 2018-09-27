@@ -66,25 +66,48 @@ export const ProductDetailsLayout = themed({
 });
 
 const GET_PRODUCT = gql`
-  query {
-    product @client
-    breadcrumbs @client
+  query GET_PRODUCT($id: Int!) {
+    product(id: $id) {
+      id
+      sku
+      name
+      description
+      price
+      gallery {
+        type
+        full
+        thumbnail
+        embedUrl
+      }
+      seo {
+        title
+        description
+        keywords
+      }
+      breadcrumbs {
+        id
+        name
+        urlPath
+        urlKey
+        urlQuery
+      }
+    }
   }
 `;
 
-export const Product = () => (
-  <Query query={GET_PRODUCT}>
-    {({ product, breadcrumbs }) => (
+export const Product = (props: { id: number }) => (
+  <Query query={GET_PRODUCT} variables={{ id: props.id }}>
+    {({ product }) => (
       <ProductLayout>
-        <Breadcrumbs breadcrumbs={breadcrumbs} />
+        {/* <Breadcrumbs breadcrumbs={breadcrumbs} /> */}
         <ProductDetailsLayout>
           <Box gridArea={Area.gallery}>
-            <Image src={product.images[0].url} />
+            <Image src={product.gallery[0].full} />
           </Box>
           <Text fontSize="sm" gridArea={Area.sku}>
             {`SKU: ${product.sku}`}
           </Text>
-          <H1 gridArea={Area.title}>{product.title}</H1>
+          <H1 gridArea={Area.title}>{product.name}</H1>
           <Text fontSize="xxl" gridArea={Area.price}>
             {product.price}
           </Text>
@@ -98,7 +121,8 @@ export const Product = () => (
             </Button>
           </FlexLayout>
           <Box gridArea={Area.meta} my="lg">
-            <ProductMeta meta={product.meta} />
+            meta
+            {/* <ProductMeta meta={product.meta} /> */}
           </Box>
         </ProductDetailsLayout>
       </ProductLayout>
