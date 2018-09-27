@@ -164,8 +164,7 @@ export const Product = (props: { id: number }) => (
             </Button>
           </FlexLayout>
           <Box gridArea={Area.meta} my="lg">
-            meta
-            {/* <ProductMeta meta={product.meta} /> */}
+            {/* <ProductMeta meta={product.seo} /> */}
           </Box>
         </ProductDetailsLayout>
       </ProductLayout>
