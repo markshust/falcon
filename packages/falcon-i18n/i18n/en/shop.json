@@ -1,3 +1,15 @@
 {
-  "title": "Shop page"
+  "product": {
+    "sku": "Sku",
+    "inStock": "In stock",
+    "notInStock": "Not in stock",
+    "reviews": "{{count}} review",
+    "reviews_plural": "{{count}} reviews",
+    "addToCart": "Add to cart",
+    "tabs": {
+      "description": "Description",
+      "moreInformation": "More information",
+      "reviews": "Reviews ({{count}})"
+    }
+  }
 }
