@@ -25,11 +25,7 @@ async function injectManifest() {
         'build/public': ''
       },
       templatedUrls: {
-        '/app-shell': [
-          'build/public/static/js/@(client|vendor)*.js',
-          'build/public/static/css/bundle*.css',
-          'build/server.js'
-        ]
+        '/app-shell': ['build/public/static/@(js|css)/@(client|vendor|bundle)*.@(js|css)', 'build/server.js']
       },
       dontCacheBustUrlsMatching: /\/static\/.*/
     };
