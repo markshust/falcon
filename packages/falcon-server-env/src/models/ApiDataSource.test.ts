@@ -248,5 +248,18 @@ describe('ApiDataSource', () => {
         'http://example.com/api/info?str=str&foo%5Bbar%5D=true&foo%5Bnested%5D%5Bfoo%5D=1&arr%5B0%5D=1&arr%5B1%5D=2'
       );
     });
+
+    it('Should pass "memoizedResults" map for GET requests', async () => {
+      const customApi: CustomApiDataSource = new CustomApiDataSource({
+        config: { host: 'example.com' }
+      });
+      const didReceiveResponseSpy: jest.SpyInstance = jest.spyOn(customApi, 'didReceiveResponse');
+
+      await customApi.initialize({ context: {} });
+      await customApi.getInfo();
+      expect(didReceiveResponseSpy).toHaveBeenCalledTimes(1);
+      await customApi.getInfo();
+      expect(didReceiveResponseSpy).toHaveBeenCalledTimes(2);
+    });
   });
 });

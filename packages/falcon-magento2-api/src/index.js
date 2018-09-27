@@ -2,7 +2,6 @@ const qs = require('qs');
 const isEmpty = require('lodash/isEmpty');
 const pick = require('lodash/pick');
 const { htmlHelpers } = require('@deity/falcon-server-env');
-const cheerio = require('cheerio');
 
 const Magento2ApiBase = require('./Magento2ApiBase');
 
@@ -386,28 +385,16 @@ module.exports = class Magento2Api extends Magento2ApiBase {
       }
     }
 
-    let content;
-
     if (customAttributes && !isEmpty(customAttributes)) {
       const { description, metaTitle, metaDescription, metaKeyword } = customAttributes;
 
-      content = description;
+      data.description = description;
 
       data.seo = {
         title: metaTitle,
         description: metaDescription,
         keywords: metaKeyword
       };
-    }
-
-    if (content) {
-      const htmlContent = cheerio.load(content);
-      const videos = htmlContent('video');
-
-      if (videos) {
-        htmlContent('video').wrap('<span class="videoPlayer"></span>');
-        data.description = htmlContent.html();
-      }
     }
 
     return response;
@@ -449,9 +436,11 @@ module.exports = class Magento2Api extends Magento2ApiBase {
   reduceUrl(data, currency = null) {
     const type = data.entity_type;
     const entityData = data[type.replace('-', '_')];
+    // unify the types so client receives 'shop-page, 'shop-product', 'shop-category, etc.
+    const unifiedType = `shop-${type.replace('cms-', '')}`;
 
     if (entityData === null) {
-      return { id: data.entity_id, type };
+      return { id: data.entity_id, type: unifiedType };
     }
 
     let reducer;
@@ -468,7 +457,7 @@ module.exports = class Magento2Api extends Magento2ApiBase {
 
     const reducedEntityData = reducer.call(this, { data: entityData }, currency);
 
-    return Object.assign(reducedEntityData.data, { type });
+    return Object.assign(reducedEntityData.data, { type: unifiedType });
   }
 
   /**
