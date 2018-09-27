@@ -85,13 +85,16 @@ const Option: React.SFC<{ option: any }> = ({ option }) => (
   </Box>
 );
 
-const ProductOptions: React.SFC<{ options: any }> = ({ options }) => (
+const ProductOptions: React.SFC<{ options: any[] }> = ({ options }) => (
   <Box>
-    {options.map((option: any) => (
+    {options.map(option => (
       <Option key={option.id} option={option} />
     ))}
   </Box>
 );
+ProductOptions.defaultProps = {
+  options: []
+};
 
 const GET_PRODUCT = gql`
   query GET_PRODUCT($id: Int!) {
@@ -106,6 +109,17 @@ const GET_PRODUCT = gql`
         full
         thumbnail
         embedUrl
+      }
+      configurableOptions {
+        id
+        attributeId
+        label
+        productId
+        values {
+          valueIndex
+          label
+          inStock
+        }
       }
       seo {
         title
@@ -130,7 +144,7 @@ export const Product = (props: { id: number }) => (
         {/* <Breadcrumbs breadcrumbs={breadcrumbs} /> */}
         <ProductDetailsLayout>
           <Box gridArea={Area.gallery} css={{ maxHeight: '100%' }}>
-            <ProductGallery items={product.gallery} />
+            {/* <ProductGallery items={product.gallery} /> */}
           </Box>
           <Text fontSize="sm" gridArea={Area.sku}>
             {`SKU: ${product.sku}`}
