@@ -39,23 +39,19 @@ const App = ({ online }) => (
       <Switch>
         <Route exact path="/" component={Home} />
         <Route exact path="/products" component={Category} />
-        <Route
-          exact
-          path="/*"
-          component={({ match }) => (
-            <DynamicRoute
-              match={match}
-              components={{
-                'cms-page': import(/* webpackChunkName: "shop/cms" */ './pages/shop/Cms'),
-                product: import(/* webpackChunkName: "shop/product" */ './pages/shop/Product'),
-                category: import(/* webpackChunkName: "shop/category" */ './pages/shop/Category'),
-                'wp-post': null,
-                'wp-page': null,
-                'wp-category': null
-              }}
-            />
-          )}
+
+        <DynamicRoute
+          components={{
+            'cms-page': import(/* webpackChunkName: "shop/cms" */ './pages/shop/Cms'),
+            product: import(/* webpackChunkName: "shop/product" */ './pages/shop/Product'),
+            category: import(/* webpackChunkName: "shop/category" */ './pages/shop/Category'),
+            'wp-post': null,
+            'wp-page': null,
+            'wp-category': null
+          }}
         />
+
+        {/* <Route component={NotFound} /> */}
       </Switch>
       <Footer />
     </AppLayout>

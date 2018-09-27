@@ -1,5 +1,5 @@
 import React from 'react';
-import Redirect from 'react-router-dom/Redirect';
+// import { Route, Redirect, Switch } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import gql from 'graphql-tag';
 import { Query } from 'react-apollo';
@@ -21,8 +21,9 @@ const Error500 = ({ message }) => (
 );
 
 const DynamicRoute = props => {
-  const { components, match } = props;
-  const path = match.params[0];
+  const { components, location } = props;
+  const { pathname } = location;
+  const path = pathname.startsWith('/') ? pathname.substring(1) : pathname;
 
   return (
     <Query
@@ -47,7 +48,7 @@ const DynamicRoute = props => {
         }
 
         if (!data || data.url === null) {
-          return <Redirect to="/not-found" />;
+          return <p>not found</p>;
         }
 
         const { type } = data.url;
@@ -81,3 +82,59 @@ DynamicRoute.propTypes = {
 };
 
 export default DynamicRoute;
+
+// const DynamicSwitch = props => {
+//   const { components, location } = props;
+//   const { pathname } = location;
+//   const path = pathname.startsWith('/') ? pathname.substring(1) : pathname;
+
+//   return (
+//     <Query
+//       query={gql`
+//         query URL($path: String!) {
+//           url(path: $path) {
+//             id
+//             path
+//             type
+//           }
+//         }
+//       `}
+//       variables={{ path }}
+//     >
+//       {({ loading, error, data }) => {
+//         if (loading) {
+//           return <Loader />;
+//         }
+
+//         if (error) {
+//           return <Error500 message={error.message} />;
+//         }
+
+//         return <Switch location={{ pathname: '' }} />;
+
+//         if (!data || data.url === null) {
+//           // return <Redirect to="/not-found" />;
+//         }
+
+//         const { type } = data.url;
+//         const component = components[type];
+//         if (!component) {
+//           return null;
+//         }
+
+//         if (isPromise(component)) {
+//           return React.createElement(
+//             asyncComponent({
+//               resolve: () => component,
+//               LoadingComponent: Loader,
+//               ErrorComponent: Error500
+//             }),
+//             { ...data.url }
+//           );
+//         }
+
+//         return React.createElement(component, { ...data.url });
+//       }}
+//     </Query>
+//   );
+// };

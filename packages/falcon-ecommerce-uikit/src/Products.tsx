@@ -38,8 +38,8 @@ export const ProductListLayout = themed({
 export const ProductsList: React.SFC<{ products: any }> = ({ products }) => (
   <ProductListLayout>
     {products.map((product: any) => (
-      <ProductCard key={product.src}>
-        <Image flex="1 1 0%" css={{ minHeight: 0 }} src={product.src} />
+      <ProductCard key={product.id}>
+        <Image flex="1 1 0%" css={{ minHeight: 0 }} src={product.thumbnail} />
         <Text ellipsis fontWeight="bold">
           {product.name}
         </Text>
@@ -48,10 +48,20 @@ export const ProductsList: React.SFC<{ products: any }> = ({ products }) => (
     ))}
   </ProductListLayout>
 );
+
 const GET_PRODUCTS = gql`
   query {
-    products @client
+    products {
+      items {
+        id
+        name
+        price
+        thumbnail
+      }
+    }
   }
 `;
 
-export const Products = () => <Query query={GET_PRODUCTS}>{data => <ProductsList products={data.products} />}</Query>;
+export const Products = () => (
+  <Query query={GET_PRODUCTS}>{({ products }) => <ProductsList products={products.items} />}</Query>
+);
