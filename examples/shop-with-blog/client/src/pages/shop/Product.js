@@ -1,6 +1,12 @@
 import React from 'react';
-// import { translate } from 'react-i18next';
+import PropTypes from 'prop-types';
 import { ProductQuery, Product } from '@deity/falcon-ecommerce-uikit';
 
-export default ({ id }) => <ProductQuery id={id}>{x => <Product product={x} />}</ProductQuery>;
+const ProductPage = ({ id }) => <ProductQuery id={id}>{x => <Product product={x} />}</ProductQuery>;
+ProductPage.propTypes = {
+  id: PropTypes.number.isRequired
+};
+
+export default ProductPage;
+
 // export default translate('shop')(Product);
