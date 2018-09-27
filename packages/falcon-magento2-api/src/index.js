@@ -1,8 +1,12 @@
 const qs = require('qs');
 const isEmpty = require('lodash/isEmpty');
 const pick = require('lodash/pick');
+const has = require('lodash/has');
 const { htmlHelpers } = require('@deity/falcon-server-env');
+const isPlainObject = require('lodash/isPlainObject');
+const addMinutes = require('date-fns/add_minutes');
 
+const Logger = require('@deity/falcon-logger');
 const Magento2ApiBase = require('./Magento2ApiBase');
 
 /**
@@ -367,9 +371,7 @@ module.exports = class Magento2Api extends Magento2ApiBase {
         data.stock = pick(stockItem, 'qty', 'isInStock');
       }
 
-      if (configurableProductOptions) {
-        data.configurableOptions = configurableProductOptions;
-      }
+      data.configurableOptions = configurableProductOptions || [];
 
       if (bundleProductOptions) {
         // remove extension attributes for option product links
@@ -504,7 +506,7 @@ module.exports = class Magento2Api extends Magento2ApiBase {
    * @param {number} id = product id called by magento entity_id
    * @return {Object} - product data
    */
-  async fetchProductById({ id, storeCode, currency }) {
+  async fetchProduct({ id, storeCode, currency }) {
     const urlPath = `catalog/product/view/id/${id}`;
 
     return this.fetchUrl({ path: urlPath, loadEntityData: true, storeCode, currency });
@@ -667,7 +669,7 @@ module.exports = class Magento2Api extends Magento2ApiBase {
 
   /**
    * Get cart data
-   * @param {Object} params - data for the cart requst
+   * @param {Object} params - data for the cart request
    * @return {Promise<Object>} - customer cart data
    */
   async fetchCart(params) {
@@ -680,17 +682,24 @@ module.exports = class Magento2Api extends Magento2ApiBase {
 
     // todo avoid calling both endpoints if not necessary
     const cartPath = this.getCartPath(params);
-    // const cartRequest = { path: cartPath, storeCode, customerToken };
-    // const totalsRequest = { path: `${cartPath}/totals`, storeCode, customerToken };
-    const [{ data: quoteData }, { data: totalsData }] = await Promise.all([
-      // this.request(cartRequest),
-      // this.request(totalsRequest)
-      this.get(cartPath, {}, { context: { storeCode, customerToken } }),
-      this.get(`${cartPath}/totals`, {}, { context: { storeCode, customerToken } })
+    const [{ data: quote }, { data: totals }] = await Promise.all([
+      this.get(
+        cartPath,
+        {},
+        {
+          context: { storeCode, customerToken, didReceiveResult: result => this.convertKeys(result) }
+        }
+      ),
+      this.get(
+        `${cartPath}/totals`,
+        {},
+        {
+          context: { storeCode, customerToken, didReceiveResult: result => this.convertKeys(result) }
+        }
+      )
     ]);
 
-    const [quote, totals] = this.convertKeys([quoteData, totalsData]);
-
+    // return this.convertCartData(deepCopy(quote), deepCopy(totals));
     return this.convertCartData(quote, totals);
   }
 
@@ -745,5 +754,182 @@ module.exports = class Magento2Api extends Magento2ApiBase {
     });
 
     return quoteData;
+  }
+
+  /**
+   * Make request for customer token
+   * @param {Object} data - form data
+   * @param {String} data.email - user email
+   * @param {String} data.password - user password
+   * @param {Object} session - session object
+   * @returns {Promise<boolean>} true if login was successful
+   */
+  async signIn(data, session) {
+    const { email, password } = data;
+    const { storeCode, cart: { quoteId = null } = {} } = session;
+
+    try {
+      const response = await this.post(
+        '/integration/customer/token',
+        {
+          username: email,
+          password,
+          guest_quote_id: quoteId
+        },
+        {
+          context: {
+            storeCode
+          }
+        }
+      );
+
+      // depending on deity-magento-api module response may be a string with token (up until and including v1.0.1)
+      // or a hash with token and valid time setting (after v1.0.1)
+      const { token, validTime } = isPlainObject(response.data)
+        ? this.convertKeys(response.data)
+        : { token: response.data };
+      const customerTokenObject = { token };
+
+      if (validTime) {
+        // calculate token expiration date and subtract 5 minutes for margin
+        const tokenTimeInMinutes = validTime * 60 - 5;
+        const tokenExpirationTime = addMinutes(Date.now(), tokenTimeInMinutes);
+
+        // save expiration time as unix timestamp in milliseconds
+        customerTokenObject.expirationTime = tokenExpirationTime.getTime();
+        Logger.debug(`Customer token valid for ${validTime} hours, till ${tokenExpirationTime.toString()}`);
+      }
+      session.customerToken = customerTokenObject;
+
+      // Remove guest cart. Magento merges guest cart with cart of authorized user so we'll have to refresh it
+      delete session.cart;
+      // make sure that cart is correctly loaded for signed in user
+      await this.ensureCart(session);
+
+      // true when user signed in correctly
+      return true;
+    } catch (e) {
+      // todo: use new version of error handler
+      // wrong password or login is not an internal error.
+      if (e.statusCode === 401) {
+        // todo: this is how old version of the extension worked - it needs to be adapted to the new way of error handling
+        e.userMessage = true;
+        e.noLogging = true;
+      }
+      throw e;
+    }
+  }
+
+  /**
+   * Log out customer.
+   * todo revoke customer token using Magento api
+   * @param {Object} session - session object
+   * @returns {Promise<boolean>} true
+   */
+  async signOut(session) {
+    /* Remove logged in customer data */
+    delete session.customerToken;
+    delete session.cart;
+
+    return true;
+  }
+
+  /**
+   * Create customer account
+   * @param {Object} data - registration form data
+   * @param {String} data.email - customer email
+   * @param {String} data.firstname - customer first name
+   * @param {String} data.lastname - customer last name
+   * @param {String} data.password - customer password
+   * @param {Object} params - request params
+   * @param {String} params.storeCode - current store code
+   * @param {Object} params.cart - customer cart
+   * @param {(String|Number)} params.cart.quoteId - cart id
+   * @returns {Promise<Object>} - new customer data
+   */
+  async signUp(data, params) {
+    const { email, firstname, lastname, password } = data;
+    const { storeCode, cart: { quoteId = null } = {} } = params;
+    const customerData = {
+      customer: {
+        email,
+        firstname,
+        lastname,
+        extension_attributes: {
+          guest_quote_id: quoteId
+        }
+      },
+      password
+    };
+
+    try {
+      return this.post('/customers', customerData, {
+        context: {
+          storeCode,
+          didReceiveResult: result => this.convertKeys(result)
+        }
+      });
+    } catch (e) {
+      // todo: use new version of error handler
+
+      // code 400 is returned if password validation fails or given email is already registered
+      if (e.statusCode === 400) {
+        e.userMessage = true;
+        e.noLogging = true;
+      }
+      throw e;
+    }
+  }
+
+  /**
+   * Fetch customer data
+   * @param {Object} params - object with storeCode and customerToken
+   * @return {Promise.<Object>} - converted customer data
+   */
+  async fetchCustomer(params) {
+    const { storeCode, customerToken = {} } = params;
+
+    if (!customerToken.token) {
+      throw new Error('Customer token is required.');
+    }
+
+    const response = await this.get(
+      '/customers/me',
+      {},
+      {
+        context: {
+          storeCode,
+          customerToken
+        }
+      }
+    );
+
+    const convertedData = this.convertKeys(response.data);
+    convertedData.addresses = convertedData.addresses.map(addr => this.convertAddressData(addr));
+
+    const { extensionAttributes = {} } = convertedData;
+    if (!isEmpty(extensionAttributes)) {
+      delete convertedData.extensionAttributes;
+    }
+
+    return { ...convertedData, ...extensionAttributes };
+  }
+
+  convertAddressData(response) {
+    response = this.convertKeys(response);
+
+    if (!has(response, 'defaultBilling')) {
+      response.defaultBilling = false;
+    }
+
+    if (!has(response, 'defaultShipping')) {
+      response.defaultShipping = false;
+    }
+
+    if (isPlainObject(response.region)) {
+      response.region = response.region.region;
+    }
+
+    return response;
   }
 };

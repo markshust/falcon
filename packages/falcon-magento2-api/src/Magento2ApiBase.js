@@ -189,6 +189,20 @@ module.exports = class Magento2ApiBase extends ApiDataSource {
   }
 
   /**
+   * Check if admin token is still valid
+   * @param {Object} customerTokenObject - customer token data
+   * @param {String} [customerTokenObject.token] - token
+   * @param {Number} [customerTokenObject.expirationTime] - token expiration time
+   * @returns {boolean} - true if token is valid
+   */
+  isCustomerTokenValid(customerTokenObject) {
+    return (
+      (customerTokenObject.expirationTime && customerTokenObject.expirationTime > Date.now()) ||
+      !customerTokenObject.expirationTime
+    );
+  }
+
+  /**
    * Get Magento api authorized admin token or perform request to create it.
    * @return {string} token value
    */
