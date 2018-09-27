@@ -367,9 +367,7 @@ module.exports = class Magento2Api extends Magento2ApiBase {
         data.stock = pick(stockItem, 'qty', 'isInStock');
       }
 
-      if (configurableProductOptions) {
-        data.configurableOptions = configurableProductOptions;
-      }
+      data.configurableOptions = configurableProductOptions || [];
 
       if (bundleProductOptions) {
         // remove extension attributes for option product links
