@@ -1,5 +1,5 @@
 import React from 'react';
-// import { Route, Redirect, Switch } from 'react-router-dom';
+import { Redirect } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import gql from 'graphql-tag';
 import { Query } from 'react-apollo';
@@ -30,9 +30,10 @@ const DynamicRoute = props => {
       query={gql`
         query URL($path: String!) {
           url(path: $path) {
+            type
+            redirect
             id
             path
-            type
           }
         }
       `}
@@ -52,6 +53,11 @@ const DynamicRoute = props => {
         }
 
         const { url } = data;
+
+        if (url.redirect) {
+          return <Redirect to={`/${url.path}`} />;
+        }
+
         const component = components[url.type];
         if (!component) {
           return null;
