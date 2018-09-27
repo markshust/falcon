@@ -1,9 +1,10 @@
 import React from 'react';
 import gql from 'graphql-tag';
-import { themed, Box, Image, Text, H1, NumberInput, Button, Icon, FlexLayout } from '@deity/falcon-ui';
+import { themed, Box, Radio, Text, H3, H1, NumberInput, Button, Icon, FlexLayout } from '@deity/falcon-ui';
 import { Query } from './Query';
 import { Breadcrumbs } from './Breadcrumbs';
 import { ProductMeta } from './ProductMeta';
+import { ProductGallery } from './ProductGallery';
 
 export const ProductLayout = themed({
   tag: 'div',
@@ -26,7 +27,8 @@ enum Area {
   cta = 'cta',
   price = 'price',
   meta = 'meta',
-  empty = 'empty'
+  empty = 'empty',
+  options = 'options'
 }
 
 export const ProductDetailsLayout = themed({
@@ -45,6 +47,7 @@ export const ProductDetailsLayout = themed({
           [Area.sku],
           [Area.gallery],
           [Area.price],
+          [Area.options],
           [Area.cta],
           [Area.description],
           [Area.meta]
@@ -53,6 +56,7 @@ export const ProductDetailsLayout = themed({
           [Area.gallery, Area.sku],
           [Area.gallery, Area.title],
           [Area.gallery, Area.price],
+          [Area.gallery, Area.options],
           [Area.gallery, Area.cta],
           [Area.gallery, Area.description],
           [Area.gallery, Area.meta]
@@ -64,6 +68,30 @@ export const ProductDetailsLayout = themed({
     }
   }
 });
+
+const Option: React.SFC<{ option: any }> = ({ option }) => (
+  <Box mb="md">
+    <H3 mb="md">{option.label}</H3>
+    {option.values.map((value: any) => (
+      <Radio
+        key={value.valueIndex}
+        mr="sm"
+        icon={<div>{value.label}</div>}
+        size={55}
+        name={option.attributeId}
+        value={value.valueIndex}
+      />
+    ))}
+  </Box>
+);
+
+const ProductOptions: React.SFC<{ options: any }> = ({ options }) => (
+  <Box>
+    {options.map((option: any) => (
+      <Option key={option.id} option={option} />
+    ))}
+  </Box>
+);
 
 const GET_PRODUCT = gql`
   query GET_PRODUCT($id: Int!) {
@@ -101,8 +129,8 @@ export const Product = (props: { id: number }) => (
       <ProductLayout>
         {/* <Breadcrumbs breadcrumbs={breadcrumbs} /> */}
         <ProductDetailsLayout>
-          <Box gridArea={Area.gallery}>
-            <Image src={product.gallery[0].full} />
+          <Box gridArea={Area.gallery} css={{ maxHeight: '100%' }}>
+            <ProductGallery items={product.gallery} />
           </Box>
           <Text fontSize="sm" gridArea={Area.sku}>
             {`SKU: ${product.sku}`}
@@ -111,6 +139,7 @@ export const Product = (props: { id: number }) => (
           <Text fontSize="xxl" gridArea={Area.price}>
             {product.price}
           </Text>
+          <ProductOptions options={product.configurableOptions} />
           <Box gridArea={Area.description}>{product.description}</Box>
 
           <FlexLayout alignItems="center" gridArea={Area.cta}>
