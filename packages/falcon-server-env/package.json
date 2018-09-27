@@ -45,8 +45,8 @@
   },
   "dependencies": {
     "@deity/falcon-logger": "^1.0.0",
-    "apollo-datasource": "^0.1.3",
-    "apollo-datasource-rest": "^0.1.5",
+    "apollo-datasource": "0.1.3",
+    "apollo-datasource-rest": "0.1.5",
     "apollo-server-env": "^2.0.3",
     "graphql": "^14.0.2",
     "html-entities": "^1.2.1",
@@ -64,6 +64,6 @@
     "rimraf": "^2.6.2",
     "koa-router": "^7.4.0",
     "nock": "^10.0.0",
-    "ts-jest": "^23.10.1"
+    "ts-jest": "^23.10.2"
   }
 }
