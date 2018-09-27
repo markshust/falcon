@@ -160,6 +160,14 @@ export default abstract class ApiDataSource<TContext = any> extends RESTDataSour
     return result;
   }
 
+  protected cacheKeyFor(request: Request): string {
+    const cacheKey: string = super.cacheKeyFor(request);
+    // Note: temporary disabling "memoized" map due to issues with GraphQL resolvers,
+    // GET-requests in particular ("fetchUrl" query)
+    this.memoizedResults.delete(cacheKey);
+    return cacheKey;
+  }
+
   private ensureContextPassed(init?: ContextRequestInit): void {
     init = init || {};
 
