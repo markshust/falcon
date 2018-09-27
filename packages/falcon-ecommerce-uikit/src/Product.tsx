@@ -96,7 +96,7 @@ ProductOptions.defaultProps = {
   options: []
 };
 
-const GET_PRODUCT = gql`
+export const GET_PRODUCT = gql`
   query GET_PRODUCT($id: Int!) {
     product(id: $id) {
       id
@@ -137,37 +137,42 @@ const GET_PRODUCT = gql`
   }
 `;
 
-export const Product = (props: { id: number }) => (
-  <Query query={GET_PRODUCT} variables={{ id: props.id }}>
-    {({ product }) => (
-      <ProductLayout>
-        {/* <Breadcrumbs breadcrumbs={breadcrumbs} /> */}
-        <ProductDetailsLayout>
-          <Box gridArea={Area.gallery} css={{ maxHeight: '100%' }}>
-            {/* <ProductGallery items={product.gallery} /> */}
-          </Box>
-          <Text fontSize="sm" gridArea={Area.sku}>
-            {`SKU: ${product.sku}`}
-          </Text>
-          <H1 gridArea={Area.title}>{product.name}</H1>
-          <Text fontSize="xxl" gridArea={Area.price}>
-            {product.price}
-          </Text>
-          <ProductOptions options={product.configurableOptions} />
-          <Box gridArea={Area.description}>{product.description}</Box>
-
-          <FlexLayout alignItems="center" gridArea={Area.cta}>
-            <NumberInput defaultValue="1" mr="md" />
-            <Button>
-              <Icon src="cart" stroke="white" size={20} mr="sm" />
-              Add to basket
-            </Button>
-          </FlexLayout>
-          <Box gridArea={Area.meta} my="lg">
-            {/* <ProductMeta meta={product.seo} /> */}
-          </Box>
-        </ProductDetailsLayout>
-      </ProductLayout>
-    )}
+export const ProductQuery: React.SFC<{
+  id: number;
+  children: (data: any) => React.ReactNode;
+}> = ({ id, children }) => (
+  <Query query={GET_PRODUCT} variables={{ id }}>
+    {({ product }) => children(product)}
   </Query>
+);
+
+export const Product: React.SFC<{ product: any }> = ({ product }) => (
+  <ProductLayout>
+    {/* <Breadcrumbs breadcrumbs={breadcrumbs} /> */}
+    <ProductDetailsLayout>
+      <Box gridArea={Area.gallery} css={{ maxHeight: '100%' }}>
+        {/* <ProductGallery items={product.gallery} /> */}
+      </Box>
+      <Text fontSize="sm" gridArea={Area.sku}>
+        {`SKU: ${product.sku}`}
+      </Text>
+      <H1 gridArea={Area.title}>{product.name}</H1>
+      <Text fontSize="xxl" gridArea={Area.price}>
+        {product.price}
+      </Text>
+      <ProductOptions options={product.configurableOptions} />
+      <Box gridArea={Area.description}>{product.description}</Box>
+
+      <FlexLayout alignItems="center" gridArea={Area.cta}>
+        <NumberInput defaultValue="1" mr="md" />
+        <Button>
+          <Icon src="cart" stroke="white" size={20} mr="sm" />
+          Add to basket
+        </Button>
+      </FlexLayout>
+      <Box gridArea={Area.meta} my="lg">
+        {/* <ProductMeta meta={product.seo} /> */}
+      </Box>
+    </ProductDetailsLayout>
+  </ProductLayout>
 );
