@@ -51,12 +51,16 @@ const DynamicRoute = props => {
           return <p>not found</p>;
         }
 
-        const { type } = data.url;
-        const component = components[type];
+        const { url } = data;
+        const component = components[url.type];
         if (!component) {
           return null;
         }
 
+        const componentProps = {
+          id: url.id,
+          path: url.path
+        };
         if (isPromise(component)) {
           return React.createElement(
             asyncComponent({
@@ -64,11 +68,11 @@ const DynamicRoute = props => {
               LoadingComponent: Loader,
               ErrorComponent: Error500
             }),
-            { ...data.url }
+            { ...componentProps }
           );
         }
 
-        return React.createElement(component, { ...data.url });
+        return React.createElement(component, { ...componentProps });
       }}
     </Query>
   );
