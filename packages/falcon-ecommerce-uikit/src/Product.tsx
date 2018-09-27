@@ -2,8 +2,8 @@ import React from 'react';
 import gql from 'graphql-tag';
 import { themed, Box, Radio, Text, H3, H1, NumberInput, Button, Icon, FlexLayout } from '@deity/falcon-ui';
 import { Query } from './Query';
-import { Breadcrumbs } from './Breadcrumbs';
-import { ProductMeta } from './ProductMeta';
+// import { Breadcrumbs } from './Breadcrumbs';
+// import { ProductMeta } from './ProductMeta';
 import { ProductGallery } from './ProductGallery';
 
 export const ProductLayout = themed({
@@ -39,7 +39,7 @@ export const ProductDetailsLayout = themed({
       gridGap: 'md',
       gridTemplateColumns: {
         xs: '1fr',
-        sm: '1fr 1fr'
+        md: '1.5fr 1fr'
       },
       gridTemplateAreas: {
         xs: asGridAreas([
@@ -52,7 +52,7 @@ export const ProductDetailsLayout = themed({
           [Area.description],
           [Area.meta]
         ]),
-        sm: asGridAreas([
+        md: asGridAreas([
           [Area.gallery, Area.sku],
           [Area.gallery, Area.title],
           [Area.gallery, Area.price],
@@ -63,7 +63,7 @@ export const ProductDetailsLayout = themed({
         ])
       },
       gridTemplateRows: {
-        sm: 'auto auto auto auto 1fr auto'
+        md: 'auto auto auto auto 1fr auto'
       }
     }
   }
@@ -96,6 +96,20 @@ ProductOptions.defaultProps = {
   options: []
 };
 
+const ProductDescriptionLayout = themed({
+  tag: 'div',
+
+  defaultTheme: {
+    productDescriptionLayout: {
+      css: {
+        p: {
+          margin: 0
+        }
+      }
+    }
+  }
+});
+
 const GET_PRODUCT = gql`
   query GET_PRODUCT($id: Int!) {
     product(id: $id) {
@@ -104,11 +118,10 @@ const GET_PRODUCT = gql`
       name
       description
       price
+      currency
       gallery {
-        type
         full
         thumbnail
-        embedUrl
       }
       configurableOptions {
         id
@@ -144,17 +157,20 @@ export const Product = (props: { id: number }) => (
         {/* <Breadcrumbs breadcrumbs={breadcrumbs} /> */}
         <ProductDetailsLayout>
           <Box gridArea={Area.gallery} css={{ maxHeight: '100%' }}>
-            {/* <ProductGallery items={product.gallery} /> */}
+            <ProductGallery items={product.gallery} />
           </Box>
           <Text fontSize="sm" gridArea={Area.sku}>
             {`SKU: ${product.sku}`}
           </Text>
           <H1 gridArea={Area.title}>{product.name}</H1>
           <Text fontSize="xxl" gridArea={Area.price}>
-            {product.price}
+            {product.currency} {product.price}
           </Text>
           <ProductOptions options={product.configurableOptions} />
-          <Box gridArea={Area.description}>{product.description}</Box>
+          <ProductDescriptionLayout
+            dangerouslySetInnerHTML={{ __html: product.description }}
+            gridArea={Area.description}
+          />
 
           <FlexLayout alignItems="center" gridArea={Area.cta}>
             <NumberInput defaultValue="1" mr="md" />
