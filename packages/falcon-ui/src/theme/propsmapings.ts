@@ -167,6 +167,7 @@ export const mappings = propsMapping({
   gridTemplateColumns: {},
   gridTemplateAreas: {},
   gridArea: {},
+  gridTemplate: {},
 
   borderRadius: {
     themeProp: 'borderRadius'
