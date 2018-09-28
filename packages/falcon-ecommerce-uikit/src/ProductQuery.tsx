@@ -1,5 +1,6 @@
 import React from 'react';
 import gql from 'graphql-tag';
+import { I18n } from 'react-i18next';
 import { Query } from './Query';
 
 export const GET_PRODUCT = gql`
@@ -47,6 +48,19 @@ export const ProductQuery: React.SFC<{
   children: (data: any) => React.ReactNode;
 }> = ({ id, children }) => (
   <Query query={GET_PRODUCT} variables={{ id }}>
-    {({ product }) => children(product)}
+    {({ product }) => (
+      <I18n ns={['shop']}>
+        {t => {
+          const translations = {
+            sku: t('product.sku'),
+            tabs: {
+              reviews: '...'
+            }
+          };
+
+          return children({ product, translations });
+        }}
+      </I18n>
+    )}
   </Query>
 );
