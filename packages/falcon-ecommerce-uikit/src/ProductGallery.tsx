@@ -57,6 +57,7 @@ export class ProductGallery extends React.Component<{ items: Item[] }> {
         <Box gridArea="thumbs">
           {items.map((item, index) => (
             <Box
+              onClick={this.scrollToItem(index)}
               key={item.full}
               border="light"
               borderRadius="sm"
@@ -77,7 +78,7 @@ export class ProductGallery extends React.Component<{ items: Item[] }> {
               p="xs"
               css={{ cursor: 'pointer' }}
             >
-              <Image key={item.thumbnail} src={item.thumbnail} onClick={this.scrollToItem(index)} />
+              <Image key={item.thumbnail} src={item.thumbnail} />
             </Box>
           ))}
         </Box>
