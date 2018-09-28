@@ -43,7 +43,7 @@ export const GET_PRODUCT = gql`
   }
 `;
 
-function getTranslations(t: reactI18Next.TranslationFunction, product: any) {
+function getTranslations(t: reactI18Next.TranslationFunction /*, product: any*/) {
   return {
     sku: t('product.sku'),
     inStock: t('product.inStock'),
@@ -67,7 +67,7 @@ export class ProductQuery extends React.PureComponent<{
     return (
       <Query query={GET_PRODUCT} variables={{ id }}>
         {({ product }) => (
-          <I18n ns={['shop']}>{t => children({ data: product, translations: getTranslations(t, product) })}</I18n>
+          <I18n ns={['shop']}>{t => children({ data: product, translations: getTranslations(t) })}</I18n>
         )}
       </Query>
     );

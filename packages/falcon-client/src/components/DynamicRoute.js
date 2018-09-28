@@ -5,12 +5,12 @@ import gql from 'graphql-tag';
 import { Query } from 'react-apollo';
 import { asyncComponent } from 'react-async-component';
 
-function isPromise(object) {
-  if (Promise && Promise.resolve) {
-    return Promise.resolve(object) === object;
-  }
-  throw new Error('Promise not supported in your environment');
-}
+// function isPromise(object) {
+//   if (Promise && Promise.resolve) {
+//     return Promise.resolve(object) === object;
+//   }
+//   throw new Error('Promise not supported in your environment');
+// }
 
 const Loader = () => <p>Loading...</p>;
 const Error500 = ({ message }) => (
@@ -66,18 +66,18 @@ const DynamicRoute = props => {
           id: url.id,
           path: url.path
         };
-        if (isPromise(component)) {
-          return React.createElement(
-            asyncComponent({
-              resolve: () => component,
-              LoadingComponent: Loader,
-              ErrorComponent: Error500
-            }),
-            { ...componentProps }
-          );
-        }
+        // if (isPromise(component)) {
+        return React.createElement(
+          asyncComponent({
+            resolve: component,
+            LoadingComponent: Loader,
+            ErrorComponent: Error500
+          }),
+          { ...componentProps }
+        );
+        // }
 
-        return React.createElement(component, { ...componentProps });
+        // return React.createElement(component, { ...componentProps });
       }}
     </Query>
   );

@@ -43,14 +43,16 @@ const App = ({ online }) => (
 
         <DynamicRoute
           components={{
-            'shop-page': import(/* webpackChunkName: "shop/cms" */ './pages/shop/Cms'),
-            'shop-product': import(/* webpackChunkName: "shop/product" */ './pages/shop/Product'),
-            'shop-category': import(/* webpackChunkName: "shop/category" */ './pages/shop/Category'),
+            'shop-page': () => import(/* webpackChunkName: "shop/cms" */ './pages/shop/Cms'),
+            'shop-product': () => import(/* webpackChunkName: "shop/product" */ './pages/shop/Product'),
+            'shop-category': () => import(/* webpackChunkName: "shop/category" */ './pages/shop/Category'),
             'blog-post': null,
             'blog-page': null,
             'blog-category': null
           }}
         />
+
+        {/* <Route component={DynamicPage} /> */}
 
         {/* <Route component={NotFound} /> */}
       </Switch>
