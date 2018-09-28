@@ -932,4 +932,169 @@ module.exports = class Magento2Api extends Magento2ApiBase {
 
     return response;
   }
+
+  /**
+   * Fetch collection of customer orders
+   * @param {Object} params - request params
+   * @param {Object} params.query - request query params
+   * @param {Number} params.query.page - pagination page
+   * @param {Number} params.query.perPage - number of items per page
+   * @returns {{data, meta}|*} - array of order items
+   */
+  async fetchOrders(params) {
+    const {
+      query: { page, perPage },
+      storeCode,
+      customerToken = {}
+    } = params;
+
+    if (!customerToken.token) {
+      throw new Error('Trying to fetch customer orders without valid customer token');
+    }
+
+    const searchCriteria = {
+      currentPage: page,
+      sortOrders: [
+        {
+          field: 'created_at',
+          direction: 'desc'
+        }
+      ]
+    };
+
+    if (perPage) {
+      searchCriteria.pageSize = perPage;
+    }
+
+    const response = await this.get(
+      '/orders/mine',
+      { searchCriteria },
+      {
+        context: {
+          storeCode,
+          customerToken
+        }
+      }
+    );
+
+    return this.convertKeys(response.data);
+  }
+
+  /**
+   * Fetch info about customer order based on order id
+   * @param {Object} params - request params
+   * @param {String} params.customerToken - customer token
+   * @param {String} params.currency - selected currency
+   * @param {Object} params.query - request query params
+   * @param {Number} params.query.id - order id
+   * @param {String} params.storeCode - request params
+   * @returns {Promise<{Object}>} - order info
+   */
+  async fetchOrderById(params) {
+    const { storeCode, customerToken = {}, id } = params;
+
+    if (!id) {
+      Logger.error('Trying to fetch customer order info without order id');
+      throw new Error('Failed to load an order.');
+    }
+
+    if (!customerToken.token) {
+      Logger.error('Trying to fetch customer order info without customer token');
+      throw new Error('Failed to load an order.');
+    }
+
+    const result = this.get(
+      `/orders/${id}/order-info`,
+      {},
+      {
+        context: {
+          storeCode,
+          customerToken
+        }
+      }
+    );
+
+    return this.convertOrder(result);
+  }
+
+  /**
+   * Process customer order data
+   * @param {Object} response - response from Magento2 backend
+   * @return {Object} - processed response
+   */
+  convertOrder(response) {
+    const { data } = response;
+
+    if (!data || isEmpty(data)) {
+      return response;
+    }
+
+    response.data = this.convertKeys(response.data);
+    response.data.items = this.convertItemsResponse(data.items);
+    response = this.convertTotals(response);
+
+    const { extensionAttributes, payment } = data;
+
+    if (extensionAttributes) {
+      response.data.shippingAddress = extensionAttributes.shippingAddress;
+      delete response.data.extensionAttributes;
+    }
+
+    if (payment && payment.extensionAttributes) {
+      response.data.paymentMethodName = payment.extensionAttributes.methodName;
+      delete response.data.payment;
+    }
+
+    return response.data;
+  }
+
+  /**
+   * Update magento items collection response
+   *
+   * @param {Array} response - products bought
+   * @return {Array} - converted items
+   */
+  convertItemsResponse(response = []) {
+    const products = response.filter(item => item.productType === 'simple');
+
+    return products.map(item => {
+      // If product is configurable ask for parent_item price otherwise price is equal to 0
+      const product = item.parentItem || item;
+
+      product.itemOptions = product.options ? JSON.parse(product.options) : [];
+      product.qty = product.qtyOrdered;
+      product.rowTotalInclTax = product.basePriceInclTax;
+      product.link = `/${product.extensionAttributes.urlKey}.html`;
+      product.thumbnailUrl = product.extensionAttributes.thumbnailUrl;
+
+      return product;
+    });
+  }
+
+  /**
+   * Process cart totals data
+   * @param {Object} response - totals response from Magento2 backend
+   * @return {Object} - processed response
+   */
+  convertTotals(response) {
+    let totalsData = response.data;
+
+    totalsData = this.convertKeys(totalsData);
+
+    const { totalSegments } = totalsData;
+
+    if (totalSegments) {
+      const discountIndex = totalSegments.findIndex(item => item.code === 'discount');
+
+      // todo: Remove it and manage totals order in m2 admin panel
+      if (discountIndex !== -1) {
+        const discountSegment = totalSegments[discountIndex];
+
+        totalSegments.splice(discountIndex, 1);
+        totalSegments.splice(1, 0, discountSegment);
+      }
+    }
+
+    return response;
+  }
 };
