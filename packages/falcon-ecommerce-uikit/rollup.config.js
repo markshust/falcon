@@ -1,5 +1,7 @@
 import babel from 'rollup-plugin-babel';
 import resolve from 'rollup-plugin-node-resolve';
+import commonjs from 'rollup-plugin-commonjs';
+
 import pkg from './package.json';
 
 process.env.ROLLUP = true;
@@ -26,7 +28,8 @@ export default {
     babel({
       extensions,
       runtimeHelpers: true
-    })
+    }),
+    commonjs()
   ],
   output: [{ file: pkg.main, format: 'cjs', sourcemap: true }]
 };
