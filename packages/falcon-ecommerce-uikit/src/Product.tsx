@@ -1,10 +1,9 @@
 import React from 'react';
-import gql from 'graphql-tag';
 import { themed, Box, Radio, Text, H3, H1, NumberInput, Button, Icon, FlexLayout } from '@deity/falcon-ui';
-import { Query } from './Query';
 // import { Breadcrumbs } from './Breadcrumbs';
 // import { ProductMeta } from './ProductMeta';
 import { ProductGallery } from './ProductGallery';
+import { ProductTranslations } from './ProductQuery';
 
 export const ProductLayout = themed({
   tag: 'div',
@@ -110,33 +109,42 @@ const ProductDescriptionLayout = themed({
   }
 });
 
-export const Product: React.SFC<{ product: any }> = ({ product }) => (
-  <ProductLayout>
-    {/* <Breadcrumbs breadcrumbs={breadcrumbs} /> */}
-    <ProductDetailsLayout>
-      <Box gridArea={Area.gallery} css={{ maxHeight: '100%' }}>
-        <ProductGallery items={product.gallery} />
-      </Box>
-      <Text fontSize="sm" gridArea={Area.sku}>
-        {`SKU: ${product.sku}`}
-      </Text>
-      <H1 gridArea={Area.title}>{product.name}</H1>
-      <Text fontSize="xxl" gridArea={Area.price}>
-        {product.currency} {product.price}
-      </Text>
-      <ProductOptions options={product.configurableOptions} />
-      <ProductDescriptionLayout dangerouslySetInnerHTML={{ __html: product.description }} gridArea={Area.description} />
+export class Product extends React.PureComponent<{ data: any; translations: ProductTranslations }> {
+  render() {
+    const { data, translations } = this.props;
 
-      <FlexLayout alignItems="center" gridArea={Area.cta}>
-        <NumberInput defaultValue="1" mr="md" />
-        <Button>
-          <Icon src="cart" stroke="white" size={20} mr="sm" />
-          Add to basket
-        </Button>
-      </FlexLayout>
-      <Box gridArea={Area.meta} my="lg">
-        {/* <ProductMeta meta={product.seo} /> */}
-      </Box>
-    </ProductDetailsLayout>
-  </ProductLayout>
-);
+    return (
+      <ProductLayout>
+        {/* <Breadcrumbs breadcrumbs={breadcrumbs} /> */}
+        <ProductDetailsLayout>
+          <Box gridArea={Area.gallery} css={{ maxHeight: '100%' }}>
+            {/* <ProductGallery items={data.gallery} /> */}
+          </Box>
+          <Text fontSize="sm" gridArea={Area.sku}>
+            {`${translations.sku}: ${data.sku}`}
+          </Text>
+          <H1 gridArea={Area.title}>{data.name}</H1>
+          <Text fontSize="xxl" gridArea={Area.price}>
+            {data.currency} {data.price}
+          </Text>
+          <ProductOptions options={data.configurableOptions} />
+          <ProductDescriptionLayout
+            dangerouslySetInnerHTML={{ __html: data.description }}
+            gridArea={Area.description}
+          />
+
+          <FlexLayout alignItems="center" gridArea={Area.cta}>
+            <NumberInput defaultValue="1" mr="md" />
+            <Button>
+              <Icon src="cart" stroke="white" size={20} mr="sm" />
+              {translations.addToCart}
+            </Button>
+          </FlexLayout>
+          <Box gridArea={Area.meta} my="lg">
+            {/* <ProductMeta meta={data.seo} /> */}
+          </Box>
+        </ProductDetailsLayout>
+      </ProductLayout>
+    );
+  }
+}

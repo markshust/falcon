@@ -14,9 +14,10 @@ describe('DynamicRoute', () => {
           query: gql`
             query URL($path: String!) {
               url(path: $path) {
+                type
+                redirect
                 id
                 path
-                type
               }
             }
           `,
@@ -24,7 +25,7 @@ describe('DynamicRoute', () => {
         },
         result: {
           data: {
-            url: { id: 100, type: 'foo', path: 'test' }
+            url: { id: 100, type: 'foo', path: 'test', redirect: null }
           }
         }
       }
