@@ -43,24 +43,33 @@ export const GET_PRODUCT = gql`
   }
 `;
 
-export const ProductQuery: React.SFC<{
-  id: number;
-  children: (data: any) => React.ReactNode;
-}> = ({ id, children }) => (
-  <Query query={GET_PRODUCT} variables={{ id }}>
-    {({ product }) => (
-      <I18n ns={['shop']}>
-        {t => {
-          const translations = {
-            sku: t('product.sku'),
-            tabs: {
-              reviews: '...'
-            }
-          };
+function getTranslations(t: reactI18Next.TranslationFunction, product: any) {
+  return {
+    sku: t('product.sku'),
+    inStock: t('product.inStock'),
+    reviews: t('product.reviews', { count: 3 }),
+    addToCart: t('product.addToCart'),
+    tabs: {
+      reviews: '...'
+    }
+  };
+}
 
-          return children({ product, translations });
-        }}
-      </I18n>
-    )}
-  </Query>
-);
+export type ProductTranslations = ReturnType<typeof getTranslations>;
+
+export class ProductQuery extends React.PureComponent<{
+  id: number;
+  children: (props: { data: any; translations: ProductTranslations }) => React.ReactNode;
+}> {
+  render() {
+    const { id, children } = this.props;
+
+    return (
+      <Query query={GET_PRODUCT} variables={{ id }}>
+        {({ product }) => (
+          <I18n ns={['shop']}>{t => children({ data: product, translations: getTranslations(t, product) })}</I18n>
+        )}
+      </Query>
+    );
+  }
+}

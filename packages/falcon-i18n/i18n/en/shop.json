@@ -1,6 +1,6 @@
 {
   "product": {
-    "sku": "Sku",
+    "sku": "SKU",
     "inStock": "In stock",
     "notInStock": "Not in stock",
     "reviews": "{{count}} review",
