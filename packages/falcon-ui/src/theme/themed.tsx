@@ -300,6 +300,8 @@ type ThemedOptions<TTag extends string | {}, TProps> = {
   defaultProps?: DefaultProps<TTag> & TProps;
 };
 
+export type DefaultThemeProps = { [name: string]: ThemedComponentPropsWithVariants };
+
 export function themed<TProps, TTag extends string | {}>(options: ThemedOptions<TTag, TProps>) {
   let label = '';
 
@@ -332,6 +334,11 @@ export function themed<TProps, TTag extends string | {}>(options: ThemedOptions<
   };
 
   return styledComponentWithThemeProps as <TTagOverride extends string | {} = TTag>(
-    props: BaseProps<TTagOverride> & Partial<typeof options['defaultProps']> & ThemedComponentProps & PropsWithVariant
+    props: BaseProps<TTagOverride> &
+      Partial<typeof options['defaultProps']> &
+      ThemedComponentProps &
+      PropsWithVariant & {
+        defaultTheme?: DefaultThemeProps;
+      }
   ) => JSX.Element;
 }
