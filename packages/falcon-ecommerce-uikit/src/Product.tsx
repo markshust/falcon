@@ -118,7 +118,7 @@ export class Product extends React.PureComponent<{ data: any; translations: Prod
         {/* <Breadcrumbs breadcrumbs={breadcrumbs} /> */}
         <ProductDetailsLayout>
           <Box gridArea={Area.gallery} css={{ maxHeight: '100%' }}>
-            {/* <ProductGallery items={data.gallery} /> */}
+            <ProductGallery items={data.gallery} />
           </Box>
           <Text fontSize="sm" gridArea={Area.sku}>
             {`${translations.sku}: ${data.sku}`}
