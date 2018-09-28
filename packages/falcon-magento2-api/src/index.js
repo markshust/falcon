@@ -757,6 +757,25 @@ module.exports = class Magento2Api extends Magento2ApiBase {
   }
 
   /**
+   * Fetch country data
+   * @param {String} storeCode - store code
+   * @return {Promise<Object>} - parsed country list
+   */
+  async fetchCountries(storeCode) {
+    const path = '/directory/countries';
+    const response = await this.forwardAction(path, {}, 'get', {}, { storeCode });
+
+    const countries = response.data.map(item => ({
+      code: item.id,
+      englishName: item.full_name_english,
+      localName: item.full_name_locale,
+      regions: item.available_regions || []
+    }));
+
+    return { items: countries };
+  }
+
+  /**
    * Make request for customer token
    * @param {Object} data - form data
    * @param {String} data.email - user email
@@ -1096,5 +1115,280 @@ module.exports = class Magento2Api extends Magento2ApiBase {
     }
 
     return response;
+  }
+
+  /**
+   * Update items in cart
+   * @param {Object} input - cart item data
+   * @param {String} [input.sku] - item sku
+   * @param {Number} [input.qty] - item qty
+   * @param {Object} params - request params
+   * @param {String} [params.customerToken] - customer token
+   * @param {String} [params.storeCode] - selected store code
+   * @param {Object} [params.cart] - customer cart
+   * @param {(String|Number)} [params.cart.quoteId] - cart id
+   * @return {{data, meta}|*} - updated item data
+   */
+  async updateCartItem(input, params = {}) {
+    const { storeCode, cart = {}, customerToken } = params;
+    const { quoteId } = cart;
+    const { itemId, sku, qty } = input;
+
+    const cartPath = this.getCartPath(params);
+
+    if (!quoteId) {
+      throw new Error('Trying to update cart item without quoteId');
+    }
+
+    const data = {
+      cartItem: {
+        quote_id: quoteId,
+        sku,
+        qty: parseInt(qty, 10)
+      }
+    };
+
+    const { data: cartItem } = await this.put(`${cartPath}/items/${itemId}`, data, {
+      context: {
+        storeCode,
+        customerToken
+      }
+    });
+
+    this.convertKeys(cartItem);
+    this.processPrice(cartItem, ['price']);
+
+    return cartItem;
+  }
+
+  /**
+   * Remove item from cart
+   * @param {Object} input - cart item data
+   * @param {String} [input.itemId] - item id
+   * @param {Object} params - request params
+   * @param {String} [params.customerToken] - customer token
+   * @param {String} [params.storeCode] - selected store code
+   * @param {Object} [params.cart] - customer cart
+   * @param {(String|Number)} [params.cart.quoteId] - cart id
+   * @returns {{data, meta}|*} - true on success
+   */
+  async removeCartItem(input, params) {
+    const { itemId } = input;
+    const cartPath = this.getCartPath(params);
+    const { storeCode, customerToken = {} } = params;
+
+    if (params.cart && params.cart.quoteId) {
+      const result = await this.delete(
+        `${cartPath}/items/${itemId}`,
+        {},
+        {
+          context: {
+            storeCode,
+            customerToken
+          }
+        }
+      );
+
+      return result.data;
+    }
+
+    Logger.warn('Trying to remove cart item without quoteId');
+
+    return false;
+  }
+
+  async editCustomerData(data, session) {
+    const { storeCode, customerToken = {} } = session;
+
+    const response = await this.put(
+      '/customers/me',
+      { customer: { ...data } },
+      {
+        context: {
+          storeCode,
+          customerToken
+        }
+      }
+    );
+
+    return this.convertKeys(response.data);
+  }
+
+  /**
+   * Request address management action
+   * @param {Object} params - request params
+   * @param {String} params.customerToken - customer token
+   * @param {Number} params.id - address id
+   * @param {String} params.storeCode - selected store code
+   * @param {String} params.path - REST API path where default path is 'customers/me/address'
+   * @param {String} params.method - request method, where default method is 'get'
+   * @returns {{data, meta}|*} - address data, list of addresses or true after successful delete
+   */
+  async forwardAddressAction(params = {}) {
+    const { id, storeCode, customerToken = {}, path = '/customers/me/address', method = 'get', data = null } = params;
+
+    let addressPath = path;
+    let addressData = data;
+
+    if (!customerToken.token) {
+      Logger.error('Trying to edit customer data without customer token');
+      throw new Error('You do not have an access to edit address data');
+    }
+
+    if (id) {
+      addressPath = `${path}/${id}`;
+    }
+
+    if (method !== 'get' && method !== 'delete') {
+      addressData = {
+        address: {
+          ...data,
+          street: Array.isArray(data.street) ? data.street : [data.street]
+        }
+      };
+    }
+
+    const response = await this[method](addressPath, method === 'get' || method === 'delete' ? null : addressData, {
+      context: {
+        storeCode,
+        customerToken
+      }
+    });
+
+    if (method !== 'delete') {
+      return this.convertAddressData(response.data);
+    }
+
+    return response.data;
+  }
+
+  /**
+   * Change customer password
+   * @param {Object} params - request params
+   * @param {String} params.storeCode - current store code
+   * @param {String} params.customerToken - customer token
+   * @param {String} method - request method
+   * @param {String} params.password - new password
+   * @param {String} params.currentPassword - current password
+   * @returns {Promise<*>} true on success
+   */
+  async changeCustomerPassword(params) {
+    const {
+      data: { password: newPassword, currentPassword },
+      storeCode,
+      customerToken = {}
+    } = params;
+
+    if (!customerToken.token) {
+      Logger.error('Trying to edit customer data without customer token');
+      throw new Error('You do not have an access to edit account data');
+    }
+
+    try {
+      const result = await this.put(
+        '/customers/me/password',
+        { currentPassword, newPassword },
+        {
+          context: {
+            storeCode,
+            customerToken
+          }
+        }
+      );
+      return result.data;
+    } catch (e) {
+      // todo: use new version of error handler
+      if ([401, 503].includes(e.statusCode)) {
+        e.userMessage = true;
+        // avoid removing customer token in onError hook
+        delete e.code;
+        e.noLogging = true;
+      }
+
+      throw e;
+    }
+  }
+  /**
+   * Check if given password reset token is valid
+   * @param {Object} params - request params
+   * @returns {{data, meta}|*} true if token is valid
+   */
+  async validatePasswordToken(params) {
+    const { storeCode, id, token } = params;
+    const validatePath = `/customers/${id}/password/resetLinkToken/${token}`;
+
+    try {
+      const result = await this.get(
+        validatePath,
+        {},
+        {
+          context: {
+            storeCode
+          }
+        }
+      );
+      return result.data;
+    } catch (e) {
+      // todo: use new version of error handler
+      e.userMessage = true;
+      e.noLogging = true;
+
+      // todo check why there's no throw here
+    }
+  }
+
+  /**
+   * Generate customer password reset token
+   * @param {Object} params - request params
+   * @param {Object} params.data - reset password form data
+   * @param {String} params.data.email - user email
+   * @returns {{data}|*} always true to avoid spying for registered emails
+   */
+  async requestCustomerPasswordResetToken(params) {
+    const {
+      data: { email },
+      storeCode
+    } = params;
+
+    const result = await this.put(
+      '/customers/password',
+      { email, template: 'email_reset' },
+      {
+        context: {
+          storeCode
+        }
+      }
+    );
+
+    return result.data;
+  }
+
+  /**
+   * Reset customer password using provided reset token
+   * @param {Object} params - request params
+   * @param {String} params.storeCode - current store code
+   * @param {Object} params.data - create new password form data
+   * @param {String} params.data.customerId - customer email
+   * @param {String} params.data.resetToken - reset token
+   * @param {String} params.data.password - new password to set
+   * @returns {{data, meta}|*} true on success
+   */
+  async resetCustomerPassword(params) {
+    const {
+      storeCode,
+      data: { customerId: email, resetToken, password: newPassword }
+    } = params;
+
+    const result = await this.put(
+      '/customers/password/reset',
+      { email, resetToken, newPassword },
+      {
+        context: {
+          storeCode
+        }
+      }
+    );
+
+    return result.data;
   }
 };
