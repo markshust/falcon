@@ -3,6 +3,7 @@ import ShoppingCart from 'react-feather/dist/icons/shopping-cart';
 import ChevronDown from 'react-feather/dist/icons/chevron-down';
 import ChevronUp from 'react-feather/dist/icons/chevron-up';
 import User from 'react-feather/dist/icons/user';
+import Close from 'react-feather/dist/icons/x';
 import { createTheme } from '@deity/falcon-ui';
 import logo from './assets/logo.svg';
 import loader from './assets/loader.svg';
@@ -33,6 +34,9 @@ export const deityGreenTheme = createTheme({
       icon: ChevronUp,
       size: 22,
       ml: 'xs'
+    },
+    close: {
+      icon: Close
     }
   },
   components: {
