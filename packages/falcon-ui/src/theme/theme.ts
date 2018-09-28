@@ -5,12 +5,11 @@ export const defaultBaseTheme = {
     primaryDark: '#e8e8e8',
     primaryText: '#5f6367',
 
-    secondary: '#2196f3',
-    secondaryLight: '#6ec6ff',
-    secondaryDark: '#0069c0',
-    secondaryText: '#ffffff',
-
-    error: '#f44336',
+    secondary: '#A9CF38',
+    secondaryLight: '#CBDE6E',
+    secondaryDark: '#A9CF38',
+    secondaryText: '#fff',
+    error: '#E74C3C',
     errorText: '#000000',
     black: '#000000',
     white: '#ffffff',

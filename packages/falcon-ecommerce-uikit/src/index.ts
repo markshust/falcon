@@ -4,6 +4,6 @@ export * from './Products';
 export * from './Product';
 export * from './ProductQuery';
 export * from './Footer';
-export * from './LanguageSwitcher';
 export * from './Category';
+export * from './MiniCart';
 export * from './Query';
