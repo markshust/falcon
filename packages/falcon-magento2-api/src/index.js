@@ -1391,4 +1391,117 @@ module.exports = class Magento2Api extends Magento2ApiBase {
 
     return result.data;
   }
+
+  async estimateShippingMethods(params, session) {
+    const response = await this.performCartAction(
+      '/estimate-shipping-methods',
+      'post',
+      // todo: check why params cannot be passed here directly. In this case params.constructor === undefined
+      // and because of that RESTDataSource.fetch() cannot properly serialize to before sending
+      // Using Object.assign() fixes the problem with constructor property so fetch() works correctly then
+      Object.assign({}, params),
+      session
+    );
+
+    response.data.forEach(method => {
+      method.currency = session.currency || 'EUR';
+    });
+
+    return this.convertKeys(response.data);
+  }
+
+  /**
+   * Make a call to cart related endpoint
+   * @param {String} path - path to magento api endpoint
+   * @param {String} method - request method
+   * @param {Object} data - request data
+   * @param {Object} session - session data
+   * @param {Object} session.cart - session cart data
+   * @param {(String|Number)} session.cart.quoteId - cart id
+   * @param {String} session.customerToken - customer token
+   * @param {String} session.storeCode - selected store code
+   * @returns {{data, meta}|*} - endpoint result
+   */
+  async performCartAction(path, method, data, session) {
+    const { cart, storeCode, customerToken = {} } = session;
+
+    if (!cart.quoteId) {
+      const errorMessage = `Quote id is empty, cannot perform api call for ${path}`;
+
+      Logger.warn(errorMessage);
+      throw new Error(errorMessage);
+    }
+
+    const cartPath = this.getCartPath(session);
+
+    const response = await this[method](`${cartPath}${path}`, method === 'get' ? null : data, {
+      context: {
+        storeCode,
+        customerToken
+      }
+    });
+
+    const cartData = this.convertKeys(response.data);
+
+    if (cartData instanceof Object) {
+      return response;
+    }
+
+    response.data = {
+      data: cartData
+    };
+
+    return response;
+  }
+
+  async setShipping(data, session) {
+    const magentoData = {
+      addressInformation: data
+    };
+
+    const response = await this.performCartAction('/shipping-information', 'post', magentoData, session);
+
+    return this.convertKeys(response.data);
+  }
+
+  /**
+   * Place order
+   * @param {Object} data - form data
+   * @param {Object} session - user session
+   * @param {Object} session.cart - cart
+   * @param {String} session.cart.quoteId - cart id
+   * @param {String} session.customerToken - customer token
+   * @param {String} session.storeCode - current store code
+   * @return {Object} - order data
+   */
+  async placeOrder(data, session) {
+    let response;
+    try {
+      response = await this.performCartAction('/deity-order', 'put', Object.assign({}, data), session);
+    } catch (e) {
+      // todo: use new version of error handler
+      if (e.statusCode === 400) {
+        e.userMessage = true;
+        e.noLogging = true;
+      }
+      throw e;
+    }
+
+    const orderData = response.data;
+    if (orderData.extensionAttributes && orderData.extensionAttributes.adyen) {
+      orderData.adyen = orderData.extensionAttributes.adyen;
+      delete orderData.extensionAttributes.adyen;
+      response.data = orderData;
+    }
+
+    session.orderId = orderData.orderId;
+
+    if (!session.orderId) {
+      throw new Error('no order id from magento.');
+    }
+
+    session.orderQuoteId = session.cart.quoteId;
+
+    return response.data;
+  }
 };
