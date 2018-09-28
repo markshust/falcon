@@ -8,7 +8,16 @@ import { ThemeProvider } from '@deity/falcon-ui';
 import DynamicRoute from '@deity/falcon-client/src/components/DynamicRoute';
 import isOnline from '@deity/falcon-client/src/components/isOnline';
 import logo from 'src/assets/logo.png';
-import { AppLayout, Header, Footer, FooterQuery, Category, HeaderQuery } from '@deity/falcon-ecommerce-uikit';
+import {
+  AppLayout,
+  Header,
+  Footer,
+  FooterQuery,
+  Category,
+  HeaderQuery,
+  MiniCartQuery,
+  MiniCart
+} from '@deity/falcon-ecommerce-uikit';
 import { deityGreenTheme } from './theme';
 
 const HeadMetaTags = () => (
@@ -54,7 +63,8 @@ const App = ({ online }) => (
 
         {/* <Route component={NotFound} /> */}
       </Switch>
-      <FooterQuery>{data => <Footer {...data} />}</FooterQuery>
+      <FooterQuery>{(data, t) => <Footer {...data} translations={t} />}</FooterQuery>
+      <MiniCartQuery>{data => <MiniCart {...data} />}</MiniCartQuery>
     </AppLayout>
   </ThemeProvider>
 );

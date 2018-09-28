@@ -5,4 +5,5 @@ export * from './Product';
 export * from './ProductQuery';
 export * from './Footer';
 export * from './Category';
+export * from './MiniCart';
 export * from './Query';

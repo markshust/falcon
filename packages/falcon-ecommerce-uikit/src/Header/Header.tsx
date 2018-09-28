@@ -14,6 +14,7 @@ import {
 
 import { HeaderData } from './HeaderQuery';
 import { toGridTemplate } from '../helpers';
+import { ToggleMiniCartMutation } from '../MiniCart';
 
 const bannerLayoutTheme: DefaultThemeProps = {
   bannerLayout: {
@@ -94,7 +95,9 @@ export const Searchbar = () => (
       <Icon src="logo" />
     </Link>
     <Icon gridArea={SearchBarArea.login} src="user" />
-    <Icon gridArea={SearchBarArea.cart} src="cart" />
+    <ToggleMiniCartMutation>
+      {toggle => <Icon gridArea={SearchBarArea.cart} src="cart" onClick={toggle as any} />}
+    </ToggleMiniCartMutation>
   </Box>
 );
 
