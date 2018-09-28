@@ -1,9 +1,14 @@
 import React from 'react';
 import { Query as ApolloQuery, OperationVariables, QueryProps } from 'react-apollo';
+import { I18n, TranslationFunction } from 'react-i18next';
 import { Loader } from './Loader';
 
-export class Query<TData = any, TVariables = OperationVariables> extends React.Component<
-  QueryProps<TData, TVariables> & { children: (result: TData | undefined) => React.ReactNode }
+export class Query<TData = any, TVariables = OperationVariables, TTranslations = {}> extends React.Component<
+  QueryProps<TData, TVariables> & {
+    children: (result: TData | TData & { translations: TTranslations } | undefined) => React.ReactNode;
+  } & {
+    getTranslations?: (t: TranslationFunction) => TTranslations;
+  }
 > {
   render() {
     return (
@@ -13,7 +18,19 @@ export class Query<TData = any, TVariables = OperationVariables> extends React.C
 
           if (error) return `Error!: ${error}`;
 
-          return this.props.children(data);
+          if (!this.props.getTranslations) {
+            return this.props.children(data);
+          }
+
+          return (
+            <I18n>
+              {t => {
+                const translations = this.props.getTranslations!(t);
+
+                return this.props.children({ ...(data as any), translations });
+              }}
+            </I18n>
+          );
         }}
       </ApolloQuery>
     );

@@ -12,9 +12,9 @@ import {
   Box
 } from '@deity/falcon-ui';
 
-import { HeaderData } from './HeaderQuery';
 import { toGridTemplate } from '../helpers';
 import { ToggleMiniCartMutation } from '../MiniCart';
+import { HeaderData } from './HeaderQuery';
 
 const bannerLayoutTheme: DefaultThemeProps = {
   bannerLayout: {
