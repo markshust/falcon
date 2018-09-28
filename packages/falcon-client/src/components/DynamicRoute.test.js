@@ -36,7 +36,7 @@ describe('DynamicRoute', () => {
         <Switch>
           <DynamicRoute
             components={{
-              foo: () => <p>Bar</p>
+              foo: () => () => <p>Bar</p>
             }}
           />
         </Switch>
