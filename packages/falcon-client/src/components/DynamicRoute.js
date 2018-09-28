@@ -53,7 +53,6 @@ const DynamicRoute = props => {
         }
 
         const { url } = data;
-
         if (url.redirect) {
           return <Redirect to={`/${url.path}`} />;
         }
