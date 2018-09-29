@@ -14,13 +14,27 @@ const Magento2ApiBase = require('./Magento2ApiBase');
  */
 module.exports = class Magento2Api extends Magento2ApiBase {
   /**
+   * Set shop configuration
+   * @param {object} params - params to be set
+   * @param {object} session - http session object
+   * @returns {boolean} true when change has been successful
+   */
+  setConfig(params, session) {
+    const { storeCode } = params;
+    if (storeCode) {
+      session.magento2.storeCode = storeCode;
+    }
+    return true;
+  }
+
+  /**
    * Fetch category data
    * @param {object} params - params with id of category
    * @return {Promise.<object>} - converted response with category data
    */
-  async category({ id }) {
+  async category(params) {
     const response = await this.get(
-      `/categories/${id}`,
+      `/categories/${params.id}`,
       {
         storeCode: this.context.magento.storeCode
       },
@@ -517,11 +531,10 @@ module.exports = class Magento2Api extends Magento2ApiBase {
    * @param {Object} input - product data
    * @param {String} input.sku - added product sku
    * @param {Number} input.qty - added product qty
-   * @param {Object} session - http session
    * @return {Promise<Object>} - cart item data
    */
-  async addToCart(input, session) {
-    const cartData = await this.ensureCart(session);
+  async addToCart(input) {
+    const cartData = await this.ensureCart();
     const cartPath = this.getCartPath();
 
     const product = {
@@ -576,13 +589,9 @@ module.exports = class Magento2Api extends Magento2ApiBase {
   /**
    * Ensure customer has cart in the session.
    * Creates if not exists.
-   * @param {Object} session - sessions
-   * @param {String} session.cart - cart data
-   * @param {(String|Number)} session.cart.quoteId - cart id
-   * @param {String} session.customerToken - customer token
    * @returns {Object} - new cart data
    */
-  async ensureCart(session) {
+  async ensureCart() {
     const { cart, customerToken: { token } = {} } = this.context.magento;
 
     if (cart && cart.quoteId) {
@@ -592,10 +601,9 @@ module.exports = class Magento2Api extends Magento2ApiBase {
     const cartPath = token ? '/carts/mine' : '/guest-carts';
     const response = await this.post(cartPath);
 
-    session.cart = { quoteId: response.data };
-    this.context.magento.cart = session.cart;
+    this.context.magento.cart = { quoteId: response.data };
 
-    return session.cart;
+    return this.context.magento.cart;
   }
 
   /**
@@ -771,10 +779,9 @@ module.exports = class Magento2Api extends Magento2ApiBase {
    * @param {Object} data - form data
    * @param {String} data.email - user email
    * @param {String} data.password - user password
-   * @param {Object} session - session object
    * @returns {Promise<boolean>} true if login was successful
    */
-  async signIn(data, session) {
+  async signIn(data) {
     const { email, password } = data;
     const { cart: { quoteId = null } = {} } = this.context.magento;
 
@@ -801,14 +808,12 @@ module.exports = class Magento2Api extends Magento2ApiBase {
         customerTokenObject.expirationTime = tokenExpirationTime.getTime();
         Logger.debug(`Customer token valid for ${validTime} hours, till ${tokenExpirationTime.toString()}`);
       }
-      session.customerToken = customerTokenObject;
       this.context.magento.customerToken = customerTokenObject;
 
       // Remove guest cart. Magento merges guest cart with cart of authorized user so we'll have to refresh it
-      delete session.cart;
       delete this.context.magento.cart;
       // make sure that cart is correctly loaded for signed in user
-      await this.ensureCart(session);
+      await this.ensureCart();
 
       // true when user signed in correctly
       return true;
@@ -830,10 +835,10 @@ module.exports = class Magento2Api extends Magento2ApiBase {
    * @param {Object} session - session object
    * @returns {Promise<boolean>} true
    */
-  async signOut(session) {
+  async signOut() {
     /* Remove logged in customer data */
-    delete session.customerToken;
-    delete session.cart;
+    delete this.context.magento.customerToken;
+    delete this.context.magento.cart;
 
     return true;
   }
@@ -1140,12 +1145,31 @@ module.exports = class Magento2Api extends Magento2ApiBase {
     return this.forwardAddressAction(params);
   }
 
+  /**
+   * Add new customer address
+   * @param {Object} data - address data
+   * @returns {{data, meta}|*} - address data, list of addresses or true after successful delete
+   */
   async addCustomerAddress(data) {
     return this.forwardAddressAction({ data, method: 'post' });
   }
 
+  /**
+   * Change customer address data
+   * @param {Object} data - data to change
+   * @returns {{data, meta}|*} - address data, list of addresses or true after successful delete
+   */
   async editCustomerAddress(data) {
     return this.forwardAddressAction({ data, method: 'put' });
+  }
+
+  /**
+   * Remove customer address data
+   * @param {Object} data - address to remove
+   * @returns {{data, meta}|*} - address data, list of addresses or true after successful delete
+   */
+  async removeCustomerAddress(data) {
+    return this.forwardAddressAction({ id: data.id, method: 'delete' });
   }
 
   /**
@@ -1315,7 +1339,7 @@ module.exports = class Magento2Api extends Magento2ApiBase {
     throw new Error('Trying to remove coupon without quoteId in session');
   }
 
-  async estimateShippingMethods(params, session) {
+  async estimateShippingMethods(params) {
     const response = await this.performCartAction(
       '/estimate-shipping-methods',
       'post',
@@ -1326,7 +1350,7 @@ module.exports = class Magento2Api extends Magento2ApiBase {
     );
 
     response.data.forEach(method => {
-      method.currency = session.currency || 'EUR';
+      method.currency = this.context.magento.currency;
     });
 
     return this.convertKeys(response.data);
@@ -1379,17 +1403,12 @@ module.exports = class Magento2Api extends Magento2ApiBase {
   /**
    * Place order
    * @param {Object} data - form data
-   * @param {Object} session - user session
-   * @param {Object} session.cart - cart
-   * @param {String} session.cart.quoteId - cart id
-   * @param {String} session.customerToken - customer token
-   * @param {String} session.storeCode - current store code
    * @return {Object} - order data
    */
-  async placeOrder(data, session) {
+  async placeOrder(data) {
     let response;
     try {
-      response = await this.performCartAction('/deity-order', 'put', Object.assign({}, data), session);
+      response = await this.performCartAction('/deity-order', 'put', Object.assign({}, data), this.context.magneto);
     } catch (e) {
       // todo: use new version of error handler
       if (e.statusCode === 400) {
@@ -1406,13 +1425,13 @@ module.exports = class Magento2Api extends Magento2ApiBase {
       response.data = orderData;
     }
 
-    session.orderId = orderData.orderId;
+    this.context.magento.orderId = orderData.orderId;
 
-    if (!session.orderId) {
+    if (!this.context.magento.orderId) {
       throw new Error('no order id from magento.');
     }
 
-    session.orderQuoteId = session.cart.quoteId;
+    this.context.magento.orderQuoteId = this.context.magento.cart.quoteId;
 
     return response.data;
   }

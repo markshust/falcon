@@ -8,6 +8,8 @@ const camelCase = require('lodash/camelCase');
 const keys = require('lodash/keys');
 const isEmpty = require('lodash/isEmpty');
 
+const DEFAULT_KEY = '*';
+
 /**
  * Base API features (configuration fetching, response parsing, token management etc.) required for communication
  * with Magento2. Extracted to separate class to keep final class clean (only resolvers-related logic should be there).
@@ -347,7 +349,7 @@ module.exports = class Magento2ApiBase extends ApiDataSource {
 
     const activeStores = storeCodes.filter(item => item.active);
 
-    return {
+    this.magentoConfig = {
       ...config,
       stores: data,
       activeStores,
@@ -356,24 +358,161 @@ module.exports = class Magento2ApiBase extends ApiDataSource {
       baseCurrencyCode,
       postCodes
     };
+
+    return this.magentoConfig;
   }
 
   createContextData(context) {
-    const {
-      session: { storeCode, currency, customerToken, language, cart, paypalExpressHash, orderId }
-    } = context.req;
+    if (!context.req.session.magento2) {
+      context.req.session.magento2 = {};
+    }
+    this.ensureStoreCode(context.req);
+    this.ensureCurrency(context.req.session);
 
+    // put all the required data as 'magento' alias inside context
+    // it's a reference to context.req.session.magento2 so change in context.magento will cause changes in the session
     return {
-      // put required data into 'magento' property so it can be used by all the resolvers
-      magento: {
-        storeCode,
-        currency,
-        customerToken,
-        language,
-        cart,
-        paypalExpressHash,
-        orderId
-      }
+      magento: context.req.session.magento2
     };
+  }
+
+  /**
+   * Ensuring that user gets storeCode in the session with the first hit.
+   *
+   * Simple config structure:
+   * {
+   *     "store": {
+   *       "enableSwitcher": false,
+   *       "enableAutoDetection": true,
+   *       // todo rename to geo mapping ?
+   *       "mapping": {
+   *         "*": "default",
+   *         "UK": "uk_store_view",
+   *         "US": "us_store_view"
+   *       }
+   *     }
+   *   }
+   * }
+   *
+   * Key is country code from geo ip, and value is a Magento store code.
+   *
+   * More custom config structure with an extra-check for user's preferred language:
+   * {
+   *     "store": {
+   *       "enableSwitcher": false,
+   *       "enableAutoDetection": true,
+   *       "mapping": {
+   *         "*": "default",
+   *         "DK": {
+   *           "*": "dk_en_store_view",
+   *           "da": "dk_da_store_view"
+   *         },
+   *        "US": "us_store_view"
+   *       }
+   *     }
+   *   }
+   * }
+   *
+   * "*" - means value by default. It's required to have a default value, since it will be used as a fallback value.
+   * Each element in "mapping" object may contain a string value or sub-mapping per language.
+   *
+   * @param {object} req Koa request object
+   */
+  ensureStoreCode(req) {
+    const clientCountryCode = req.headers['CountryCode']; // eslint-disable-line dot-notation
+    const { enableAutoDetection = false, geoMapping: storeMapping = {} } = this.config;
+    const { storeCode, cart } = req.session.magento2;
+
+    if (storeCode) {
+      const isValidCode = this.magentoConfig.stores.find(({ code }) => code === storeCode);
+
+      if (isValidCode) {
+        Logger.debug(`Using existing session store code: ${storeCode}`);
+      } else {
+        Logger.warn(`Removing invalid user store code ${storeCode} from session.`);
+        if (cart) {
+          Logger.warn(`Removing cart from session assuming it was create in non existing 
+            store with code: ${storeCode}`);
+          delete req.session.magento2.cart;
+        }
+        // api should use it's default if not present in session
+        delete req.session.magento2.storeCode;
+      }
+
+      return;
+    }
+
+    if (!enableAutoDetection) {
+      Logger.debug('Store code detection disabled.');
+      return;
+    }
+
+    Logger.debug(`Detecting store for ${clientCountryCode} country code.`);
+
+    const { [DEFAULT_KEY]: defaultStoreCode = 'default' } = storeMapping;
+
+    // removes string after occurrence of passed separator (including the separator)
+    const removeSubstring = (item, separator = ';') =>
+      item.indexOf(separator) > 0 ? item.substring(0, item.indexOf(separator)) : item;
+
+    let { [clientCountryCode]: clientStoreCode } = storeMapping;
+
+    clientStoreCode = clientStoreCode || defaultStoreCode;
+
+    if (clientStoreCode && typeof clientStoreCode === 'object') {
+      const { 'accept-language': acceptLanguage } = req.headers;
+      // Equals to a default mapped key
+      let activeLanguage = DEFAULT_KEY;
+      // Splitting accept-language header string with comma-separated values ("da,en-gb;q=0.8,en;q=0.7")
+      const acceptLanguages = (acceptLanguage ? acceptLanguage.split(',') : [])
+        // Extracting language parts (removing "priority" values, it's already sorted by priority)
+        .map(item => removeSubstring(item))
+        // Cleaning up the results ("en-US" -> "en")
+        .map(item => removeSubstring(item, '-'));
+
+      // Searching for available language in the language mapping for active country
+      acceptLanguages.some(lang => {
+        if (clientStoreCode[lang]) {
+          activeLanguage = lang;
+          return true;
+        }
+        return false;
+      });
+
+      clientStoreCode = clientStoreCode[activeLanguage];
+    }
+
+    if (clientStoreCode) {
+      Logger.debug(`Using country detected store code: ${clientStoreCode}`);
+      req.session.magento2.storeCode = clientStoreCode;
+    }
+  }
+
+  /**
+   * Ensure session has a currency code to be use for example for price formatting.
+   * @param {object} session object
+   */
+  ensureCurrency(session) {
+    const { storeCode } = session.magento2;
+
+    // todo: use sensible defaults instead of EUR
+    let userCurrency = this.config.currency && (this.config.currency.symbol || 'EUR');
+
+    Logger.debug('Detecting currency');
+
+    if (storeCode && this.magentoConfig.activeStores.length) {
+      const activeStore = this.magentoConfig.activeStores.find(item => item.code === storeCode);
+
+      if (activeStore) {
+        Logger.debug(`Found active store: ${activeStore.code}, currency changed to ${activeStore.currency}`);
+        userCurrency = activeStore.currency;
+      } else {
+        Logger.debug(`Not found active store for code: ${storeCode}, currency changed to default: ${this.currency}`);
+      }
+    } else {
+      Logger.debug('No store code or store inactive.');
+    }
+
+    session.magento2.currency = userCurrency;
   }
 };

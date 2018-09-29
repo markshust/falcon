@@ -42,7 +42,8 @@ describe('Magento2Api', () => {
       .get(uri => /\/categories\/20/.test(uri)) // regexp as query params might be there
       .reply(200, magentoResponses.category.data);
 
-    const result = await api.fetchCategory({ id: 20 });
+    api.context = { magento: { storeCode: '' } };
+    const result = await api.category({ id: 20 });
     expect(result.data.id).toEqual(magentoResponses.category.data.id);
   });
 
