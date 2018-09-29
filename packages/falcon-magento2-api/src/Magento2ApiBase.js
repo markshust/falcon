@@ -138,7 +138,7 @@ module.exports = class Magento2ApiBase extends ApiDataSource {
    */
   async resolveURL(req) {
     const { path } = req;
-    let { storeCode } = req.context || {};
+    let { storeCode } = this.context.magento || {};
     if (storeCode) {
       req.params.delete(storeCode);
     } else {
@@ -162,9 +162,16 @@ module.exports = class Magento2ApiBase extends ApiDataSource {
   }
 
   async authorizeRequest(req) {
-    const { customerToken = {} } = req.context || {};
-    this.validateCustomerToken(customerToken);
-    const token = customerToken.token || (await this.getAdminToken());
+    let token;
+    const { useAdminToken } = req.context || {};
+
+    if (useAdminToken) {
+      token = await this.getAdminToken();
+    } else {
+      const { customerToken = {} } = this.context.magento || {};
+      this.validateCustomerToken(customerToken);
+      token = customerToken.token || (await this.getAdminToken());
+    }
 
     req.headers.set('Authorization', `Bearer ${token}`);
     req.headers.set('Content-Type', 'application/json');
@@ -348,6 +355,25 @@ module.exports = class Magento2ApiBase extends ApiDataSource {
       minPasswordCharClass,
       baseCurrencyCode,
       postCodes
+    };
+  }
+
+  createContextData(context) {
+    const {
+      session: { storeCode, currency, customerToken, language, cart, paypalExpressHash, orderId }
+    } = context.req;
+
+    return {
+      // put required data into 'magento' property so it can be used by all the resolvers
+      magento: {
+        storeCode,
+        currency,
+        customerToken,
+        language,
+        cart,
+        paypalExpressHash,
+        orderId
+      }
     };
   }
 };
