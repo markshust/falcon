@@ -15,14 +15,13 @@ const Magento2ApiBase = require('./Magento2ApiBase');
 module.exports = class Magento2Api extends Magento2ApiBase {
   /**
    * Set shop configuration
-   * @param {object} params - params to be set
-   * @param {object} session - http session object
-   * @returns {boolean} true when change has been successful
+   * @param {ShopConfigInput} params - params to be set
+   * @return {boolean} true when change has been successful
    */
-  setConfig(params, session) {
+  setConfig(params) {
     const { storeCode } = params;
     if (storeCode) {
-      session.magento2.storeCode = storeCode;
+      this.context.magento2.storeCode = storeCode;
     }
     return true;
   }
@@ -30,7 +29,8 @@ module.exports = class Magento2Api extends Magento2ApiBase {
   /**
    * Fetch category data
    * @param {object} params - params with id of category
-   * @return {Promise.<object>} - converted response with category data
+   * @param {number} params.id - id of the requested category
+   * @return {Promise<Category>} - converted response with category data
    */
   async category(params) {
     const response = await this.get(
@@ -46,7 +46,7 @@ module.exports = class Magento2Api extends Magento2ApiBase {
   /**
    * Process category data from Magento2 response
    * @param {object} response - response from Magento2 backend
-   * @return {object} - processed response
+   * @return {Category} processed response
    */
   convertCategoryData(response) {
     const { data } = response;
@@ -85,7 +85,7 @@ module.exports = class Magento2Api extends Magento2ApiBase {
    * Convert attributes from array of object into flat key-value pair,
    * where key is attribute code and value is attribute value
    * @param {object} response - response from Magento2 backend
-   * @return {object} - converted response
+   * @return {object} converted response
    */
   convertAttributesSet(response) {
     const { data } = response;
@@ -106,7 +106,7 @@ module.exports = class Magento2Api extends Magento2ApiBase {
   /**
    * Add suffix to path
    * @param {string} path - path to convert
-   * @return {string} - converted path
+   * @return {string} converted path
    * @todo get suffix from Magento2 config
    */
   convertPathToUrl(path) {
@@ -115,8 +115,8 @@ module.exports = class Magento2Api extends Magento2ApiBase {
 
   /**
    * Convert breadcrumbs for category, product entities
-   * @param {array} breadcrumbs an array of breadcrumbs from Magento
-   * @returns {array} | converted breadcrumbs
+   * @param {object[]} breadcrumbs  - array of breadcrumbs entries from Magento
+   * @return {Breadcrumb[]} converted breadcrumbs
    */
   convertBreadcrumbs(breadcrumbs = []) {
     return breadcrumbs.map(item => {
@@ -141,7 +141,13 @@ module.exports = class Magento2Api extends Magento2ApiBase {
   /**
    * Get list of products based on filters from params
    * @param {object} params - request params
-   * @return {Promise<object>} - response with list of products
+   * @param {number} [params.categoryId] - id of the category to search in
+   * @param {boolean} [params.includeSubcategories] - flag indicates if products from subcategories should be included
+   * @param {ShopPageQuery} [params.query] - definitions of aggregations
+   * @param {SortOrder[]} [params.sortOrders] - definition of sort orders
+   * @param {Filter[]} [params.filters] - filters that should be used for filtering
+   * @param {string[]} [skus] - skus of products that search should be narrowed to
+   * @return {Promise<Product[]>} - response with list of products
    */
   async products(params) {
     const { filters: simpleFilters = [], categoryId, skus } = params;
@@ -176,11 +182,11 @@ module.exports = class Magento2Api extends Magento2ApiBase {
 
   /**
    * Include field to list of filters. Used when making request to listing endpoint.
-   * @param {Object} params - request params
-   * @param {String} field - filter field to include
-   * @param {*} value - field value
-   * @param {String} conditionType - condition type of the filter
-   * @return {Object} - request params with additional filter
+   * @param {object} params - request params that should be populated with filters
+   * @param {string} field - filter field to include
+   * @param {string} value - field value
+   * @param {string} conditionType - condition type of the filter
+   * @return {object} - request params with additional filter
    */
   addSearchFilter(params = {}, field, value, conditionType = 'eq') {
     params.filters = isEmpty(params.filters) ? [] : params.filters;
@@ -199,9 +205,9 @@ module.exports = class Magento2Api extends Magento2ApiBase {
   }
 
   /**
-   * Fetch list of products
-   * @param {Object} params - request params
-   * @returns {Promise<Object>} - list of product items
+   * Fetch list of the products based on passed criteria
+   * @param {Object} params - search criteria
+   * @return {Promise<Product[]>} - list of product items
    */
   fetchProductList(params = {}) {
     /**
@@ -226,8 +232,8 @@ module.exports = class Magento2Api extends Magento2ApiBase {
 
   /**
    * Check if given filter is set in params
-   * @param {String} filterName - Name of the filter
-   * @param {Object} params - Params with filters
+   * @param {string} filterName - name of the filter
+   * @param {object} params - params with filters
    * @return {boolean} if filter is set
    */
   isFilterSet(filterName, params = {}) {
@@ -239,19 +245,17 @@ module.exports = class Magento2Api extends Magento2ApiBase {
   }
 
   /**
-   * Generic method for endpoints handling category listing
-   * @param {String} path - path to magento api endpoint
-   * @param {Object} params - request params
-   * @param {String} params.currency - selected currency
-   * @param {Object[]} params.filters - filters for the collection
-   * @param {Boolean} params.includeSubcategories - use subcategories in the search flag
-   * @param {Object} params.query - request query params
-   * @param {Number} params.query.page - pagination page
-   * @param {Number} params.query.perPage - number of items per page
-   * @param {Object[]} params.sortOrders - list of sorting parameters
-   * @param {String} params.storeCode - request params
-   * @param {String[]} params.withAttributeFilters - list of attributes for layout navigation
-   * @return {Promise<Object>} - response from endpoint
+   * Generic method for endpoints handling category and product listing
+   * @param {string} path - path to magento api endpoint
+   * @param {object} params - request params
+   * @param {object[]} [params.filters] - filters for the collection
+   * @param {boolean} [params.includeSubcategories] - use subcategories in the search flag
+   * @param {object} [params.query] - request query params
+   * @param {number} [params.query.page] - pagination page
+   * @param {number} [params.query.perPage] - number of items per page
+   * @param {object[]} [params.sortOrders] - list of sorting parameters
+   * @param {string[]} [params.withAttributeFilters] - list of attributes for layout navigation
+   * @return {Promise<Product[] | Category[]>} - response from endpoint
    */
   async fetchList(path, params) {
     const {
@@ -293,9 +297,9 @@ module.exports = class Magento2Api extends Magento2ApiBase {
 
   /**
    * Process data from listing endpoint
-   * @param {Object} response - response from Magento2 backend
-   * @param {String} currency - selected currency
-   * @return {Object} - processed response
+   * @param {object} response - response from Magento2 backend
+   * @param {string} currency - selected currency
+   * @return {object} - processed response
    */
   convertList(response = {}, currency = null) {
     const {
@@ -324,9 +328,9 @@ module.exports = class Magento2Api extends Magento2ApiBase {
 
   /**
    * Process product data from Magento2 response
-   * @param {Object} response - reponse from Magento2 backend
-   * @param {String} currency - selected currency
-   * @return {Object} - processed response
+   * @param {object} response - response from Magento2 backend
+   * @param {string} currency - selected currency
+   * @return {Product} - processed response
    */
   convertProductData(response, currency = null) {
     this.convertAttributesSet(response);
@@ -418,9 +422,9 @@ module.exports = class Magento2Api extends Magento2ApiBase {
 
   /**
    * Special endpoint to fetch any magento entity by it's url, for example product, cms page
-   * @param {Object} params - request params
-   * @param {String} [params.path] - request path to be checked against api urls
-   * @param {Boolean} [params.loadEntityData] - flag to mark whether endpoint should return entity data as well
+   * @param {object} params - request params
+   * @param {string} [params.path] - request path to be checked against api urls
+   * @param {boolean} [params.loadEntityData] - flag to mark whether endpoint should return entity data as well
    * @return {Promise} - request promise
    */
   async fetchUrl(params) {
@@ -444,9 +448,9 @@ module.exports = class Magento2Api extends Magento2ApiBase {
    * Reduce url endpoint data.
    * Find entity reducer and use it.
    *
-   * @param {Object} data - parsed response Api Response
-   * @param {String} [currency=null] currency code
-   * @return {Object} reduced data
+   * @param {object} data - parsed response Api Response
+   * @param {string} [currency] currency code
+   * @return {CmsPage | Product | Category} reduced data
    */
   reduceUrl(data, currency = null) {
     const type = data.entity_type;
@@ -477,8 +481,8 @@ module.exports = class Magento2Api extends Magento2ApiBase {
 
   /**
    * Reduce cms page data
-   * @param {Object} response - full api response
-   * @return {Object} - reduced response
+   * @param {object} response - full api response
+   * @return {CmsPage} - reduced response
    */
   reduceCmsPage(response) {
     const { data } = response;
@@ -493,9 +497,9 @@ module.exports = class Magento2Api extends Magento2ApiBase {
 
   /**
    * Reduce product data to what is needed.
-   * @param {Object} response - api response
-   * @param {String} [currency=null] - currency code
-   * @return {Object} - reduced data
+   * @param {object} response - api response
+   * @param {string} [currency] - currency code
+   * @return {Product} - reduced data
    */
   reduceProduct(response, currency = null) {
     this.convertProductData(response, currency);
@@ -505,8 +509,8 @@ module.exports = class Magento2Api extends Magento2ApiBase {
 
   /**
    * Reduce category data
-   * @param {Object} response - api response
-   * @return {Object} reduced data
+   * @param {object} response - api response
+   * @return {Category} reduced data
    */
   reduceCategory(response) {
     this.convertCategoryData(response);
@@ -516,11 +520,12 @@ module.exports = class Magento2Api extends Magento2ApiBase {
 
   /**
    * Search for product with id
-   * @param {number} id = product id called by magento entity_id
-   * @return {Object} - product data
+   * @param {object} params - request params
+   * @param {number} params.id - product id called by magento entity_id
+   * @return {Promise<Product>} product data
    */
-  async product({ id }) {
-    const urlPath = `catalog/product/view/id/${id}`;
+  async product(params) {
+    const urlPath = `catalog/product/view/id/${params.id}`;
 
     return this.fetchUrl({ path: urlPath, loadEntityData: true });
   }
@@ -528,10 +533,10 @@ module.exports = class Magento2Api extends Magento2ApiBase {
   /**
    * Add product to cart
    *
-   * @param {Object} input - product data
-   * @param {String} input.sku - added product sku
-   * @param {Number} input.qty - added product qty
-   * @return {Promise<Object>} - cart item data
+   * @param {object} input - product data
+   * @param {string} input.sku - added product sku
+   * @param {number} input.qty - added product qty
+   * @return {Promise<CartItemPayload>} - cart item data
    */
   async addToCart(input) {
     const cartData = await this.ensureCart();
@@ -588,8 +593,8 @@ module.exports = class Magento2Api extends Magento2ApiBase {
 
   /**
    * Ensure customer has cart in the session.
-   * Creates if not exists.
-   * @returns {Object} - new cart data
+   * Creates cart if it doesn't yet exist.
+   * @return {object} - new cart data
    */
   async ensureCart() {
     const { cart, customerToken: { token } = {} } = this.context.magento2;
@@ -607,34 +612,8 @@ module.exports = class Magento2Api extends Magento2ApiBase {
   }
 
   /**
-   * Forward action with common magento api params.
-   * @param {String} path Api path
-   * @param {Object} params Api params
-   * @param {String} method Api method
-   * @param {Object} [data] Api data
-   * @param {Object} session session content
-   * @param {Boolean} [shouldUseCustomerToken = false] if customer token should be used
-   * @return {Promise} Api request promise
-   */
-  async forwardAction(path, params, method, data, session, shouldUseCustomerToken = false) {
-    const { storeCode, customerToken = {} } = session;
-    const customer = {};
-
-    if (shouldUseCustomerToken) {
-      customer.customerToken = customerToken;
-    }
-
-    return this[method](path, method === 'get' ? {} : data, {
-      context: {
-        storeCode,
-        ...customer
-      }
-    });
-  }
-
-  /**
-   * Generate prefix for path to cart
-   * @returns {string} - prefix for cart endpoints
+   * Generate prefix for path to cart based on current user session state
+   * @return {string} - prefix for cart endpoints
    */
   getCartPath() {
     const { cart, customerToken = {} } = this.context.magento2;
@@ -648,22 +627,21 @@ module.exports = class Magento2Api extends Magento2ApiBase {
 
   /**
    * Make sure price fields are float
-   * @param {Object} object - object to process
-   * @param {Array.<String>} fieldsToProcess - array with field names
-   * @return {Object} - updated object
+   * @param {object} data - object to process
+   * @param {string[]} fieldsToProcess - array with field names
+   * @return {object} updated object
    */
-  processPrice(object = {}, fieldsToProcess = []) {
+  processPrice(data = {}, fieldsToProcess = []) {
     fieldsToProcess.forEach(field => {
-      object[field] = parseFloat(object[field]);
+      data[field] = parseFloat(data[field]);
     });
 
-    return object;
+    return data;
   }
 
   /**
    * Get cart data
-   * @param {Object} params - data for the cart request
-   * @return {Promise<Object>} - customer cart data
+   * @return {Promise<Cart>} - customer cart data
    */
   async cart() {
     const { magento2 } = this.context;
@@ -706,10 +684,9 @@ module.exports = class Magento2Api extends Magento2ApiBase {
 
   /**
    * Process and merge cart and totals response
-   *
-   * @param {Object} quoteData - data from cart endpoint
-   * @param {Object} totalsData - data from cart totals endpoint
-   * @return {Object} - object with merged data
+   * @param {object} quoteData - data from cart endpoint
+   * @param {object} totalsData - data from cart totals endpoint
+   * @return {Cart} object with merged data
    */
   convertCartData(quoteData, totalsData) {
     quoteData.active = quoteData.isActive;
@@ -759,7 +736,7 @@ module.exports = class Magento2Api extends Magento2ApiBase {
 
   /**
    * Fetch country data
-   * @return {Promise<Object>} - parsed country list
+   * @return {CountriesList} parsed country list
    */
   async countries() {
     const response = await this.get('/directory/countries', {}, { context: { useAdminToken: false } });
@@ -776,10 +753,10 @@ module.exports = class Magento2Api extends Magento2ApiBase {
 
   /**
    * Make request for customer token
-   * @param {Object} data - form data
-   * @param {String} data.email - user email
-   * @param {String} data.password - user password
-   * @returns {Promise<boolean>} true if login was successful
+   * @param {SignIn} data - form data
+   * @param {string} data.email - user email
+   * @param {string} data.password - user password
+   * @return {Promise<boolean>} true if login was successful
    */
   async signIn(data) {
     const { email, password } = data;
@@ -831,9 +808,8 @@ module.exports = class Magento2Api extends Magento2ApiBase {
 
   /**
    * Log out customer.
-   * todo revoke customer token using Magento api
-   * @param {Object} session - session object
-   * @returns {Promise<boolean>} true
+   * @todo revoke customer token using Magento api
+   * @return {Promise<boolean>} true
    */
   async signOut() {
     /* Remove logged in customer data */
@@ -845,13 +821,13 @@ module.exports = class Magento2Api extends Magento2ApiBase {
 
   /**
    * Create customer account
-   * @param {Object} data - registration form data
-   * @param {String} data.email - customer email
-   * @param {String} data.firstname - customer first name
+   * @param {SignUp} data - registration form data
+   * @param {string} data.email - customer email
+   * @param {string} data.firstname - customer first name
    * @param {String} data.lastname - customer last name
    * @param {String} data.password - customer password
-   * @param {(String|Number)} params.cart.quoteId - cart id
-   * @returns {Promise<Object>} - new customer data
+   * @param {string|number} params.cart.quoteId - cart id
+   * @return {Promise<Customer>} - new customer data
    */
   async signUp(data) {
     const { email, firstname, lastname, password } = data;
@@ -886,10 +862,10 @@ module.exports = class Magento2Api extends Magento2ApiBase {
 
   /**
    * Fetch customer data
-   * @return {Promise.<object>} - converted customer data
+   * @return {Promise<Customer>} - converted customer data
    */
   async customer() {
-    const { customerToken = {} } = this.context.magento22;
+    const { customerToken = {} } = this.context.magento2;
 
     if (!customerToken.token) {
       throw new Error('Customer token is required.');
@@ -908,6 +884,11 @@ module.exports = class Magento2Api extends Magento2ApiBase {
     return { ...convertedData, ...extensionAttributes };
   }
 
+  /**
+   * Converts address response from magento to Address type
+   * @param {object} response - api response
+   * @return {Address} parsed address
+   */
   convertAddressData(response) {
     response = this.convertKeys(response);
 
@@ -928,11 +909,11 @@ module.exports = class Magento2Api extends Magento2ApiBase {
 
   /**
    * Fetch collection of customer orders
-   * @param {Object} params - request params
-   * @param {Object} params.query - request query params
-   * @param {Number} params.query.page - pagination page
-   * @param {Number} params.query.perPage - number of items per page
-   * @returns {{data, meta}|*} - array of order items
+   * @param {object} params - request params
+   * @param {object} params.query - request query params
+   * @param {number} params.query.page - pagination page
+   * @param {number} params.query.perPage - number of items per page
+   * @return {Orders} parsed orders with pagination info
    */
   async orders(params) {
     const {
@@ -965,9 +946,9 @@ module.exports = class Magento2Api extends Magento2ApiBase {
 
   /**
    * Fetch info about customer order based on order id
-   * @param {Object} params - request params
-   * @param {Number} params.id - order id
-   * @returns {Promise<{object}>} - order info
+   * @param {object} params - request params
+   * @param {number} params.id - order id
+   * @return {Promise<Order>} - order info
    */
   async order(params) {
     const { id } = params;
@@ -990,8 +971,8 @@ module.exports = class Magento2Api extends Magento2ApiBase {
 
   /**
    * Process customer order data
-   * @param {Object} response - response from Magento2 backend
-   * @return {Object} - processed response
+   * @param {object} response - response from Magento2 backend
+   * @return {Order} processed order
    */
   convertOrder(response) {
     const { data } = response;
@@ -1021,9 +1002,8 @@ module.exports = class Magento2Api extends Magento2ApiBase {
 
   /**
    * Update magento items collection response
-   *
-   * @param {Array} response - products bought
-   * @return {Array} - converted items
+   * @param {object[]} response - products bought
+   * @return {OrderItem[]} converted items
    */
   convertItemsResponse(response = []) {
     const products = response.filter(item => item.productType === 'simple');
@@ -1044,8 +1024,8 @@ module.exports = class Magento2Api extends Magento2ApiBase {
 
   /**
    * Process cart totals data
-   * @param {Object} response - totals response from Magento2 backend
-   * @return {Object} - processed response
+   * @param {object} response - totals response from Magento2 backend
+   * @return {object} processed response
    */
   convertTotals(response) {
     let totalsData = response.data;
@@ -1071,15 +1051,15 @@ module.exports = class Magento2Api extends Magento2ApiBase {
 
   /**
    * Update items in cart
-   * @param {Object} input - cart item data
-   * @param {String} [input.sku] - item sku
-   * @param {Number} [input.qty] - item qty
-   * @param {Object} session - request params
-   * @param {String} [params.customerToken] - customer token
-   * @param {String} [params.storeCode] - selected store code
-   * @param {Object} [params.cart] - customer cart
-   * @param {(String|Number)} [params.cart.quoteId] - cart id
-   * @return {{data, meta}|*} - updated item data
+   * @param {UpdateCartItemInput} input - cart item data
+   * @param {string} [input.sku] - item sku
+   * @param {number} [input.qty] - item qty
+   * @param {object} session - request params
+   * @param {string} [params.customerToken] - customer token
+   * @param {string} [params.storeCode] - selected store code
+   * @param {object} [params.cart] - customer cart
+   * @param {String|Number} [params.cart.quoteId] - cart id
+   * @return {Promise<CartItemPayload>} - updated item data
    */
   async updateCartItem(input) {
     const { cart } = this.context.magento2;
@@ -1110,10 +1090,10 @@ module.exports = class Magento2Api extends Magento2ApiBase {
 
   /**
    * Remove item from cart
-   * @param {Object} input - cart item data
-   * @param {String} [input.itemId] - item id
-   * @param {(String|Number)} [params.cart.quoteId] - cart id
-   * @returns {{data, meta}|*} - true on success
+   * @param {RemoveCartItemInput} input - cart item data
+   * @param {string} [input.itemId] - item id
+   * @param {string|number} [params.cart.quoteId] - cart id
+   * @return {Promise<boolean>} true on success
    */
   async removeCartItem(input) {
     const { cart } = this.context.magento2;
@@ -1130,6 +1110,11 @@ module.exports = class Magento2Api extends Magento2ApiBase {
     return false;
   }
 
+  /**
+   * Updates customer profile data
+   * @param {CustomerInput} data - data to be saved
+   * @return {Promise<Customer>} updated customer data
+   */
   async editCustomerData(data) {
     const response = await this.put('/customers/me', { customer: { ...data } });
 
@@ -1138,8 +1123,9 @@ module.exports = class Magento2Api extends Magento2ApiBase {
 
   /**
    * Request customer address
-   * @param {Object} params - request params
-   * @returns {{data, meta}|*} - address data, list of addresses or true after successful delete
+   * @param {object} params - request params
+   * @param {number} params.id - address id
+   * @return {Promise<Address>} requested address data
    */
   async address(params) {
     return this.forwardAddressAction(params);
@@ -1147,8 +1133,8 @@ module.exports = class Magento2Api extends Magento2ApiBase {
 
   /**
    * Add new customer address
-   * @param {Object} data - address data
-   * @returns {{data, meta}|*} - address data, list of addresses or true after successful delete
+   * @param {AddressInput} data - address data
+   * @return {Promise<Address>} added address data
    */
   async addCustomerAddress(data) {
     return this.forwardAddressAction({ data, method: 'post' });
@@ -1156,8 +1142,8 @@ module.exports = class Magento2Api extends Magento2ApiBase {
 
   /**
    * Change customer address data
-   * @param {Object} data - data to change
-   * @returns {{data, meta}|*} - address data, list of addresses or true after successful delete
+   * @param {AddressInput} data - data to change
+   * @return {Promise<Address>} updated address data
    */
   async editCustomerAddress(data) {
     return this.forwardAddressAction({ data, method: 'put' });
@@ -1165,8 +1151,8 @@ module.exports = class Magento2Api extends Magento2ApiBase {
 
   /**
    * Remove customer address data
-   * @param {Object} data - address to remove
-   * @returns {{data, meta}|*} - address data, list of addresses or true after successful delete
+   * @param {EntityIdInput} data - address to remove
+   * @return {boolean} true when removed successfully
    */
   async removeCustomerAddress(data) {
     return this.forwardAddressAction({ id: data.id, method: 'delete' });
@@ -1174,13 +1160,13 @@ module.exports = class Magento2Api extends Magento2ApiBase {
 
   /**
    * Request address management action
-   * @param {Object} params - request params
-   * @param {String} params.customerToken - customer token
-   * @param {Number} params.id - address id
-   * @param {String} params.storeCode - selected store code
-   * @param {String} params.path - REST API path where default path is 'customers/me/address'
-   * @param {String} params.method - request method, where default method is 'get'
-   * @returns {{data, meta}|*} - address data, list of addresses or true after successful delete
+   * @param {object} params - request params
+   * @param {string} params.customerToken - customer token
+   * @param {number} params.id - address id
+   * @param {string} params.storeCode - selected store code
+   * @param {string} params.path - REST API path where default path is 'customers/me/address'
+   * @param {string} params.method - request method, where default method is 'get'
+   * @return {Promise<Address|Address[]|boolean>} - address data, list of addresses or true after successful delete
    */
   async forwardAddressAction(params = {}) {
     const { id, path = '/customers/me/address', method = 'get', data = null } = params;
@@ -1218,8 +1204,10 @@ module.exports = class Magento2Api extends Magento2ApiBase {
 
   /**
    * Check if given password reset token is valid
-   * @param {Object} params - request params
-   * @returns {{data, meta}|*} true if token is valid
+   * @param {object} params - request params
+   * @param {number} params.id - customer id
+   * @param {string} params.token - reset password token
+   * @return {Promise<boolean>} true if token is valid
    */
   async validatePasswordToken(params) {
     const { id, token } = params;
@@ -1239,9 +1227,9 @@ module.exports = class Magento2Api extends Magento2ApiBase {
 
   /**
    * Generate customer password reset token
-   * @param {Object} params - request params
-   * @param {String} params.email - user email
-   * @returns {{data}|*} always true to avoid spying for registered emails
+   * @param {EmailInput} params - request params
+   * @param {string} params.email - user email
+   * @return {Promise<boolean>} always true to avoid spying for registered emails
    */
   async requestCustomerPasswordResetToken(params) {
     const { email } = params;
@@ -1251,27 +1239,24 @@ module.exports = class Magento2Api extends Magento2ApiBase {
 
   /**
    * Reset customer password using provided reset token
-   * @param {Object} params - request params
-   * @param {Object} params- create new password form data
-   * @param {String} params.customerId - customer email
-   * @param {String} params.resetToken - reset token
-   * @param {String} params.password - new password to set
-   * @returns {{data, meta}|*} true on success
+   * @param {CustomerPasswordReset} params - request params
+   * @param {string} params.customerId - customer email
+   * @param {string} params.resetToken - reset token
+   * @param {string} params.password - new password to set
+   * @return {Promise<boolean>} true on success
    */
   async resetCustomerPassword(params) {
     const { customerId: email, resetToken, password: newPassword } = params;
-
     const result = await this.put('/customers/password/reset', { email, resetToken, newPassword });
-
     return result.data;
   }
 
   /**
    * Change customer password
-   * @param {Object} params - request params
-   * @param {String} params.password - new password
-   * @param {String} params.currentPassword - current password
-   * @returns {Promise<*>} true on success
+   * @param {CustomerPasswordReset} params - request params
+   * @param {string} params.password - new password
+   * @param {string} params.currentPassword - current password
+   * @return {Promise<boolean>} true on success
    */
   async changeCustomerPassword(params) {
     const { password: newPassword, currentPassword } = params;
@@ -1300,9 +1285,9 @@ module.exports = class Magento2Api extends Magento2ApiBase {
 
   /**
    * Apply coupon to cart
-   * @param {Object} input - request data
-   * @param {String} [input.couponCode] - coupon code
-   * @returns {{data, meta}|*} - true on success
+   * @param {CouponInput} input - request data
+   * @param {string} [input.couponCode] - coupon code
+   * @return {Promise<boolean>} true on success
    */
   async applyCoupon(input) {
     const { cart } = this.context.magento2,
@@ -1326,7 +1311,7 @@ module.exports = class Magento2Api extends Magento2ApiBase {
 
   /**
    * Remove coupon from the cart
-   * @returns {{data, meta}|*} - true on success
+   * @return {Promise<boolean>} true on success
    */
   async cancelCoupon() {
     const { cart } = this.context.magento2;
@@ -1358,10 +1343,10 @@ module.exports = class Magento2Api extends Magento2ApiBase {
 
   /**
    * Make a call to cart related endpoint
-   * @param {String} path - path to magento api endpoint
-   * @param {String} method - request method
-   * @param {Object} data - request data
-   * @returns {{data, meta}|*} - endpoint result
+   * @param {string} path - path to magento api endpoint
+   * @param {string} method - request method
+   * @param {object} data - request data
+   * @return {Promise<object>} response data
    */
   async performCartAction(path, method, data) {
     const { cart } = this.context.magento2;
@@ -1390,6 +1375,11 @@ module.exports = class Magento2Api extends Magento2ApiBase {
     return response;
   }
 
+  /**
+   * Sets shipping method for the order
+   * @param {ShippingInput} data - shipping configuration
+   * @return {Promise<ShippingInformation>} shipping configuration info
+   */
   async setShipping(data) {
     const magentoData = {
       addressInformation: data
@@ -1402,8 +1392,8 @@ module.exports = class Magento2Api extends Magento2ApiBase {
 
   /**
    * Place order
-   * @param {Object} data - form data
-   * @return {Object} - order data
+   * @param {PlaceOrderInput} data - form data
+   * @return {Promise<PlaceOrderResult>} order data
    */
   async placeOrder(data) {
     let response;
@@ -1436,6 +1426,10 @@ module.exports = class Magento2Api extends Magento2ApiBase {
     return response.data;
   }
 
+  /**
+   * Load last customer's order
+   * @return {Promise<Order>} last order data
+   */
   async lastOrder() {
     const { orderId, paypalExpressHash } = this.context.magento2;
     let lastOrderId = orderId;

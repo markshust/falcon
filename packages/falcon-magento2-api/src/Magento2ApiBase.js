@@ -6,6 +6,7 @@ const addMinutes = require('date-fns/add_minutes');
 const isPlainObject = require('lodash/isPlainObject');
 const camelCase = require('lodash/camelCase');
 const keys = require('lodash/keys');
+const has = require('lodash/has');
 const isEmpty = require('lodash/isEmpty');
 
 const DEFAULT_KEY = '*';
@@ -31,6 +32,9 @@ module.exports = class Magento2ApiBase extends ApiDataSource {
     this.setupAdminTokenRefreshJob();
   }
 
+  /**
+   * Makes sure that context required for http calls exists
+   */
   async preInitialize() {
     if (!this.context) {
       this.initialize({ context: {} });
@@ -57,7 +61,7 @@ module.exports = class Magento2ApiBase extends ApiDataSource {
 
   /**
    * Check if admin token is still valid
-   * @returns {boolean} true if token is valid
+   * @return {boolean} true if token is valid
    */
   isAdminTokenValid() {
     return !this.tokenExpirationTime || (this.tokenExpirationTime && this.tokenExpirationTime > Date.now());
@@ -65,7 +69,7 @@ module.exports = class Magento2ApiBase extends ApiDataSource {
 
   /**
    * Make request to the backend for admin token
-   * @returns {Promise<string>} admin token
+   * @return {Promise<string>} admin token
    */
   async retrieveAdminToken() {
     Logger.info('Retrieving Magento token.');
@@ -95,17 +99,16 @@ module.exports = class Magento2ApiBase extends ApiDataSource {
    * Retrieve token for given user.
    * @param {string} username magento2 user
    * @param {string} password magento2 user password
-   * @returns {object} response data
+   * @return {object} response data
    */
-  retrieveToken({ username, password }) {
+  async retrieveToken({ username, password }) {
     return this.post('/integration/admin/token', { username, password }, { context: { skipAuth: true } });
   }
 
   /**
-   * Helper method to recursively change key naming from underscore to camelCase
-   *
-   * @param {*} data - argument to process
-   * @return {object} - converted object
+   * Helper method to recursively change key naming from underscore (snake case) to camelCase
+   * @param {object} data - argument to process
+   * @return {object} converted object
    */
   convertKeys(data) {
     // handle simple types
@@ -136,7 +139,7 @@ module.exports = class Magento2ApiBase extends ApiDataSource {
   /**
    * Resolves url based on passed parameters
    * @param {object} req - request params
-   * @returns {URL} resolved url object
+   * @return {Promise<URL>} resolved url object
    */
   async resolveURL(req) {
     const { path } = req;
@@ -154,7 +157,7 @@ module.exports = class Magento2ApiBase extends ApiDataSource {
 
   /**
    * Authorize all requests, except case when authorization is explicitly disabled via context settings
-   * @param {object} req - request params
+   * @param {RequestOptions} req - request params
    */
   async willSendRequest(req) {
     const { context } = req;
@@ -163,6 +166,10 @@ module.exports = class Magento2ApiBase extends ApiDataSource {
     }
   }
 
+  /**
+   * Sets authorization headers for the passed request
+   * @param {RequestOptions} req - request input
+   */
   async authorizeRequest(req) {
     let token;
     const { useAdminToken } = req.context || {};
@@ -184,7 +191,7 @@ module.exports = class Magento2ApiBase extends ApiDataSource {
    * Check if token is still valid and throw error if it has expired
    * @param {object} customerToken - customer token data
    * @param {string} [customerToken.token] - token
-   * @param {Number} [customerToken.expirationTime] - token expiration time
+   * @param {number} [customerToken.expirationTime] - token expiration time
    * @throws Error - throw error and set status code to 401 if token has expired
    */
   validateCustomerToken(customerToken) {
@@ -199,10 +206,10 @@ module.exports = class Magento2ApiBase extends ApiDataSource {
 
   /**
    * Check if admin token is still valid
-   * @param {Object} customerTokenObject - customer token data
-   * @param {String} [customerTokenObject.token] - token
-   * @param {Number} [customerTokenObject.expirationTime] - token expiration time
-   * @returns {boolean} - true if token is valid
+   * @param {object} customerTokenObject - customer token data
+   * @param {string} [customerTokenObject.token] - token
+   * @param {number} [customerTokenObject.expirationTime] - token expiration time
+   * @return {boolean} - true if token is valid
    */
   isCustomerTokenValid(customerTokenObject) {
     return (
@@ -213,7 +220,7 @@ module.exports = class Magento2ApiBase extends ApiDataSource {
 
   /**
    * Get Magento api authorized admin token or perform request to create it.
-   * @return {string} token value
+   * @return {Promise<string>} token value
    */
   async getAdminToken() {
     if (!this.token) {
@@ -230,6 +237,11 @@ module.exports = class Magento2ApiBase extends ApiDataSource {
     return this.token;
   }
 
+  /**
+   * Process recived response data
+   * @param {Response} response - received response from the api
+   * @return {object} processed response data
+   */
   async didReceiveResponse(response) {
     const cookies = (response.headers.get('set-cookie') || '').split('; ');
     const responseTags = response.headers.get('x-cache-tags');
@@ -264,8 +276,12 @@ module.exports = class Magento2ApiBase extends ApiDataSource {
     return { data: { items: data.items, filters: data.filters || [], pagination }, meta };
   }
 
+  /**
+   * Handle error occurred during http response
+   * @param {Error} error - error to process
+   */
   didEncounterError(error) {
-    const customerToken = {}; // todo: get it from the session or temporary context implemented in pr#9
+    const { customerToken = {} } = this.context.magento2;
 
     // eslint-disable-next-line no-underscore-dangle
     if (!global.__DEVELOPMENT__) {
@@ -362,10 +378,20 @@ module.exports = class Magento2ApiBase extends ApiDataSource {
     return this.magentoConfig;
   }
 
+  /**
+   * Returns data that should be placed in global GraphQL execution context for the upcoming query
+   * @param {object} context - existing context data
+   * @return {object} additional data to be created
+   */
   createContextData(context) {
-    if (!context.req.session.magento2) {
+    if (!has(context, 'req.session')) {
+      throw new Error('No session in context passed to Magento2Api.createContextData()');
+    }
+
+    if (!has(context, 'req.session.magento2')) {
       context.req.session.magento2 = {};
     }
+
     this.ensureStoreCode(context.req);
     this.ensureCurrency(context.req.session);
 
@@ -416,7 +442,7 @@ module.exports = class Magento2ApiBase extends ApiDataSource {
    * "*" - means value by default. It's required to have a default value, since it will be used as a fallback value.
    * Each element in "mapping" object may contain a string value or sub-mapping per language.
    *
-   * @param {object} req Koa request object
+   * @param {Request} req Koa request object
    */
   ensureStoreCode(req) {
     const clientCountryCode = req.headers['CountryCode']; // eslint-disable-line dot-notation
