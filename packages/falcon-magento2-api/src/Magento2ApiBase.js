@@ -140,7 +140,7 @@ module.exports = class Magento2ApiBase extends ApiDataSource {
    */
   async resolveURL(req) {
     const { path } = req;
-    let { storeCode } = this.context.magento || {};
+    let { storeCode } = this.context.magento2 || {};
     if (storeCode) {
       req.params.delete(storeCode);
     } else {
@@ -170,7 +170,7 @@ module.exports = class Magento2ApiBase extends ApiDataSource {
     if (useAdminToken) {
       token = await this.getAdminToken();
     } else {
-      const { customerToken = {} } = this.context.magento || {};
+      const { customerToken = {} } = this.context.magento2 || {};
       this.validateCustomerToken(customerToken);
       token = customerToken.token || (await this.getAdminToken());
     }
@@ -372,7 +372,7 @@ module.exports = class Magento2ApiBase extends ApiDataSource {
     // put all the required data as 'magento' alias inside context
     // it's a reference to context.req.session.magento2 so change in context.magento will cause changes in the session
     return {
-      magento: context.req.session.magento2
+      magento2: context.req.session.magento2
     };
   }
 
