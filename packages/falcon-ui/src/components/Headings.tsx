@@ -30,7 +30,6 @@ export const H3 = themed({
   defaultTheme: {
     h3: {
       fontSize: 'lg',
-      fontWeight: 'bold',
       m: 'none'
     }
   }

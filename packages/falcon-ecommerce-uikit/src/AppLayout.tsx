@@ -4,7 +4,7 @@ export const AppLayout = themed({
   tag: 'div',
 
   defaultTheme: {
-    AppLayout: {
+    appLayout: {
       px: {
         xs: 'sm',
         md: 'md'

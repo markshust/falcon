@@ -4,7 +4,7 @@ export const toGridTemplate = (items: string[][]) => {
 
   const gridAreas = items
     .map(item => {
-      const rowTemplate = item.length > columnTemplate.length ? item.shift() : '';
+      const rowTemplate = item.length > columnTemplate.length ? item.pop() : '';
       return `"${item.join(' ')}" ${rowTemplate}`;
     })
     .join(' ');
