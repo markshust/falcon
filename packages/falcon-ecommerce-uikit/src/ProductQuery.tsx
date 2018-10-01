@@ -1,9 +1,7 @@
-import React from 'react';
 import gql from 'graphql-tag';
-import { I18n } from 'react-i18next';
 import { Query } from './Query';
 
-export const GET_PRODUCT = gql`
+export const product = gql`
   query GET_PRODUCT($id: Int!) {
     product(id: $id) {
       id
@@ -43,7 +41,7 @@ export const GET_PRODUCT = gql`
   }
 `;
 
-function getTranslations(t: reactI18Next.TranslationFunction /*, product: any*/) {
+function getTranslations(t: reactI18Next.TranslationFunction /* , product: any */) {
   return {
     sku: t('product.sku'),
     inStock: t('product.inStock'),
@@ -57,19 +55,10 @@ function getTranslations(t: reactI18Next.TranslationFunction /*, product: any*/)
 
 export type ProductTranslations = ReturnType<typeof getTranslations>;
 
-export class ProductQuery extends React.PureComponent<{
-  id: number;
-  children: (props: { data: any; translations: ProductTranslations }) => React.ReactNode;
-}> {
-  render() {
-    const { id, children } = this.props;
-
-    return (
-      <Query query={GET_PRODUCT} variables={{ id }}>
-        {({ product }) => (
-          <I18n ns={['shop']}>{t => children({ data: product, translations: getTranslations(t) })}</I18n>
-        )}
-      </Query>
-    );
-  }
+export class ProductQuery extends Query<any> {
+  static defaultProps = {
+    query: product,
+    getTranslations,
+    translationsNamespaces: ['shop']
+  };
 }
