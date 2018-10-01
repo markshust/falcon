@@ -66,7 +66,8 @@
     "react-async-bootstrapper2": "^2.1.2",
     "react-google-tag-manager": "2.2.1",
     "resolve": "^1.8.1",
-    "serialize-javascript": "^1.5.0"
+    "serialize-javascript": "^1.5.0",
+    "webpack-bundle-analyzer": "^3.0.2"
   },
   "devDependencies": {
     "@deity/falcon-i18n-webpack-plugin": "^1.0.0",
