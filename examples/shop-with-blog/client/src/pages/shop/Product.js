@@ -3,7 +3,8 @@ import PropTypes from 'prop-types';
 import { ProductQuery, Product } from '@deity/falcon-ecommerce-uikit';
 
 const ProductPage = ({ id }) => (
-  <ProductQuery id={id}>{({ data, translations }) => <Product data={data} translations={translations} />}</ProductQuery>
+  // <p>Id: {id}</p>
+  <ProductQuery variables={{ id }}>{productProps => <Product {...productProps} />}</ProductQuery>
 );
 ProductPage.propTypes = {
   id: PropTypes.number.isRequired
