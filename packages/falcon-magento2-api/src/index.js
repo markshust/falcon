@@ -15,10 +15,10 @@ const Magento2ApiBase = require('./Magento2ApiBase');
 module.exports = class Magento2Api extends Magento2ApiBase {
   /**
    * Set shop configuration
-   * @param {ShopConfigInput} params - params to be set
+   * @param {StoreConfigInput} params - params to be set
    * @return {boolean} true when change has been successful
    */
-  setConfig(params) {
+  setStoreConfig(params) {
     const { storeCode } = params;
     if (storeCode) {
       this.context.magento2.storeCode = storeCode;

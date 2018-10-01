@@ -10,7 +10,7 @@ extend type Query {
     skus: [String]
   ): ProductList
   cart: Cart
-  countries: CountriesList
+  countries: CountryList
   order(id: Int!): Order
   lastOrder: Order
   orders(query: ShopPageQuery): Orders
@@ -41,7 +41,7 @@ extend type Mutation {
   # set current customer order shipping information
   setShipping(input: ShippingInput): ShippingInformation
   placeOrder(input: PlaceOrderInput!): PlaceOrderResult
-  setConfig(input: ShopConfigInput): Boolean
+  setStoreConfig(input: StoreConfigInput): Boolean
 }
 
 input EntityIdInput {
@@ -401,7 +401,7 @@ input SignIn {
   password: String
 }
 
-input ShopConfigInput {
+input StoreConfigInput {
   storeCode: String
 }
 
@@ -472,7 +472,7 @@ type Country {
   regions: [Region]
 }
 
-type CountriesList {
+type CountryList {
   items: [Country]
 }
 

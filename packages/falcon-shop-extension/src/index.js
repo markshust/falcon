@@ -72,7 +72,7 @@ module.exports = class Shop extends Extension {
           estimateShippingMethods: (root, data) => this.api.estimateShippingMethods(data.input),
           setShipping: (root, data) => this.api.setShipping(data.input),
           placeOrder: (root, data) => this.api.placeOrder(data.input),
-          setConfig: (root, data) => this.api.setConfig(data.input)
+          setStoreConfig: (root, data) => this.api.setStoreConfig(data.input)
         }
       }
     };
