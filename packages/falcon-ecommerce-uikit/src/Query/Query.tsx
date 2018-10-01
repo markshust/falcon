@@ -8,6 +8,7 @@ export class Query<TData = any, TVariables = OperationVariables, TTranslations =
     children: (result: TData | TData & { translations: TTranslations } | undefined) => React.ReactNode;
   } & {
     getTranslations?: (t: TranslationFunction) => TTranslations;
+    translationsNamespaces?: string[];
   }
 > {
   render() {
@@ -18,19 +19,22 @@ export class Query<TData = any, TVariables = OperationVariables, TTranslations =
 
           if (error) return `Error!: ${error}`;
 
-          if (!this.props.getTranslations) {
-            return this.props.children(data);
+          const { children, getTranslations } = this.props;
+          if (getTranslations) {
+            const { translationsNamespaces } = this.props;
+
+            return (
+              <I18n ns={translationsNamespaces}>
+                {t => {
+                  const translations = getTranslations(t);
+
+                  return children({ ...(data as any), translations });
+                }}
+              </I18n>
+            );
           }
 
-          return (
-            <I18n>
-              {t => {
-                const translations = this.props.getTranslations!(t);
-
-                return this.props.children({ ...(data as any), translations });
-              }}
-            </I18n>
-          );
+          return children(data);
         }}
       </ApolloQuery>
     );
