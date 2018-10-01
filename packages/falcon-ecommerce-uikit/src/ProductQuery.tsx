@@ -31,11 +31,8 @@ export const product = gql`
         keywords
       }
       breadcrumbs {
-        id
         name
         urlPath
-        urlKey
-        urlQuery
       }
     }
   }
