@@ -69,8 +69,8 @@ export const ShowMore = () => (
 );
 
 const GET_PRODUCTS = gql`
-  query {
-    products {
+  query GET_PRODUCTS($categoryId: Int!) {
+    products(categoryId: $categoryId) {
       items {
         id
         name
@@ -79,7 +79,6 @@ const GET_PRODUCTS = gql`
         urlPath
       }
     }
-    breadcrumbs @client
     sortOrders @client
   }
 `;
@@ -90,18 +89,14 @@ export class CategoryQuery extends Query<any> {
   };
 }
 
-export const Category = () => (
-  <CategoryQuery>
-    {({ breadcrumbs, sortOrders, products }) => (
-      <CategoryLayout>
-        {/* <Breadcrumbs breadcrumbs={breadcrumbs} /> */}
-        <H1>Pots & Pans</H1>
-        <CategoryToolbar sortOrders={sortOrders} />
-        <Divider />
-        <ProductsList products={products.items} />
-        <Divider />
-        <ShowMore />
-      </CategoryLayout>
-    )}
-  </CategoryQuery>
+export const Category: React.SFC<{ products: any; sortOrders: any[] }> = ({ products, sortOrders }) => (
+  <CategoryLayout>
+    {/* <Breadcrumbs breadcrumbs={breadcrumbs} /> */}
+    <H1>Pots & Pans</H1>
+    <CategoryToolbar sortOrders={sortOrders} />
+    <Divider />
+    <ProductsList products={products.items} />
+    <Divider />
+    <ShowMore />
+  </CategoryLayout>
 );

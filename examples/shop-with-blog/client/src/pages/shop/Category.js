@@ -1,17 +1,13 @@
 import React from 'react';
-import { translate } from 'react-i18next';
+// import { translate } from 'react-i18next';
 import PropTypes from 'prop-types';
+import { CategoryQuery, Category } from '@deity/falcon-ecommerce-uikit';
 
-const Category = ({ id, path, type, t }) => (
-  <div>
-    <h1>{t('category.title')}</h1>
-    <p>{`type: ${type}`}</p>
-    <p>{`id: ${id}`}</p>
-    <p>{`path: ${path}`}</p>
-  </div>
+const CategoryPage = ({ id }) => (
+  <CategoryQuery variables={{ categoryId: id }}>{categoryProps => <Category {...categoryProps} />}</CategoryQuery>
 );
-Category.propTypes = {
-  t: PropTypes.func.isRequired
+CategoryPage.propTypes = {
+  id: PropTypes.number.isRequired
 };
 
-export default translate('shop')(Category);
+export default CategoryPage;
