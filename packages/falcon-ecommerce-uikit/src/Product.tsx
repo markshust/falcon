@@ -109,27 +109,27 @@ const ProductDescriptionLayout = themed({
   }
 });
 
-export class Product extends React.PureComponent<{ data: any; translations: ProductTranslations }> {
+export class Product extends React.PureComponent<{ product: any; translations: ProductTranslations }> {
   render() {
-    const { data, translations } = this.props;
+    const { product, translations } = this.props;
 
     return (
       <ProductLayout>
         {/* <Breadcrumbs breadcrumbs={breadcrumbs} /> */}
         <ProductDetailsLayout>
           <Box gridArea={Area.gallery} css={{ maxHeight: '100%' }}>
-            <ProductGallery items={data.gallery} />
+            <ProductGallery items={product.gallery} />
           </Box>
           <Text fontSize="sm" gridArea={Area.sku}>
-            {`${translations.sku}: ${data.sku}`}
+            {`${translations.sku}: ${product.sku}`}
           </Text>
-          <H1 gridArea={Area.title}>{data.name}</H1>
+          <H1 gridArea={Area.title}>{product.name}</H1>
           <Text fontSize="xxl" gridArea={Area.price}>
-            {data.currency} {data.price}
+            {product.currency} {product.price}
           </Text>
-          <ProductOptions options={data.configurableOptions} />
+          <ProductOptions options={product.configurableOptions} />
           <ProductDescriptionLayout
-            dangerouslySetInnerHTML={{ __html: data.description }}
+            dangerouslySetInnerHTML={{ __html: product.description }}
             gridArea={Area.description}
           />
 
