@@ -2,8 +2,10 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import Route from 'react-router-dom/Route';
 import Switch from 'react-router-dom/Switch';
-import Home from 'src/pages/Home';
 import Helmet from 'react-helmet';
+import AsyncComponent from 'src/components/Async';
+import Home from 'src/pages/Home';
+import { Loader } from '@deity/falcon-ecommerce-uikit';
 import { ThemeProvider } from '@deity/falcon-ui';
 import DynamicRoute from '@deity/falcon-client/src/components/DynamicRoute';
 import isOnline from '@deity/falcon-client/src/components/isOnline';
@@ -13,7 +15,6 @@ import {
   Header,
   Footer,
   FooterQuery,
-  Category,
   HeaderQuery,
   MiniCartQuery,
   MiniCart
@@ -38,31 +39,34 @@ const HeadMetaTags = () => (
 );
 
 // const NotFound = () => <p>Not Found</p>;
+const Category = AsyncComponent(() => import(/* webpackChunkName: "shop/category" */ './pages/shop/Category'));
+const Product = AsyncComponent(() => import(/* webpackChunkName: "shop/product" */ './pages/shop/Product'));
+const Cms = AsyncComponent(() => import(/* webpackChunkName: "shop/cms" */ './pages/shop/Cms'));
 
 const App = ({ online }) => (
   <ThemeProvider theme={deityGreenTheme}>
     <HeadMetaTags />
     <AppLayout>
       <HeaderQuery>{data => <Header {...data} />}</HeaderQuery>
-
       {!online && <p>your are offline.</p>}
       <Switch>
         <Route exact path="/" component={Home} />
         <Route exact path="/products" component={Category} />
+        {/* <DynamicSwitch>
+          <Route exact path="/shop-product?:id" component={() => <p>asdasdasd</p>} />
+        </DynamicSwitch> */}
 
         <DynamicRoute
+          loaderComponent={Loader}
           components={{
-            'shop-page': () => import(/* webpackChunkName: "shop/cms" */ './pages/shop/Cms'),
-            'shop-product': () => import(/* webpackChunkName: "shop/product" */ './pages/shop/Product'),
-            'shop-category': () => import(/* webpackChunkName: "shop/category" */ './pages/shop/Category'),
+            'shop-category': Category,
+            'shop-product': Product,
+            'shop-page': Cms,
             'blog-post': null,
             'blog-page': null,
             'blog-category': null
           }}
         />
-
-        {/* <Route component={DynamicPage} /> */}
-
         {/* <Route component={NotFound} /> */}
       </Switch>
       <FooterQuery>{(data, t) => <Footer {...data} translations={t} />}</FooterQuery>
