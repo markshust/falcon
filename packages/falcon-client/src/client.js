@@ -4,7 +4,7 @@ import { hydrate, render } from 'react-dom';
 import BrowserRouter from 'react-router-dom/BrowserRouter';
 import { ApolloProvider } from 'react-apollo';
 import { AsyncComponentProvider } from 'react-async-component';
-import asyncBootstrapper from 'react-async-bootstrapper';
+import asyncBootstrapper from 'react-async-bootstrapper2';
 import { I18nextProvider } from 'react-i18next';
 import ApolloClient from './service/ApolloClient';
 import HtmlHead from './components/HtmlHead';

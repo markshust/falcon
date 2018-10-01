@@ -230,7 +230,7 @@ module.exports = appConfig => (config, { target, dev }, webpackObject) => {
     'razzle/polyfills',
     'react',
     'react-apollo',
-    'react-async-bootstrapper',
+    'react-async-bootstrapper2',
     'react-async-component',
     'react-dom',
     'react-google-tag-manager',
