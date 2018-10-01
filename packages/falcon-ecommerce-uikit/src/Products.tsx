@@ -70,6 +70,12 @@ const GET_PRODUCTS = gql`
   }
 `;
 
-export const Products = () => (
-  <Query query={GET_PRODUCTS}>{({ products }) => <ProductsList products={products.items} />}</Query>
-);
+export type Products = {
+  items: any[];
+};
+
+export class ProductsListQuery extends Query<Products> {
+  static defaultProps = {
+    query: GET_PRODUCTS
+  };
+}
