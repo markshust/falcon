@@ -16,7 +16,7 @@ type DropdownContextType = {
 const DropdownContext = React.createContext<DropdownContextType>({});
 
 const DropdownInnerDOM: React.SFC<DropDownPropsType> = ({ onChange, ...rest }) => (
-  <Toggle initial={false}>
+  <Toggle>
     {({ on, toggle }) => {
       const onChangeAndClose = (value: any) => () => {
         if (onChange) {
@@ -56,10 +56,10 @@ export const Dropdown = themed({
   }
 });
 
-const DropdownLabelInnerDOM = ({ children, ...rest }: any) => (
+const DropdownLabelInnerDOM: React.SFC<any> = ({ children, ...rest }) => (
   <DropdownContext.Consumer>
     {({ open }) => (
-      <Box {...rest} active={open}>
+      <Box {...rest}>
         <span>{children}</span>
         <Icon src={open ? 'dropdownArrowUp' : 'dropdownArrowDown'} fallback={open ? '▴' : '▾'} />
       </Box>
@@ -77,19 +77,15 @@ export const DropdownLabel = themed({
       px: 'md',
       fontSize: 'md',
       justifyContent: 'space-between',
-      css: ({ theme }) => ({
+      css: {
         width: '100%',
-        cursor: 'pointer',
-        '&[data-active]': {
-          backgroundColor: theme.colors.primaryDark,
-          color: theme.colors.primaryText
-        }
-      })
+        cursor: 'pointer'
+      }
     }
   }
 });
 
-const DropdownMenuInnerDOM = (props: any) => (
+const DropdownMenuInnerDOM: React.SFC<any> = props => (
   <DropdownContext.Consumer>
     {({ open }) => <Box as="ul" {...props} display={open ? 'block' : 'none'} />}
   </DropdownContext.Consumer>
@@ -117,7 +113,7 @@ export const DropdownMenu = themed({
   }
 });
 
-const DropdownMenuItemInnerDOM = (props: any) => (
+const DropdownMenuItemInnerDOM: React.SFC<any> = props => (
   <DropdownContext.Consumer>
     {({ onChange }) => <Box as="li" {...props} onClick={onChange && onChange(props.value)} />}
   </DropdownContext.Consumer>

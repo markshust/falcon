@@ -1,4 +1,8 @@
+import React from 'react';
+import { Value } from 'react-powerplug';
+
 import { themed } from '../theme';
+import { Box } from './Box';
 
 export const Navbar = themed({
   tag: 'ul',
@@ -18,8 +22,30 @@ export const Navbar = themed({
   }
 });
 
+type NavbarContextType = {
+  open?: boolean;
+};
+
+const NavbarItemContext = React.createContext<NavbarContextType>({});
+
+const NavbarItemInnerDOM: React.SFC<any> = props => (
+  <Value initial={false}>
+    {({ set, value }) => (
+      <NavbarItemContext.Provider value={{ open: value }}>
+        <Box
+          as="li"
+          {...props}
+          onMouseEnter={() => set(true)}
+          onMouseLeave={() => set(false)}
+          onClick={() => set(false)}
+        />
+      </NavbarItemContext.Provider>
+    )}
+  </Value>
+);
+
 export const NavbarItem = themed({
-  tag: 'li',
+  tag: NavbarItemInnerDOM,
 
   defaultProps: {
     active: false
@@ -39,17 +65,20 @@ export const NavbarItem = themed({
         ':hover': {
           background: theme.colors.primary,
           color: theme.colors.primaryText
-        },
-        ':hover > [role="menu"]': {
-          display: 'block'
         }
       })
     }
   }
 });
 
+const NavbarItemMenuInnerDOM: React.SFC<any> = props => (
+  <NavbarItemContext.Consumer>
+    {({ open }) => <Box {...props} display={open ? 'block' : 'none'} />}
+  </NavbarItemContext.Consumer>
+);
+
 export const NavbarItemMenu = themed({
-  tag: 'div',
+  tag: NavbarItemMenuInnerDOM,
 
   defaultProps: {
     role: 'menu'
@@ -62,7 +91,6 @@ export const NavbarItemMenu = themed({
       color: 'primaryText',
       boxShadow: 'xs',
       css: {
-        display: 'none',
         position: 'absolute',
         top: '100%',
         left: 0,
