@@ -1,5 +1,4 @@
 import React from 'react';
-
 import gql from 'graphql-tag';
 import {
   themed,
@@ -71,24 +70,38 @@ export const ShowMore = () => (
 
 const GET_PRODUCTS = gql`
   query {
-    products @client
+    products {
+      items {
+        id
+        name
+        price
+        thumbnail
+        urlPath
+      }
+    }
     breadcrumbs @client
     sortOrders @client
   }
 `;
 
+export class CategoryQuery extends Query<any> {
+  static defaultProps = {
+    query: GET_PRODUCTS
+  };
+}
+
 export const Category = () => (
-  <Query query={GET_PRODUCTS}>
-    {data => (
+  <CategoryQuery>
+    {({ breadcrumbs, sortOrders, products }) => (
       <CategoryLayout>
-        <Breadcrumbs breadcrumbs={data.breadcrumbs} />
+        {/* <Breadcrumbs breadcrumbs={breadcrumbs} /> */}
         <H1>Pots & Pans</H1>
-        <CategoryToolbar sortOrders={data.sortOrders} />
+        <CategoryToolbar sortOrders={sortOrders} />
         <Divider />
-        <ProductsList products={data.products} />
+        <ProductsList products={products.items} />
         <Divider />
         <ShowMore />
       </CategoryLayout>
     )}
-  </Query>
+  </CategoryQuery>
 );
