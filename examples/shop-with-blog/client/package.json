@@ -41,6 +41,7 @@
     "start:dbg-brk": "cross-env VERBOSE=true falcon-client start -- --inspect-brk",
     "start:prod": "cross-env NODE_ENV=production node build/server.js",
     "build": "falcon-client build",
+    "size": "cross-env NODE_ANALYZE=true npm run build",
     "test": "falcon-client test --env=jsdom",
     "test:coverage": "falcon-client test --env=jsdom --ci --coverage",
     "lint": "./node_modules/.bin/eslint ./"
@@ -55,7 +56,7 @@
     "i18next": "^11.6.0",
     "prop-types": "15.6.2",
     "react": "^16.4.2",
-    "react-apollo": "^2.1.11",
+    "react-apollo": "^2.2.2",
     "react-async-component": "^2.0.0",
     "react-dom": "^16.4.2",
     "react-feather": "^1.1.3",

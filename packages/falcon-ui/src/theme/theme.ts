@@ -43,7 +43,7 @@ export const defaultBaseTheme = {
     sm: 14,
     md: 16,
     lg: 20,
-    xl: 24,
+    xl: 26,
     xxl: 34,
     xxxl: 48
   },
@@ -100,6 +100,10 @@ export const defaultBaseTheme = {
     standard: '250ms',
     long: '375ms'
   },
+
+  // animations: {
+
+  // },
 
   zIndex: {
     dropDownMenu: 600,

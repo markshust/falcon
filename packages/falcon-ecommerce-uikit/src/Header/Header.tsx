@@ -96,7 +96,7 @@ export const Searchbar = () => (
     </Link>
     <Icon gridArea={SearchBarArea.login} src="user" />
     <ToggleMiniCartMutation>
-      {toggle => <Icon gridArea={SearchBarArea.cart} src="cart" onClick={toggle as any} />}
+      {toggle => <Icon gridArea={SearchBarArea.cart} src="cart" onClick={toggle as any} css={{ cursor: 'pointer' }} />}
     </ToggleMiniCartMutation>
   </Box>
 );

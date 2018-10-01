@@ -6,6 +6,7 @@ const GET_MINI_CART = gql`
     miniCart @client {
       open
     }
+    basketItems @client
   }
 `;
 
@@ -13,6 +14,7 @@ export type MiniCartData = {
   miniCart: {
     open: boolean;
   };
+  basketItems: any[];
 };
 
 export class MiniCartQuery extends Query<MiniCartData> {

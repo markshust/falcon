@@ -7,7 +7,7 @@ export class Query<TData = any, TVariables = OperationVariables, TTranslations =
   QueryProps<TData, TVariables> & {
     children: (result: TData | TData & { translations: TTranslations } | undefined) => React.ReactNode;
   } & {
-    getTranslations?: (t: TranslationFunction) => TTranslations;
+    getTranslations?: (t: TranslationFunction, data: TData) => TTranslations;
     translationsNamespaces?: string[];
   }
 > {
@@ -26,7 +26,7 @@ export class Query<TData = any, TVariables = OperationVariables, TTranslations =
             return (
               <I18n ns={translationsNamespaces}>
                 {t => {
-                  const translations = getTranslations(t);
+                  const translations = getTranslations(t, data!);
 
                   return children({ ...(data as any), translations });
                 }}

@@ -62,7 +62,7 @@ export const ProductDetailsLayout = themed({
         ])
       },
       gridTemplateRows: {
-        md: 'auto auto auto auto 1fr auto'
+        md: 'auto auto auto auto auto 1fr'
       }
     }
   }

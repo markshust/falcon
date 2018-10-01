@@ -1,5 +1,6 @@
 /* eslint-disable import/no-extraneous-dependencies */
 const path = require('path');
+const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 const FalconI18nLocalesPlugin = require('@deity/falcon-i18n-webpack-plugin');
 const razzlePluginTypescript = require('razzle-plugin-typescript');
 const WebpackConfigHelpers = require('razzle-dev-utils/WebpackConfigHelpers');
@@ -224,24 +225,33 @@ module.exports = appConfig => (config, { target, dev }, webpackObject) => {
     'apollo-link',
     'apollo-link-http',
     'apollo-link-state',
-    `graphql-tag`,
-    `node-fetch`,
+    'apollo-utilities',
+    'graphql',
+    'graphql-tag',
+    'node-fetch',
     'i18next',
+    'i18next-xhr-backend',
     'razzle/polyfills',
+    'razzle',
     'react',
     'react-apollo',
-    'react-async-bootstrapper',
+    'react-async-bootstrapper2',
     'react-async-component',
     'react-dom',
     'react-google-tag-manager',
     `react-helmet`,
     'react-i18next',
-    'react-router-dom'
+    'react-router',
+    'react-router-dom',
+    'history'
   ])(config, { target, dev });
   excludeIcoFromFileLoader(config);
   addGraphQLTagLoader(config);
   addFalconI18nPlugin(appConfig.i18n)(config, target);
   addWebManifest(config, target);
 
+  if (target === 'web' && process.env.NODE_ANALYZE) {
+    config.plugins.push(new BundleAnalyzerPlugin());
+  }
   return config;
 };

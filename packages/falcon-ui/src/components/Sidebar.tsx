@@ -13,7 +13,7 @@ export const Sidebar = themed({
       display: 'flex',
       bg: 'white',
       css: ({ visible, theme, side }) => ({
-        position: 'absolute',
+        position: 'fixed',
         top: 0,
         bottom: 0,
         [side]: 0,

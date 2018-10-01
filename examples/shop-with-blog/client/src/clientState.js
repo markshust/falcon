@@ -230,6 +230,21 @@ const sortOrders = [
   }
 ];
 
+const basketItems = [
+  {
+    src:
+      'https://www.hartsofstur.com/media/catalog/product/cache/e3c1c5e5f4f6c7872a68d3422aa97082/Z/K/ZK201-Zoku-Round-Pops.jpg',
+    name: 'Zoku Round Pop Moulds',
+    price: 199
+  },
+  {
+    src:
+      'https://www.hartsofstur.com/media/catalog/product/cache/e3c1c5e5f4f6c7872a68d3422aa97082/8/0/8004111-Poach-Pod-Egg-Poacher.jpg',
+    name: 'Fusionbrands Poachpod Egg Poacher',
+    price: 299
+  }
+];
+
 export default {
   defaults: {
     miniCart: {
@@ -246,7 +261,8 @@ export default {
       footerSections: () => footerSections,
       languages: () => languages,
       breadcrumbs: () => breadcrumbs,
-      sortOrders: () => sortOrders
+      sortOrders: () => sortOrders,
+      basketItems: () => basketItems
     },
 
     Mutation: {
