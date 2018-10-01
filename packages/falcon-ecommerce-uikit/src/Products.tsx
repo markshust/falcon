@@ -40,7 +40,7 @@ export const ProductListLayout = themed({
   }
 });
 
-export const ProductsList: React.SFC<{ products: any }> = ({ products }) => (
+export const ProductsList: React.SFC<{ products: any[] }> = ({ products }) => (
   <ProductListLayout>
     {products.map((product: any) => (
       <li key={product.id}>
