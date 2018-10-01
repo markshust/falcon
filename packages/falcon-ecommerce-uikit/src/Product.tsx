@@ -1,6 +1,6 @@
 import React from 'react';
 import { themed, Box, Radio, Text, H3, H1, NumberInput, Button, Icon, FlexLayout } from '@deity/falcon-ui';
-// import { Breadcrumbs } from './Breadcrumbs';
+import { Breadcrumbs } from './Breadcrumbs';
 // import { ProductMeta } from './ProductMeta';
 import { ProductGallery } from './ProductGallery';
 import { ProductTranslations } from './ProductQuery';
@@ -115,7 +115,7 @@ export class Product extends React.PureComponent<{ product: any; translations: P
 
     return (
       <ProductLayout>
-        {/* <Breadcrumbs breadcrumbs={breadcrumbs} /> */}
+        <Breadcrumbs breadcrumbs={product.breadcrumbs} />
         <ProductDetailsLayout>
           <Box gridArea={Area.gallery} css={{ maxHeight: '100%' }}>
             <ProductGallery items={product.gallery} />
