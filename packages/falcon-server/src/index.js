@@ -1,6 +1,7 @@
 const Koa = require('koa');
 const Router = require('koa-router');
 const session = require('koa-session');
+const cors = require('@koa/cors');
 const { ApolloServer } = require('apollo-server-koa');
 const Logger = require('@deity/falcon-logger');
 const ApiContainer = require('./containers/ApiContainer');
@@ -121,6 +122,11 @@ class FalconServer {
       prefix: '/api'
     });
 
+    this.app.use(
+      cors({
+        credentials: true
+      })
+    );
     // todo: implement backend session store e.g. https://www.npmjs.com/package/koa-redis-session
     this.app.use(session((this.config.session && this.config.session.options) || {}, this.app));
 

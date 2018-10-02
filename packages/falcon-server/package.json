@@ -27,6 +27,7 @@
   "dependencies": {
     "@deity/falcon-logger": "^1.0.0",
     "@deity/falcon-server-env": "^1.0.0",
+    "@koa/cors": "^2.2.2",
     "apollo-server-koa": "^2.1.0",
     "eventemitter2": "^5.0.1",
     "graphql": "^14.0.2",
