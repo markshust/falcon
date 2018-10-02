@@ -82,20 +82,6 @@ const languages = [
     active: true
   }
 ];
-const breadcrumbs = [
-  {
-    name: 'Home',
-    url: '/'
-  },
-  {
-    name: 'Cooking',
-    url: '/cooking'
-  },
-  {
-    name: 'Pots & Pans',
-    url: '/pots'
-  }
-];
 
 const sortOrders = [
   {
@@ -135,7 +121,6 @@ export default {
     Query: {
       footerSections: () => footerSections,
       languages: () => languages,
-      breadcrumbs: () => breadcrumbs,
       sortOrders: () => sortOrders,
       basketItems: () => basketItems
     },
