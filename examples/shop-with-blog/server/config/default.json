@@ -19,7 +19,36 @@
         "host": "snapshot.deity.io",
         "protocol": "https",
         "username": "node-api",
-        "password": "3de3f3a262"
+        "password": "3de3f3a262",
+
+        "currency": {
+          "symbol": "EUR"
+        },
+
+        "demo": true,
+        "enableSwitcher": true,
+        "enableAutoDetection": false,
+        "geoMapping": {
+          "*": "default",
+          "NL": "nl_store",
+          "PL": "pl_store",
+          "FR": "fr_store",
+          "DE": "de_store"
+        },
+        "languageMapping": {
+          "en": ["*"],
+          "nl": ["nl_store"],
+          "pl": ["pl_store"],
+          "de": ["de_store"],
+          "fr": ["fr_store"]
+        },
+        "codeMapping": {
+          "default": "default",
+          "nl_store": "nl_store",
+          "pl_store": "pl_store",
+          "fr_store": "fr_store",
+          "de_store": "de_store"
+        }
       }
     }
   ],

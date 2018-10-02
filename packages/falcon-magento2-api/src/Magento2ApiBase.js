@@ -6,7 +6,10 @@ const addMinutes = require('date-fns/add_minutes');
 const isPlainObject = require('lodash/isPlainObject');
 const camelCase = require('lodash/camelCase');
 const keys = require('lodash/keys');
+const has = require('lodash/has');
 const isEmpty = require('lodash/isEmpty');
+
+const DEFAULT_KEY = '*';
 
 /**
  * Base API features (configuration fetching, response parsing, token management etc.) required for communication
@@ -29,6 +32,9 @@ module.exports = class Magento2ApiBase extends ApiDataSource {
     this.setupAdminTokenRefreshJob();
   }
 
+  /**
+   * Makes sure that context required for http calls exists
+   */
   async preInitialize() {
     if (!this.context) {
       this.initialize({ context: {} });
@@ -55,7 +61,7 @@ module.exports = class Magento2ApiBase extends ApiDataSource {
 
   /**
    * Check if admin token is still valid
-   * @returns {boolean} true if token is valid
+   * @return {boolean} true if token is valid
    */
   isAdminTokenValid() {
     return !this.tokenExpirationTime || (this.tokenExpirationTime && this.tokenExpirationTime > Date.now());
@@ -63,7 +69,7 @@ module.exports = class Magento2ApiBase extends ApiDataSource {
 
   /**
    * Make request to the backend for admin token
-   * @returns {Promise<string>} admin token
+   * @return {Promise<string>} admin token
    */
   async retrieveAdminToken() {
     Logger.info('Retrieving Magento token.');
@@ -93,17 +99,16 @@ module.exports = class Magento2ApiBase extends ApiDataSource {
    * Retrieve token for given user.
    * @param {string} username magento2 user
    * @param {string} password magento2 user password
-   * @returns {object} response data
+   * @return {object} response data
    */
-  retrieveToken({ username, password }) {
+  async retrieveToken({ username, password }) {
     return this.post('/integration/admin/token', { username, password }, { context: { skipAuth: true } });
   }
 
   /**
-   * Helper method to recursively change key naming from underscore to camelCase
-   *
-   * @param {*} data - argument to process
-   * @return {object} - converted object
+   * Helper method to recursively change key naming from underscore (snake case) to camelCase
+   * @param {object} data - argument to process
+   * @return {object} converted object
    */
   convertKeys(data) {
     // handle simple types
@@ -134,11 +139,11 @@ module.exports = class Magento2ApiBase extends ApiDataSource {
   /**
    * Resolves url based on passed parameters
    * @param {object} req - request params
-   * @returns {URL} resolved url object
+   * @return {Promise<URL>} resolved url object
    */
   async resolveURL(req) {
     const { path } = req;
-    let { storeCode } = req.context || {};
+    let { storeCode } = this.context.magento2 || {};
     if (storeCode) {
       req.params.delete(storeCode);
     } else {
@@ -152,7 +157,7 @@ module.exports = class Magento2ApiBase extends ApiDataSource {
 
   /**
    * Authorize all requests, except case when authorization is explicitly disabled via context settings
-   * @param {object} req - request params
+   * @param {RequestOptions} req - request params
    */
   async willSendRequest(req) {
     const { context } = req;
@@ -161,10 +166,21 @@ module.exports = class Magento2ApiBase extends ApiDataSource {
     }
   }
 
+  /**
+   * Sets authorization headers for the passed request
+   * @param {RequestOptions} req - request input
+   */
   async authorizeRequest(req) {
-    const { customerToken = {} } = req.context || {};
-    this.validateCustomerToken(customerToken);
-    const token = customerToken.token || (await this.getAdminToken());
+    let token;
+    const { useAdminToken } = req.context || {};
+
+    if (useAdminToken) {
+      token = await this.getAdminToken();
+    } else {
+      const { customerToken = {} } = this.context.magento2 || {};
+      this.validateCustomerToken(customerToken);
+      token = customerToken.token || (await this.getAdminToken());
+    }
 
     req.headers.set('Authorization', `Bearer ${token}`);
     req.headers.set('Content-Type', 'application/json');
@@ -175,7 +191,7 @@ module.exports = class Magento2ApiBase extends ApiDataSource {
    * Check if token is still valid and throw error if it has expired
    * @param {object} customerToken - customer token data
    * @param {string} [customerToken.token] - token
-   * @param {Number} [customerToken.expirationTime] - token expiration time
+   * @param {number} [customerToken.expirationTime] - token expiration time
    * @throws Error - throw error and set status code to 401 if token has expired
    */
   validateCustomerToken(customerToken) {
@@ -189,8 +205,22 @@ module.exports = class Magento2ApiBase extends ApiDataSource {
   }
 
   /**
+   * Check if admin token is still valid
+   * @param {object} customerTokenObject - customer token data
+   * @param {string} [customerTokenObject.token] - token
+   * @param {number} [customerTokenObject.expirationTime] - token expiration time
+   * @return {boolean} - true if token is valid
+   */
+  isCustomerTokenValid(customerTokenObject) {
+    return (
+      (customerTokenObject.expirationTime && customerTokenObject.expirationTime > Date.now()) ||
+      !customerTokenObject.expirationTime
+    );
+  }
+
+  /**
    * Get Magento api authorized admin token or perform request to create it.
-   * @return {string} token value
+   * @return {Promise<string>} token value
    */
   async getAdminToken() {
     if (!this.token) {
@@ -207,6 +237,11 @@ module.exports = class Magento2ApiBase extends ApiDataSource {
     return this.token;
   }
 
+  /**
+   * Process recived response data
+   * @param {Response} response - received response from the api
+   * @return {object} processed response data
+   */
   async didReceiveResponse(response) {
     const cookies = (response.headers.get('set-cookie') || '').split('; ');
     const responseTags = response.headers.get('x-cache-tags');
@@ -241,8 +276,12 @@ module.exports = class Magento2ApiBase extends ApiDataSource {
     return { data: { items: data.items, filters: data.filters || [], pagination }, meta };
   }
 
+  /**
+   * Handle error occurred during http response
+   * @param {Error} error - error to process
+   */
   didEncounterError(error) {
-    const customerToken = {}; // todo: get it from the session or temporary context implemented in pr#9
+    const { customerToken = {} } = this.context.magento2;
 
     // eslint-disable-next-line no-underscore-dangle
     if (!global.__DEVELOPMENT__) {
@@ -326,7 +365,7 @@ module.exports = class Magento2ApiBase extends ApiDataSource {
 
     const activeStores = storeCodes.filter(item => item.active);
 
-    return {
+    this.magentoConfig = {
       ...config,
       stores: data,
       activeStores,
@@ -335,5 +374,171 @@ module.exports = class Magento2ApiBase extends ApiDataSource {
       baseCurrencyCode,
       postCodes
     };
+
+    return this.magentoConfig;
+  }
+
+  /**
+   * Returns data that should be placed in global GraphQL execution context for the upcoming query
+   * @param {object} context - existing context data
+   * @return {object} additional data to be created
+   */
+  createContextData(context) {
+    if (!has(context, 'req.session')) {
+      throw new Error('No session in context passed to Magento2Api.createContextData()');
+    }
+
+    if (!has(context, 'req.session.magento2')) {
+      context.req.session.magento2 = {};
+    }
+
+    this.ensureStoreCode(context.req);
+    this.ensureCurrency(context.req.session);
+
+    // put all the required data as 'magento' alias inside context
+    // it's a reference to context.req.session.magento2 so change in context.magento will cause changes in the session
+    return {
+      magento2: context.req.session.magento2
+    };
+  }
+
+  /**
+   * Ensuring that user gets storeCode in the session with the first hit.
+   *
+   * Simple config structure:
+   * {
+   *     "store": {
+   *       "enableSwitcher": false,
+   *       "enableAutoDetection": true,
+   *       // todo rename to geo mapping ?
+   *       "mapping": {
+   *         "*": "default",
+   *         "UK": "uk_store_view",
+   *         "US": "us_store_view"
+   *       }
+   *     }
+   *   }
+   * }
+   *
+   * Key is country code from geo ip, and value is a Magento store code.
+   *
+   * More custom config structure with an extra-check for user's preferred language:
+   * {
+   *     "store": {
+   *       "enableSwitcher": false,
+   *       "enableAutoDetection": true,
+   *       "mapping": {
+   *         "*": "default",
+   *         "DK": {
+   *           "*": "dk_en_store_view",
+   *           "da": "dk_da_store_view"
+   *         },
+   *        "US": "us_store_view"
+   *       }
+   *     }
+   *   }
+   * }
+   *
+   * "*" - means value by default. It's required to have a default value, since it will be used as a fallback value.
+   * Each element in "mapping" object may contain a string value or sub-mapping per language.
+   *
+   * @param {Request} req Koa request object
+   */
+  ensureStoreCode(req) {
+    const clientCountryCode = req.headers['CountryCode']; // eslint-disable-line dot-notation
+    const { enableAutoDetection = false, geoMapping: storeMapping = {} } = this.config;
+    const { storeCode, cart } = req.session.magento2;
+
+    if (storeCode) {
+      const isValidCode = this.magentoConfig.stores.find(({ code }) => code === storeCode);
+
+      if (isValidCode) {
+        Logger.debug(`Using existing session store code: ${storeCode}`);
+      } else {
+        Logger.warn(`Removing invalid user store code ${storeCode} from session.`);
+        if (cart) {
+          Logger.warn(`Removing cart from session assuming it was create in non existing 
+            store with code: ${storeCode}`);
+          delete req.session.magento2.cart;
+        }
+        // api should use it's default if not present in session
+        delete req.session.magento2.storeCode;
+      }
+
+      return;
+    }
+
+    if (!enableAutoDetection) {
+      Logger.debug('Store code detection disabled.');
+      return;
+    }
+
+    Logger.debug(`Detecting store for ${clientCountryCode} country code.`);
+
+    const { [DEFAULT_KEY]: defaultStoreCode = 'default' } = storeMapping;
+
+    // removes string after occurrence of passed separator (including the separator)
+    const removeSubstring = (item, separator = ';') =>
+      item.indexOf(separator) > 0 ? item.substring(0, item.indexOf(separator)) : item;
+
+    let { [clientCountryCode]: clientStoreCode } = storeMapping;
+
+    clientStoreCode = clientStoreCode || defaultStoreCode;
+
+    if (clientStoreCode && typeof clientStoreCode === 'object') {
+      const { 'accept-language': acceptLanguage } = req.headers;
+      // Equals to a default mapped key
+      let activeLanguage = DEFAULT_KEY;
+      // Splitting accept-language header string with comma-separated values ("da,en-gb;q=0.8,en;q=0.7")
+      const acceptLanguages = (acceptLanguage ? acceptLanguage.split(',') : [])
+        // Extracting language parts (removing "priority" values, it's already sorted by priority)
+        .map(item => removeSubstring(item))
+        // Cleaning up the results ("en-US" -> "en")
+        .map(item => removeSubstring(item, '-'));
+
+      // Searching for available language in the language mapping for active country
+      acceptLanguages.some(lang => {
+        if (clientStoreCode[lang]) {
+          activeLanguage = lang;
+          return true;
+        }
+        return false;
+      });
+
+      clientStoreCode = clientStoreCode[activeLanguage];
+    }
+
+    if (clientStoreCode) {
+      Logger.debug(`Using country detected store code: ${clientStoreCode}`);
+      req.session.magento2.storeCode = clientStoreCode;
+    }
+  }
+
+  /**
+   * Ensure session has a currency code to be use for example for price formatting.
+   * @param {object} session object
+   */
+  ensureCurrency(session) {
+    const { storeCode } = session.magento2;
+
+    // todo: use sensible defaults instead of EUR
+    let userCurrency = this.config.currency && (this.config.currency.symbol || 'EUR');
+
+    Logger.debug('Detecting currency');
+
+    if (storeCode && this.magentoConfig.activeStores.length) {
+      const activeStore = this.magentoConfig.activeStores.find(item => item.code === storeCode);
+
+      if (activeStore) {
+        Logger.debug(`Found active store: ${activeStore.code}, currency changed to ${activeStore.currency}`);
+        userCurrency = activeStore.currency;
+      } else {
+        Logger.debug(`Not found active store for code: ${storeCode}, currency changed to default: ${this.currency}`);
+      }
+    } else {
+      Logger.debug('No store code or store inactive.');
+    }
+
+    session.magento2.currency = userCurrency;
   }
 };
