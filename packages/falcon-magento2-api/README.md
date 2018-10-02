@@ -61,3 +61,4 @@ Once user signs in with his Magento2 credentials his access token is stored in t
 When GraphQL request comes in [Falcon Server](https://github.com/deity-io/falcon/tree/master/packages/falcon-server) invokes context handlers for all the extensions. [Falcon Shop Extension](https://github.com/deity-io/falcon/tree/master/packages/falcon-shop-extension) calls `createContextData(context)` of the connected API instance (in this case it's Falcon Magento2 API) and passes GraphQL execution context as the param to that method. That way API instance can fill in context with its own data that can be reused during query execution. 
 
 Falcon Magento2 API gets then data from the session (which is available as `context.req.session`) and puts it under `magento2` property in context. That way all the required data (like auth token, currency, storeToken) are available in `this.context.magento2` during query processing.
+
