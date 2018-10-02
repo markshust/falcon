@@ -6,7 +6,6 @@ import Helmet from 'react-helmet';
 import { I18nextProvider } from 'react-i18next';
 import { AsyncComponentProvider, createAsyncContext } from 'react-async-component';
 import asyncBootstrapper from 'react-async-bootstrapper2';
-import { filterResourceStoreByNs } from '../../i18n/i18nServerFactory';
 import HtmlHead from '../../components/HtmlHead';
 
 /**
@@ -57,7 +56,8 @@ export default ({ App }) => async (ctx, next) => {
   ctx.state.AppMarkup = markup;
   ctx.state.asyncContext = asyncContext.getState();
   ctx.state.helmetContext = Helmet.renderStatic();
-  ctx.state.i18nextFilteredStore = filterResourceStoreByNs(i18next.services.resourceStore.data, i18nextUsedNamespaces);
+  // TODO: fix it in smarter way, temporary commented out because of blinking translations!!!
+  // ctx.state.i18nextFilteredStore = filterResourceStoreByNs(i18next.services.resourceStore.data, i18nextUsedNamespaces);
 
   return context.url ? ctx.redirect(context.url) : next();
 };
