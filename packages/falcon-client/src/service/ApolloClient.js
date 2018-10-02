@@ -25,7 +25,7 @@ import fetch from 'node-fetch';
  * @return {ApolloClient} ApolloClient instance
  */
 export default (config = {}) => {
-  const addTypename = process.env.NODE_ENV !== 'test';
+  const addTypename = false;
   const {
     extraLinks = [],
     isBrowser = false,

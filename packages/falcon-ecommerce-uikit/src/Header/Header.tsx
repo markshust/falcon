@@ -14,7 +14,7 @@ import {
 
 import { toGridTemplate } from '../helpers';
 import { ToggleMiniCartMutation } from '../MiniCart';
-import { HeaderData } from './HeaderQuery';
+import { HeaderData, MenuItem } from './HeaderQuery';
 
 const bannerLayoutTheme: DefaultThemeProps = {
   bannerLayout: {
@@ -29,7 +29,7 @@ const bannerLayoutTheme: DefaultThemeProps = {
   }
 };
 
-export const Banner: React.SFC<{ items: any[] }> = ({ items }) => (
+export const Banner: React.SFC<{ items: MenuItem[] }> = ({ items }) => (
   <List defaultTheme={bannerLayoutTheme}>
     {items.map(item => (
       <ListItem p="md" key={item.name}>
@@ -41,19 +41,19 @@ export const Banner: React.SFC<{ items: any[] }> = ({ items }) => (
   </List>
 );
 
-export const Nav: React.SFC<{ items: any[] }> = ({ items }) => (
+export const Nav: React.SFC<{ items: MenuItem[] }> = ({ items }) => (
   <Navbar>
     {items.map(item => (
       <NavbarItem key={item.name}>
-        <Link as={RouterLink} to="/products">
+        <Link as={RouterLink} to={item.url}>
           {item.name}
         </Link>
-        {item.subMenu && (
+        {item.children.length > 0 && (
           <NavbarItemMenu>
             <List>
-              {item.subMenu.map((subItem: any) => (
+              {item.children.map(subItem => (
                 <ListItem key={subItem.name}>
-                  <Link as={RouterLink} to="/products">
+                  <Link as={RouterLink} to={item.url}>
                     {subItem.name}
                   </Link>
                 </ListItem>
@@ -101,12 +101,16 @@ export const Searchbar = () => (
   </Box>
 );
 
-export const Header: React.SFC<HeaderData> = ({ bannerLinks, menuItems }) => (
+export const Header: React.SFC<HeaderData> = ({
+  config: {
+    menu: { header, banner }
+  }
+}) => (
   <header>
-    <Banner items={bannerLinks} />
+    <Banner items={banner} />
     <Searchbar />
     <nav>
-      <Nav items={menuItems} />
+      <Nav items={header} />
     </nav>
   </header>
 );

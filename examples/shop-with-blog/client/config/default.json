@@ -3,5 +3,71 @@
   "useWebManifest": true,
   "i18n": {
     "ns": ["common", "shop", "post"]
+  },
+  "menu": {
+    "header": [
+      {
+        "name": "What's new?",
+        "url": "/what-is-new.html",
+        "children": []
+      },
+      {
+        "name": "Women",
+        "url": "/women.html",
+        "children": [
+          {
+            "name": "Tops",
+            "url": "/women/tops-women.html"
+          },
+          {
+            "name": "Bottoms",
+            "url": "/women/bottoms-women/shorts-women.html"
+          }
+        ]
+      },
+      {
+        "name": "Men",
+        "url": "/men.html",
+        "children": []
+      },
+      {
+        "name": "Gear",
+        "url": "/gear.html",
+        "children": [
+          {
+            "name": "Bags",
+            "url": "/gear/bags.html"
+          },
+          {
+            "name": "Fitness Equipment",
+            "url": "/gear/fitness-equipment.html"
+          },
+          {
+            "name": "Watches",
+            "url": "/gear/watches.html"
+          }
+        ]
+      },
+      {
+        "name": "Sale",
+        "url": "/sale.html",
+        "children": []
+      },
+      {
+        "name": "Blog",
+        "url": "/blog",
+        "children": []
+      }
+    ],
+    "banner": [
+      {
+        "name": "Contact",
+        "url": "#"
+      },
+      {
+        "name": "Blog",
+        "url": "#"
+      }
+    ]
   }
 }
