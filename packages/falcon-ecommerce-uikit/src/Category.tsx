@@ -70,7 +70,7 @@ export const ShowMore = () => (
 
 const GET_PRODUCTS = gql`
   query GET_PRODUCTS($categoryId: Int!) {
-    products(categoryId: $categoryId) {
+    products(categoryId: $categoryId, includeSubcategories: true) {
       items {
         id
         name
