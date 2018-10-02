@@ -1,4 +1,7 @@
 {
+  "home": {
+    "hotSellers": "Hot sellers"
+  },
   "product": {
     "sku": "SKU",
     "inStock": "In stock",
