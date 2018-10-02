@@ -78,6 +78,10 @@ const GET_PRODUCTS = gql`
         thumbnail
         urlPath
       }
+      pagination {
+        currentPage
+        totalItems
+      }
     }
     sortOrders @client
   }
@@ -89,7 +93,11 @@ export class CategoryQuery extends Query<any> {
   };
 }
 
-export const Category: React.SFC<{ products: any; sortOrders: any[] }> = ({ products, sortOrders }) => (
+export const Category: React.SFC<{ products: any; pagination: any; sortOrders: any[] }> = ({
+  products,
+  pagination,
+  sortOrders
+}) => (
   <CategoryLayout>
     {/* <Breadcrumbs breadcrumbs={breadcrumbs} /> */}
     <H1>Pots & Pans</H1>
