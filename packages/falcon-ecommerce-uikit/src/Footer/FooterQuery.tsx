@@ -1,15 +1,41 @@
 import gql from 'graphql-tag';
 import { Query } from '../Query/Query';
+import { MenuItem } from '../Header';
 
 const GET_FOOTER_DATA = gql`
-  query {
-    footerSections @client
-    languages @client
+  query GET_FOOTER_DATA {
+    config @client {
+      menus {
+        footer {
+          name
+          children {
+            name
+            url
+          }
+        }
+      }
+      languages {
+        name
+        code
+        active
+      }
+    }
   }
 `;
+
+export type LanguageItem = {
+  name: string;
+  code: string;
+  active: boolean;
+};
+
 export type FooterData = {
-  footerSections: any[];
-  languages: any[];
+  config: {
+    menus: {
+      footer: MenuItem[];
+    };
+    languages: LanguageItem[];
+  };
 };
 
 export class FooterQuery extends Query<FooterData> {

@@ -4,7 +4,7 @@ import { Query } from '../Query/Query';
 const GET_HEADER_DATA = gql`
   query GET_HEADER_DATA {
     config @client {
-      menu {
+      menus {
         header {
           name
           url
@@ -25,7 +25,7 @@ export type MenuItem = {
 };
 export type HeaderData = {
   config: {
-    menu: {
+    menus: {
       header: MenuItem[];
       banner: MenuItem[];
     };

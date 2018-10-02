@@ -103,7 +103,7 @@ export const Searchbar = () => (
 
 export const Header: React.SFC<HeaderData> = ({
   config: {
-    menu: { header, banner }
+    menus: { header, banner }
   }
 }) => (
   <header>
