@@ -6,6 +6,7 @@
   "repository": "https://github.com/deity-io/falcon/tree/master/packages/falcon-dynamic-route-extension",
   "dependencies": {
     "@deity/falcon-logger": "1.0.0",
-    "@deity/falcon-server-env": "1.0.0"
+    "@deity/falcon-server-env": "1.0.0",
+    "@deity/falcon-errors": "^1.0.0"
   }
 }
