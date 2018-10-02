@@ -42,7 +42,7 @@ export default (config = {}) => {
   const httpLink = createHttpLink({
     uri: serverUri,
     fetch,
-    credentials: 'same-origin'
+    credentials: 'include'
   });
 
   return new ApolloClient({
