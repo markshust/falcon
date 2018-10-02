@@ -1,4 +1,4 @@
-import { from } from 'apollo-link';
+import { ApolloLink } from 'apollo-link';
 import ApolloClient from 'apollo-client';
 import { withClientState } from 'apollo-link-state';
 import { createHttpLink } from 'apollo-link-http';
@@ -50,6 +50,6 @@ export default (config = {}) => {
     connectToDevTools: isBrowser && process.env.NODE_ENV !== 'production',
     ssrMode: !isBrowser,
     addTypename,
-    link: from([...extraLinks, linkState, httpLink])
+    link: ApolloLink.from([...extraLinks, linkState, httpLink])
   });
 };
