@@ -1,5 +1,4 @@
 import React from 'react';
-import gql from 'graphql-tag';
 import {
   themed,
   H1,
@@ -13,10 +12,7 @@ import {
   DropdownMenu,
   DropdownMenuItem
 } from '@deity/falcon-ui';
-
-import { Query } from './Query';
-import { ProductsList } from './Products';
-import { Breadcrumbs } from './Breadcrumbs';
+import { ProductsList } from './../Products';
 
 const CategoryLayout = themed({
   tag: 'div',
@@ -52,9 +48,13 @@ export const SortOrderDropdown: React.SFC<any> = ({ sortOrders, onChange }) => {
     </Box>
   );
 };
-export const CategoryToolbar: React.SFC<{ sortOrders: any }> = ({ sortOrders }) => (
+export const CategoryToolbar: React.SFC<{ translations: { showingOutOf: string }; sortOrders: any }> = ({
+  translations,
+
+  sortOrders
+}) => (
   <FlexLayout justifyContent="space-between" alignItems="center">
-    <Text>Showing x producs out of y</Text>
+    <Text>{translations.showingOutOf}</Text>
     <FlexLayout alignItems="center">
       <Text mr="md">Sort by</Text>
       <SortOrderDropdown sortOrders={sortOrders} />
@@ -62,49 +62,34 @@ export const CategoryToolbar: React.SFC<{ sortOrders: any }> = ({ sortOrders }) 
   </FlexLayout>
 );
 
-export const ShowMore = () => (
+export const ShowMore: React.SFC<{ text: string }> = ({ text }) => (
   <Box my="lg">
-    <Button variant="secondary">Show more products</Button>
+    <Button variant="secondary">{text}</Button>
   </Box>
 );
 
-const GET_PRODUCTS = gql`
-  query GET_PRODUCTS($categoryId: Int!) {
-    products(categoryId: $categoryId, includeSubcategories: true) {
-      items {
-        id
-        name
-        price
-        thumbnail
-        urlPath
-      }
-      pagination {
-        currentPage
-        totalItems
-      }
-    }
-    sortOrders @client
-  }
-`;
-
-export class CategoryQuery extends Query<any> {
-  static defaultProps = {
-    query: GET_PRODUCTS
-  };
-}
-
-export const Category: React.SFC<{ products: any; pagination: any; sortOrders: any[] }> = ({
+export const Category: React.SFC<{
+  category: { name: string };
+  products: any;
+  pagination: any;
+  sortOrders: any[];
+  translations: any;
+}> = ({
+  category,
   products,
-  pagination,
-  sortOrders
+  // pagination,
+  sortOrders,
+  translations
 }) => (
   <CategoryLayout>
-    {/* <Breadcrumbs breadcrumbs={breadcrumbs} /> */}
-    <H1>Pots & Pans</H1>
-    <CategoryToolbar sortOrders={sortOrders} />
+    <H1>{category.name}</H1>
+    <CategoryToolbar
+      sortOrders={sortOrders}
+      translations={{ showingOutOf: translations.category.pagination.showingOutOf }}
+    />
     <Divider />
     <ProductsList products={products.items} />
     <Divider />
-    <ShowMore />
+    <ShowMore text={translations.category.pagination.showMore} />
   </CategoryLayout>
 );
