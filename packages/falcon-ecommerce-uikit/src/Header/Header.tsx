@@ -45,7 +45,7 @@ export const Nav: React.SFC<{ items: MenuItem[] }> = ({ items }) => (
   <Navbar>
     {items.map(item => (
       <NavbarItem key={item.name}>
-        <Link as={RouterLink} to={item.url}>
+        <Link p="md" as={RouterLink} to={item.url}>
           {item.name}
         </Link>
         {item.children.length > 0 && (
@@ -53,7 +53,7 @@ export const Nav: React.SFC<{ items: MenuItem[] }> = ({ items }) => (
             <List>
               {item.children.map(subItem => (
                 <ListItem key={subItem.name}>
-                  <Link as={RouterLink} to={item.url}>
+                  <Link p="md" display="block" as={RouterLink} to={item.url}>
                     {subItem.name}
                   </Link>
                 </ListItem>
