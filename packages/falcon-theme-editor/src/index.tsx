@@ -410,7 +410,7 @@ export class ThemeEditor extends React.Component<any, any> {
             <Details key="presets" open={(this.state.openPanels as any)['presets']}>
               <Summary onClick={this.toggleCollapsible('presets')}>Presets</Summary>
               <DetailsContent>
-                <Group my="md" mr="xl" display="flex">
+                <Group my="md" mx="md" display="flex">
                   {availablePresets.map((preset, index) => (
                     <Button
                       key={preset.name}

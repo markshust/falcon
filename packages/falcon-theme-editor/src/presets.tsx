@@ -134,7 +134,7 @@ export const availablePresets: Preset[] = [
     }
   },
   {
-    name: 'Insanely Green',
+    name: 'Insanely Pink',
     theme: {
       colors: {
         primary: '#e0e0e0',
@@ -142,36 +142,118 @@ export const availablePresets: Preset[] = [
         primaryDark: '#aeaeae',
         primaryText: '#000000',
 
-        secondary: '#388e3c',
-        secondaryLight: '#6abf69',
-        secondaryDark: '#00600f',
+        secondary: '#e45e93',
+        secondaryLight: '#ed92b6',
+        secondaryDark: '#c52163',
+        secondaryText: '#fff',
 
         errorText: '#000000',
         black: '#9b9aa0'
       },
 
       fonts: {
-        sans: 'Monoton'
+        sans: 'Bangers'
       },
+
+      icons: {
+        logo: {
+          icon: (props: any) => (
+            <svg viewBox="0 0 175 239" {...props}>
+              <defs>
+                <path
+                  d="M110.7334,145.1606 L110.7334,106.7526 L77.4704,87.5486 L44.2084,106.7526 L44.2084,145.1606 L77.4704,164.3646 L110.7334,145.1606 Z M76.8974,215.0006 L0.0004,170.6036 L0.0004,81.8116 L76.8974,37.4146 L110.7334,56.6176 L110.7334,0.2906 L153.7934,25.2206 L153.7934,170.6036 L76.8974,215.0006 Z"
+                  id="path-1"
+                />
+                <polygon
+                  id="path-3"
+                  points="44.2085 69.7524 44.2085 70.2044 0.1135 44.7454 76.8965 0.4154 110.7335 19.6174 110.7335 69.7524 77.4705 50.5484"
+                />
+                <polygon id="path-5" points="0.451 0.001 1.016 0.001 1.016 193.331 0.451 193.331" />
+                <polygon id="path-7" points="85.4312 50.4272 0.2752 1.2622 0.5572 0.7732 85.7132 49.9372" />
+                <polygon id="path-9" points="77.6943 45.8168 0.5313 1.2668 0.8143 0.7778 77.9763 45.3278" />
+              </defs>
+
+              <g id="Group-42" transform="translate(0.000000, 24.000000)">
+                <mask id="mask-2" fill="white">
+                  <use xlinkHref="#path-1" />
+                </mask>
+                <g id="Clip-41" />
+                <polygon
+                  id="Fill-40"
+                  mask="url(#mask-2)"
+                  points="-4.9996 220.0006 158.7934 220.0006 158.7934 -4.7094 -4.9996 -4.7094"
+                />
+              </g>
+              <g id="Group-45" transform="translate(0.000000, 61.000000)">
+                <mask id="mask-4" fill="white">
+                  <use xlinkHref="#path-3" />
+                </mask>
+                <g id="Clip-44" />
+                <polygon
+                  id="Fill-43"
+                  mask="url(#mask-4)"
+                  points="-4.8865 75.2044 115.7335 75.2044 115.7335 -4.5846 -4.8865 -4.5846"
+                />
+              </g>
+              <g id="Group-48" transform="translate(110.000000, 0.000000)">
+                <mask id="mask-6" fill="white">
+                  <use xlinkHref="#path-5" />
+                </mask>
+                <g id="Clip-47" />
+                <polygon
+                  id="Fill-46"
+                  fill="#000000"
+                  mask="url(#mask-6)"
+                  points="-4.549 198.331 6.016 198.331 6.016 -4.999 -4.549 -4.999"
+                />
+              </g>
+              <g id="Group-51" transform="translate(89.000000, 11.000000)">
+                <mask id="mask-8" fill="white">
+                  <use xlinkHref="#path-7" />
+                </mask>
+                <g id="Clip-50" />
+                <polygon
+                  id="Fill-49"
+                  fill="#000000"
+                  mask="url(#mask-8)"
+                  points="-4.7248 55.4272 90.7132 55.4272 90.7132 -4.2268 -4.7248 -4.2268"
+                />
+              </g>
+              <g id="Group-54" transform="translate(55.000000, 98.000000)">
+                <mask id="mask-10" fill="white">
+                  <use xlinkHref="#path-9" />
+                </mask>
+                <g id="Clip-53" />
+                <polygon
+                  id="Fill-52"
+                  fill="#000000"
+                  mask="url(#mask-10)"
+                  points="-4.4687 50.8168 82.9763 50.8168 82.9763 -4.2222 -4.4687 -4.2222"
+                />
+              </g>
+            </svg>
+          ),
+          fill: 'secondary'
+        }
+      } as any,
 
       components: {
         searchbarLayout: {
           gridTemplate: '"cart logo login" / auto 1fr auto',
           alignItems: 'center',
+          my: 'md',
           css: {
             justifyItems: 'center'
           }
         },
 
         icon: {
-          stroke: 'primaryDark',
-          css: {
-            transform: 'skew(15deg)'
-          }
+          stroke: 'primaryDark'
         },
 
         bannerLayout: {
-          bgFullWidth: 'secondary'
+          bgFullWidth: 'secondary',
+          color: 'secondaryText'
         },
 
         productListLayout: {
@@ -182,15 +264,21 @@ export const availablePresets: Preset[] = [
           }
         },
         navbar: {
-          color: 'black',
           bgFullWidth: 'transparent',
           borderColor: 'secondary',
           justifyContent: 'center',
+
           css: {
             transform: 'skew(15deg)',
             borderBottomStyle: 'solid',
             borderBottomWidth: 2
           }
+        },
+        navbarItem: {
+          fontSize: 'xl',
+          css: (props: any) => ({
+            color: props.theme.colors.black
+          })
         }
       }
     }
