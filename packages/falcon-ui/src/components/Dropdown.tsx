@@ -17,7 +17,7 @@ const DropdownContext = React.createContext<DropdownContextType>({});
 
 const DropdownInnerDOM: React.SFC<DropDownPropsType> = ({ onChange, ...rest }) => (
   <Toggle>
-    {({ on, toggle }) => {
+    {({ on, toggle, set }) => {
       const onChangeAndClose = (value: any) => () => {
         if (onChange) {
           onChange(value);
@@ -26,7 +26,7 @@ const DropdownInnerDOM: React.SFC<DropDownPropsType> = ({ onChange, ...rest }) =
 
       return (
         <DropdownContext.Provider value={{ open: on, onChange: onChangeAndClose }}>
-          <Box {...rest} onClick={toggle} onBlur={toggle} tabIndex={-1} />
+          <Box {...rest} onClick={toggle} onBlur={() => set(false)} tabIndex={-1} />
         </DropdownContext.Provider>
       );
     }}
