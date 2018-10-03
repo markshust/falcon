@@ -14,5 +14,17 @@
       "moreInformation": "More information",
       "reviews": "Reviews ({{count}})"
     }
+  },
+  "category": {
+    "pagination": {
+      "showingOutOf": "Showing {{itemsCount}} products out of {{totalItems}}",
+      "showMore": "Show more products"
+    },
+    "sort": {
+      "title": "Sort by",
+      "disabled": "No sort",
+      "ascending": "ascending",
+      "descending": "descending"
+    }
   }
 }
