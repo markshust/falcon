@@ -16,7 +16,7 @@ describe('falcon-client', () => {
         },
         result: {
           data: {
-            getUrl: { type: 'foo', url: '/test' }
+            url: { type: 'foo', url: '/test' }
           }
         }
       }
