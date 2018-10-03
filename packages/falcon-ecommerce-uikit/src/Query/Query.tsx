@@ -2,6 +2,7 @@ import React from 'react';
 import { Query as ApolloQuery, OperationVariables, QueryProps, QueryResult, ObservableQueryFields } from 'react-apollo';
 import { I18n, TranslationFunction } from 'react-i18next';
 import { Loader } from './Loader';
+import { NetworkStatus } from 'apollo-client';
 
 export class Query<TData = any, TVariables = OperationVariables, TTranslations = {}> extends React.Component<
   QueryProps<TData, TVariables> & {
@@ -17,13 +18,16 @@ export class Query<TData = any, TVariables = OperationVariables, TTranslations =
 
     return (
       <ApolloQuery {...restProps}>
-        {({ loading, error, data, fetchMore: apolloFetchMore }) => {
-          if (loading) return <Loader />;
-
+        {({ networkStatus, error, data, fetchMore: apolloFetchMore }) => {
           if (error) return `Error!: ${error}`;
+
+          if (networkStatus === NetworkStatus.loading) {
+            return <Loader />;
+          }
 
           const props = {
             ...(data as any),
+            networkStatus,
             fetchMore: fetchMore ? () => fetchMore(data!, apolloFetchMore) : undefined
           };
 

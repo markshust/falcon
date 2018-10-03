@@ -74,6 +74,7 @@ export class CategoryQuery extends Query<any> {
   static defaultProps = {
     query: GET_PRODUCTS,
     fetchMore,
+    notifyOnNetworkStatusChange: true,
     getTranslations,
     translationsNamespaces: ['shop']
   };

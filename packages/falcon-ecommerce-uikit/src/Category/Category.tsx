@@ -4,6 +4,7 @@ import {
   H1,
   Text,
   Divider,
+  Icon,
   Button,
   Box,
   FlexLayout,
@@ -12,7 +13,9 @@ import {
   DropdownMenu,
   DropdownMenuItem
 } from '@deity/falcon-ui';
+
 import { ProductsList } from './../Products';
+import { NetworkStatus } from 'apollo-client';
 
 const CategoryLayout = themed({
   tag: 'div',
@@ -62,9 +65,16 @@ export const CategoryToolbar: React.SFC<{ translations: { showingOutOf: string }
   </FlexLayout>
 );
 
-export const ShowMore: React.SFC<{ text: string; onClick?: MouseEventHandler }> = ({ text, onClick }) => (
+export const ShowMore: React.SFC<{ text: string; onClick?: MouseEventHandler; loading: boolean }> = ({
+  text,
+  onClick,
+  loading
+}) => (
   <Box my="lg" onClick={onClick || (() => {})}>
-    <Button variant="secondary">{text}</Button>
+    <Button variant="secondary">
+      {text}
+        {loading && <Icon src="loader" ml='sm' size={16} />}
+    </Button>
   </Box>
 );
 
@@ -74,7 +84,8 @@ export const Category: React.SFC<{
   sortOrders: any[];
   translations: any;
   fetchMore: any;
-}> = ({ category, products, sortOrders, translations, fetchMore }) => {
+  networkStatus: NetworkStatus;
+}> = ({ category, products, sortOrders, translations, fetchMore, networkStatus }) => {
   const { pagination, items } = products;
 
   return (
@@ -88,7 +99,13 @@ export const Category: React.SFC<{
       <ProductsList products={items} />
       <Divider />
 
-      {pagination.nextPage && <ShowMore text={translations.category.pagination.showMore} onClick={fetchMore} />}
+      {pagination.nextPage && (
+        <ShowMore
+          text={translations.category.pagination.showMore}
+          onClick={fetchMore}
+          loading={networkStatus === NetworkStatus.fetchMore}
+        />
+      )}
     </CategoryLayout>
   );
 };
