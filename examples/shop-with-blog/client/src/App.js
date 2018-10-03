@@ -39,10 +39,8 @@ const HeadMetaTags = () => (
   </Helmet>
 );
 
-// const NotFound = () => <p>Not Found</p>;
 const Category = AsyncComponent(() => import(/* webpackChunkName: "shop/category" */ './pages/shop/Category'));
 const Product = AsyncComponent(() => import(/* webpackChunkName: "shop/product" */ './pages/shop/Product'));
-const Cms = AsyncComponent(() => import(/* webpackChunkName: "shop/cms" */ './pages/shop/Cms'));
 
 const App = ({ online }) => (
   <ThemeState initial={deityGreenTheme}>
@@ -56,22 +54,13 @@ const App = ({ online }) => (
             <Switch>
               <Route exact path="/" component={Home} />
               <Route exact path="/products" component={Category} />
-              {/* <DynamicSwitch>
-          <Route exact path="/shop-product?:id" component={() => <p>asdasdasd</p>} />
-        </DynamicSwitch> */}
-
               <DynamicRoute
                 loaderComponent={Loader}
                 components={{
                   'shop-category': Category,
-                  'shop-product': Product,
-                  'shop-page': Cms,
-                  'blog-post': null,
-                  'blog-page': null,
-                  'blog-category': null
+                  'shop-product': Product
                 }}
               />
-              {/* <Route component={NotFound} /> */}
             </Switch>
             <FooterQuery>{(data, t) => <Footer {...data} translations={t} />}</FooterQuery>
             <MiniCartQuery>{data => <MiniCart {...data} />}</MiniCartQuery>

@@ -33,7 +33,7 @@ const DynamicRoute = ({ components, location, loaderComponent, errorComponent })
 
         const component = components[url.type];
         if (!component) {
-          return null;
+          return <p>{`Please register component for '${url.type}' content type!`}</p>;
         }
 
         return React.createElement(component, { id: url.id, path: url.path });
