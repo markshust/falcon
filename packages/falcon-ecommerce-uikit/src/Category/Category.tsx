@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { MouseEventHandler } from 'react';
 import {
   themed,
   H1,
@@ -62,8 +62,8 @@ export const CategoryToolbar: React.SFC<{ translations: { showingOutOf: string }
   </FlexLayout>
 );
 
-export const ShowMore: React.SFC<{ text: string }> = ({ text }) => (
-  <Box my="lg">
+export const ShowMore: React.SFC<{ text: string; onClick?: MouseEventHandler }> = ({ text, onClick }) => (
+  <Box my="lg" onClick={onClick || (() => {})}>
     <Button variant="secondary">{text}</Button>
   </Box>
 );
@@ -71,25 +71,24 @@ export const ShowMore: React.SFC<{ text: string }> = ({ text }) => (
 export const Category: React.SFC<{
   category: { name: string };
   products: any;
-  pagination: any;
   sortOrders: any[];
   translations: any;
-}> = ({
-  category,
-  products,
-  // pagination,
-  sortOrders,
-  translations
-}) => (
-  <CategoryLayout>
-    <H1>{category.name}</H1>
-    <CategoryToolbar
-      sortOrders={sortOrders}
-      translations={{ showingOutOf: translations.category.pagination.showingOutOf }}
-    />
-    <Divider />
-    <ProductsList products={products.items} />
-    <Divider />
-    <ShowMore text={translations.category.pagination.showMore} />
-  </CategoryLayout>
-);
+  fetchMore: any;
+}> = ({ category, products, sortOrders, translations, fetchMore }) => {
+  const { pagination, items } = products;
+
+  return (
+    <CategoryLayout>
+      <H1>{category.name}</H1>
+      <CategoryToolbar
+        sortOrders={sortOrders}
+        translations={{ showingOutOf: translations.category.pagination.showingOutOf }}
+      />
+      <Divider />
+      <ProductsList products={items} />
+      <Divider />
+
+      {pagination.nextPage && <ShowMore text={translations.category.pagination.showMore} onClick={fetchMore} />}
+    </CategoryLayout>
+  );
+};
