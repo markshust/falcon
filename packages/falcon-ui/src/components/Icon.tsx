@@ -11,7 +11,7 @@ const IconRenderer = themed({
   },
 
   defaultTheme: {
-    themedIcon: {
+    icon: {
       size: 32,
       stroke: 'secondary'
     }
