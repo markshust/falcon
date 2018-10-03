@@ -1,6 +1,8 @@
 query GET_URL($url: String!) {
-  getUrl(url: $url) {
+  url(url: $url) {
     type
-    url
+    redirect
+    id
+    path
   }
 }
