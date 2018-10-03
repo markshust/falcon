@@ -14,11 +14,9 @@ Please don't file an issue to ask a question. You'll get faster results by using
 
 We have an official message board with a detailed FAQ and where the community chimes in with helpful advice and answers if you have questions.
 
-{ Discourse FAQ }
+[Slack Community Channel](slack.deity.io)
 
-{ Discourse message board }
-
-{ Discord Community Channel }
+[Community Forum](community.deity.io)
 
 ## How can I contribute?
 
