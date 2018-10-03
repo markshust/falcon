@@ -13,7 +13,8 @@ export const deityGreenTheme = createTheme({
     logo: {
       icon: props => <img src={logo} alt="logo" {...props} />,
       height: 70,
-      width: 'auto'
+      width: 'auto',
+      display: 'block'
     },
     loader: {
       icon: props => (

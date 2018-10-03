@@ -19,6 +19,8 @@ import {
   MiniCartQuery,
   MiniCart
 } from '@deity/falcon-ecommerce-uikit';
+import { ThemeEditor, ThemeState } from '@deity/falcon-theme-editor';
+
 import { deityGreenTheme } from './theme';
 
 const HeadMetaTags = () => (
@@ -34,7 +36,6 @@ const HeadMetaTags = () => (
     <meta property="og:image" content={logo} />
     <meta property="og:image:width" content="300" />
     <meta property="og:image:height" content="107" />
-    <link href="https://fonts.googleapis.com/css?family=Roboto:400,700" rel="stylesheet" />
   </Helmet>
 );
 
@@ -44,35 +45,42 @@ const Product = AsyncComponent(() => import(/* webpackChunkName: "shop/product" 
 const Cms = AsyncComponent(() => import(/* webpackChunkName: "shop/cms" */ './pages/shop/Cms'));
 
 const App = ({ online }) => (
-  <ThemeProvider theme={deityGreenTheme}>
-    <HeadMetaTags />
-    <AppLayout>
-      <HeaderQuery>{data => <Header {...data} />}</HeaderQuery>
-      {!online && <p>your are offline.</p>}
-      <Switch>
-        <Route exact path="/" component={Home} />
-        <Route exact path="/products" component={Category} />
-        {/* <DynamicSwitch>
+  <ThemeState initial={deityGreenTheme}>
+    {props => (
+      <React.Fragment>
+        <ThemeProvider theme={props.theme}>
+          <HeadMetaTags />
+          <AppLayout>
+            <HeaderQuery>{data => <Header {...data} />}</HeaderQuery>
+            {!online && <p>your are offline.</p>}
+            <Switch>
+              <Route exact path="/" component={Home} />
+              <Route exact path="/products" component={Category} />
+              {/* <DynamicSwitch>
           <Route exact path="/shop-product?:id" component={() => <p>asdasdasd</p>} />
         </DynamicSwitch> */}
 
-        <DynamicRoute
-          loaderComponent={Loader}
-          components={{
-            'shop-category': Category,
-            'shop-product': Product,
-            'shop-page': Cms,
-            'blog-post': null,
-            'blog-page': null,
-            'blog-category': null
-          }}
-        />
-        {/* <Route component={NotFound} /> */}
-      </Switch>
-      <FooterQuery>{(data, t) => <Footer {...data} translations={t} />}</FooterQuery>
-      <MiniCartQuery>{data => <MiniCart {...data} />}</MiniCartQuery>
-    </AppLayout>
-  </ThemeProvider>
+              <DynamicRoute
+                loaderComponent={Loader}
+                components={{
+                  'shop-category': Category,
+                  'shop-product': Product,
+                  'shop-page': Cms,
+                  'blog-post': null,
+                  'blog-page': null,
+                  'blog-category': null
+                }}
+              />
+              {/* <Route component={NotFound} /> */}
+            </Switch>
+            <FooterQuery>{(data, t) => <Footer {...data} translations={t} />}</FooterQuery>
+            <MiniCartQuery>{data => <MiniCart {...data} />}</MiniCartQuery>
+          </AppLayout>
+        </ThemeProvider>
+        <ThemeEditor {...props} />
+      </React.Fragment>
+    )}
+  </ThemeState>
 );
 
 App.propTypes = {

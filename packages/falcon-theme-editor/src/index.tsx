@@ -17,8 +17,11 @@ import {
   themed,
   Theme,
   createTheme,
-  mergeThemes
+  mergeThemes,
+  Group,
+  Button
 } from '@deity/falcon-ui';
+import { availablePresets } from './presets';
 
 const categories = {
   colors: {
@@ -47,7 +50,21 @@ const categories = {
     themeMappings: [
       {
         themeProps: 'fonts',
-        input: 'text'
+        input: 'text',
+        options: [
+          {
+            name: 'System',
+            value: '"Segoe UI", system-ui, sans-serif'
+          },
+          {
+            name: 'Mono',
+            value: '"SF Mono", "Roboto Mono", Menlo, monospace'
+          },
+          {
+            name: ' Work Sans - Google Font',
+            value: ''
+          }
+        ]
       },
       {
         themeProps: 'fontSizes',
@@ -131,7 +148,14 @@ const SVGIcon = themed({
 });
 
 const ThemeSidebar = (props: ThemeSidebarProps) => (
-  <Sidebar as={Portal} visible={props.open} side="right" css={{ position: 'fixed' }} boxShadow="xs" bg="primaryLight">
+  <Sidebar
+    as={Portal}
+    visible={props.open}
+    side="right"
+    css={{ position: 'fixed', overflowX: 'inherit' }}
+    boxShadow="xs"
+    bg="primaryLight"
+  >
     {props.children}
     <Box
       position="absolute"
@@ -168,7 +192,8 @@ const ThemeSidebar = (props: ThemeSidebarProps) => (
 export class ThemeEditor extends React.Component<any, any> {
   state = {
     openPanels: {},
-    sidebarVisible: false
+    sidebarVisible: false,
+    selectedTheme: 0
   };
 
   onChange = (themeKey: string, propName: string, isNumber?: boolean) => (e: any) => {
@@ -176,6 +201,20 @@ export class ThemeEditor extends React.Component<any, any> {
       [themeKey]: {
         [propName]: isNumber ? +e.target.value : e.target.value
       }
+    });
+  };
+
+  onPresetChange = (presetIndex: number) => () => {
+    if (presetIndex === this.state.selectedTheme) {
+      return;
+    }
+
+    this.setState({
+      selectedTheme: presetIndex
+    });
+
+    requestAnimationFrame(() => {
+      this.props.updateTheme(availablePresets[presetIndex].theme, { useInitial: true });
     });
   };
 
@@ -242,7 +281,7 @@ export class ThemeEditor extends React.Component<any, any> {
                 />
 
                 <RangeInput
-                  value={theme[themeMapping.themeProps][themeProp]}
+                  defaultValue={theme[themeMapping.themeProps][themeProp]}
                   min={themeMapping.min}
                   max={themeMapping.max}
                   step={themeMapping.step}
@@ -269,6 +308,23 @@ export class ThemeEditor extends React.Component<any, any> {
             gridAutoRows="min-content"
             css={{ overflow: 'auto' }}
           >
+            <Details key="presets" open={(this.state.openPanels as any)['presets']}>
+              <Summary onClick={this.toggleCollapsible('presets')}>Presets</Summary>
+              <DetailsContent>
+                <Group my="md" display="flex">
+                  {availablePresets.map((preset, index) => (
+                    <Button
+                      key={preset.name}
+                      variant={index === this.state.selectedTheme ? '' : 'secondary'}
+                      flex="1"
+                      onClick={this.onPresetChange(index)}
+                    >
+                      {preset.name}
+                    </Button>
+                  ))}
+                </Group>
+              </DetailsContent>
+            </Details>
             {Object.keys(categories).map(categoryKey => {
               const category = (categories as any)[categoryKey];
               return (
@@ -303,7 +359,10 @@ type ThemeStateState = {
   activeTheme: Theme;
 };
 
-type ChildrenRenderProp = { theme: Theme; updateTheme: (themeDiff: Partial<Theme>) => void };
+type ChildrenRenderProp = {
+  theme: Theme;
+  updateTheme: (themeDiff: Partial<Theme>, useInitial: any) => void;
+};
 
 type ThemeStateProps = {
   initial?: Theme;
@@ -313,16 +372,21 @@ type ThemeStateProps = {
 export class ThemeState extends React.Component<ThemeStateProps, ThemeStateState> {
   constructor(props: ThemeStateProps) {
     super(props);
-
     this.state = {
       activeTheme: props.initial || createTheme()
     };
   }
 
-  updateTheme = (themeDiff: Partial<Theme>) => {
-    this.setState(state => ({
-      activeTheme: mergeThemes(state.activeTheme, themeDiff)
-    }));
+  updateTheme = (themeDiff: Partial<Theme>, { useInitial = false }: { useInitial?: boolean } = {}) => {
+    requestAnimationFrame(() => {
+      this.setState(state => {
+        const themeBase = useInitial ? this.props.initial || createTheme() : state.activeTheme;
+
+        return {
+          activeTheme: mergeThemes(themeBase, themeDiff)
+        };
+      });
+    });
   };
 
   render() {
