@@ -16,25 +16,14 @@ module.exports = class Shop extends Extension {
   async initConfig() {
     Logger.debug('Loading shop config');
 
-    const {
-      baseCurrencyCode,
-      activeStores,
-      postCodes,
-      minPasswordLength,
-      minPasswordCharClass,
-      locale
-    } = await this.api.getInfo();
+    const { baseCurrencyCode, locale } = await this.api.getInfo();
 
+    // todo: verify if this is needed because all the operations that use those are performed inside API class
+    // which keeps these values updated locally
     Logger.debug(`Locale set to: ${locale}.`);
     this.defaultLanguage = locale;
     Logger.debug(`Currency set to: ${baseCurrencyCode}.`);
     this.currency = baseCurrencyCode;
-    this.stores = activeStores;
-    this.optionalPostCode = postCodes;
-    this.customerConfiguration = {
-      minPasswordLength,
-      minPasswordCharClass
-    };
   }
 
   getGraphQLConfig() {
@@ -43,76 +32,47 @@ module.exports = class Shop extends Extension {
       dataSources: {
         [this.api.name]: this.api
       },
+      context: ({ ctx }) => this.api.createContextData(ctx),
       resolvers: {
         Query: {
-          category: (root, params, { session: { storeCode, currency } }) =>
-            this.api.fetchCategory({ storeCode, currency, ...params }),
-          products: (root, params, { session: { storeCode, currency } }) =>
-            this.api.fetchProducts({ storeCode, currency, ...params }),
-          cart: (root, data, { session }) => {
-            if (!session.cart || !session.cart.quoteId) {
-              return {
-                active: false,
-                itemsQty: 0,
-                items: [],
-                totals: []
-              };
-            }
-            return this.api.fetchCart(session);
-          },
-          product: (root, params, { session: { storeCode, currency } }) =>
-            this.api.fetchProductById({ ...params, storeCode, currency }),
-          countries: (root, params, { session: { storeCode } }) => this.api.fetchCountries(storeCode),
-          customer: (root, params, { session: { storeCode, customerToken } }) =>
-            this.api.getCustomerData({ storeCode, customerToken }),
-          lastOrder: (root, params, { session: { storeCode, orderId, paypalExpressHash } }) =>
-            this.api.getLastOrder({ storeCode, orderId, paypalExpressHash }),
-          order: (root, params, { session: { storeCode, customerToken } }) =>
-            this.api.getOrderById({ storeCode, customerToken, ...params }),
-          orders: (root, params, { session: { storeCode, customerToken } }) =>
-            this.api.getOrders({ storeCode, customerToken, ...params }),
-          address: (root, params, { session: { storeCode, customerToken } }) =>
-            this.api.forwardAddressAction({ storeCode, customerToken, ...params }),
-          validatePasswordToken: (root, params, { session: { storeCode } }) =>
-            this.api.validatePasswordToken({ storeCode, ...params }),
-          cmsPage: (root, params, { session: { storeCode } }) => this.api.fetchPage({ ...params, storeCode }),
-          cmsBlock: (root, params, { session: { storeCode } }) => this.api.fetchBlock({ ...params, storeCode })
+          category: (root, params) => this.api.category(params),
+          products: (root, params) => this.api.products(params),
+          cart: (root, params) => this.api.cart(params),
+          product: (root, params) => this.api.product(params),
+          countries: (root, params) => this.api.countries(params),
+          customer: (root, params) => this.api.customer(params),
+          orders: (root, params) => this.api.orders(params),
+          order: (root, params) => this.api.order(params),
+          address: (root, params) => this.api.address(params),
+          validatePasswordToken: (root, params) => this.api.validatePasswordToken(params),
+          lastOrder: (root, params) => this.api.lastOrder(params),
+
+          // todo: these two are not yet implemented in the api class
+          cmsPage: (root, params) => this.api.fetchPage(params),
+          cmsBlock: (root, params) => this.api.fetchBlock(params)
         },
         Mutation: {
-          addToCart: (root, data, { session }) => this.api.addToCart(data.input, session),
-          updateCartItem: (root, data, { session }) => this.api.updateCartItem(data.input, session),
-          removeCartItem: (root, data, { session }) => this.api.removeFromCart(data.input, session),
+          addToCart: (root, data) => this.api.addToCart(data.input),
+          updateCartItem: (root, data) => this.api.updateCartItem(data.input),
+          removeCartItem: (root, data) => this.api.removeCartItem(data.input),
+          signUp: (root, data) => this.api.signUp(data.input),
+          signIn: (root, data) => this.api.signIn(data.input),
+          // todo: unify signature - pass data.input even if it's empty
+          signOut: (root, data) => this.api.signOut(data),
+          editCustomerData: (root, data) => this.api.editCustomerData(data.input),
+          addCustomerAddress: (root, data) => this.api.addCustomerAddress(data.input),
+          editCustomerAddress: (root, data) => this.api.editCustomerAddress(data.input),
+          removeCustomerAddress: (root, data) => this.api.removeCustomerAddress(data.input),
+          requestCustomerPasswordResetToken: (root, data) => this.api.requestCustomerPasswordResetToken(data.input),
+          resetCustomerPassword: (root, data) => this.api.resetCustomerPassword(data.input),
+          changeCustomerPassword: (root, data) => this.api.changeCustomerPassword(data.input),
           applyCoupon: (root, data, { session }) => this.api.applyCoupon(data.input, session),
-          cancelCoupon: (root, data, { session }) => this.api.cancelCoupon(session),
-          signUp: (root, data, { session: { storeCode, cart } }) => this.api.signUp(data.input, { storeCode, cart }),
-          signIn: (root, data, { session }) => this.api.signIn(data.input, session),
-          signOut: (root, data, { session }) => this.api.signOut(session),
-          editCustomerData: (root, data, { session }) => this.api.editCustomerData(data.input, session),
-          estimateShippingMethods: (root, data, { session }) => this.api.estimateShippingMethods(data.input, session),
-          placeOrder: (root, data, { session }) => this.api.placeOrder(data.input, session),
-          setShipping: (root, data, { session }) => this.api.setShippingInformation(data.input, session),
-          editCustomerAddress: (root, data, { session: { storeCode, customerToken } }) =>
-            this.api.forwardAddressAction({
-              data: data.input,
-              storeCode,
-              customerToken,
-              method: 'put'
-            }),
-          addCustomerAddress: (root, data, { session: { storeCode, customerToken } }) =>
-            this.api.forwardAddressAction({
-              data: data.input,
-              storeCode,
-              customerToken,
-              method: 'post'
-            }),
-          removeCustomerAddress: (root, params, { session: { storeCode, customerToken } }) =>
-            this.api.forwardAddressAction({ storeCode, customerToken, method: 'delete', ...params }),
-          requestCustomerPasswordResetToken: (root, data, { session: { storeCode } }) =>
-            this.api.requestCustomerPasswordResetToken({ storeCode, data }),
-          changeCustomerPassword: (root, data, { session: { storeCode, customerToken } }) =>
-            this.api.changeCustomerPassword({ storeCode, data: data.input, customerToken }),
-          resetCustomerPassword: (root, data, { session: { storeCode } }) =>
-            this.api.resetCustomerPassword({ storeCode, data: data.input })
+          // todo: unify signature - pass data.input and session even if it's empty
+          cancelCoupon: (root, data) => this.api.cancelCoupon(data),
+          estimateShippingMethods: (root, data) => this.api.estimateShippingMethods(data.input),
+          setShipping: (root, data) => this.api.setShipping(data.input),
+          placeOrder: (root, data) => this.api.placeOrder(data.input),
+          setStoreConfig: (root, data) => this.api.setStoreConfig(data.input)
         }
       }
     };

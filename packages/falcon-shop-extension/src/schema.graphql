@@ -10,7 +10,7 @@ extend type Query {
     skus: [String]
   ): ProductList
   cart: Cart
-  countries: Directory
+  countries: CountryList
   order(id: Int!): Order
   lastOrder: Order
   orders(query: ShopPageQuery): Orders
@@ -23,24 +23,33 @@ extend type Query {
 
 extend type Mutation {
   addToCart(input: AddToCartInput!): CartItemPayload
+  updateCartItem(input: UpdateCartItemInput!): CartItemPayload
+  removeCartItem(input: RemoveCartItemInput!): Boolean
   applyCoupon(input: CouponInput!): Boolean
   cancelCoupon: Boolean
-  removeCartItem(input: RemoveCartItemInput!): Boolean
   signUp(input: SignUp!): Customer
   signIn(input: SignIn!): Boolean
   signOut: Boolean
-  updateCartItem(input: UpdateCartItemInput!): CartItemPayload
   editCustomerData(input: CustomerInput!): Customer
   editCustomerAddress(input: AddressInput!): Address
   addCustomerAddress(input: AddressInput!): Address
   estimateShippingMethods(input: EstimateShippingInput!): [ShippingMethod]
-  removeCustomerAddress(id: Int!): Boolean
-  requestCustomerPasswordResetToken(email: String!): Boolean
+  removeCustomerAddress(input: EntityIdInput!): Boolean
+  requestCustomerPasswordResetToken(input: EmailInput!): Boolean
   changeCustomerPassword(input: CustomerPassword!): Boolean
   resetCustomerPassword(input: CustomerPasswordReset!): Boolean
   # set current customer order shipping information
   setShipping(input: ShippingInput): ShippingInformation
   placeOrder(input: PlaceOrderInput!): PlaceOrderResult
+  setStoreConfig(input: StoreConfigInput): Boolean
+}
+
+input EntityIdInput {
+  id: Int!
+}
+
+input EmailInput {
+  email: String!
 }
 
 input PlaceOrderInput {
@@ -392,6 +401,10 @@ input SignIn {
   password: String
 }
 
+input StoreConfigInput {
+  storeCode: String
+}
+
 type GalleryEntry {
   type: String!
   full: String!
@@ -459,7 +472,7 @@ type Country {
   regions: [Region]
 }
 
-type Directory {
+type CountryList {
   items: [Country]
 }
 
