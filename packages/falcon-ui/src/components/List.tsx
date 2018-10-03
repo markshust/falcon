@@ -17,7 +17,7 @@ export const ListItem = themed({
   tag: 'li',
   defaultTheme: {
     listItem: {
-      pb: 'sm'
+      p: 'none'
     }
   }
 });

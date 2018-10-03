@@ -4,72 +4,6 @@ import gql from 'graphql-tag';
  * Defines client-side state resolvers
  */
 
-const footerSections = [
-  {
-    name: 'Customer service',
-    links: [
-      {
-        name: 'Track order',
-        url: '/'
-      },
-      {
-        name: 'Return policy',
-        url: '/'
-      },
-      {
-        name: 'FAQs',
-        url: '/'
-      },
-      {
-        name: 'Terms',
-        url: '/'
-      }
-    ]
-  },
-  {
-    name: 'About us',
-    links: [
-      {
-        name: 'Blog',
-        url: '/'
-      },
-      {
-        name: 'Cookies',
-        url: '/'
-      },
-      {
-        name: 'About us',
-        url: '/'
-      },
-      {
-        name: 'Jobs',
-        url: '/'
-      }
-    ]
-  },
-  {
-    name: 'Terms',
-    links: [
-      {
-        name: 'Blog',
-        url: '/'
-      },
-      {
-        name: 'Cookies',
-        url: '/'
-      },
-      {
-        name: 'About us',
-        url: '/'
-      },
-      {
-        name: 'Jobs',
-        url: '/'
-      }
-    ]
-  }
-];
-
 const languages = [
   {
     name: 'English',
@@ -119,7 +53,6 @@ export default {
 
   resolvers: {
     Query: {
-      footerSections: () => footerSections,
       languages: () => languages,
       sortOrders: () => sortOrders,
       basketItems: () => basketItems

@@ -4,6 +4,7 @@ import { H3, Link, List, ListItem, Box, DefaultThemeProps } from '@deity/falcon-
 import { LanguageSwitcher } from './LanguageSwitcher';
 import { FooterData } from './FooterQuery';
 import { Newsletter } from './Newsletter';
+import { MenuItem } from '../Header';
 
 const footerLayoutTheme: DefaultThemeProps = {
   footer: {
@@ -38,13 +39,13 @@ const footerSectionsTheme: DefaultThemeProps = {
   }
 };
 
-export const FooterSections: React.SFC<{ sections: any }> = ({ sections }) => (
+export const FooterSections: React.SFC<{ sections: MenuItem[] }> = ({ sections }) => (
   <Box defaultTheme={footerSectionsTheme}>
-    {sections.map((section: any) => (
+    {sections.map(section => (
       <Box key={section.name} css={{ minWidth: 200 }}>
         <H3>{section.name}</H3>
         <List>
-          {section.links.map((item: any) => (
+          {section.children.map(item => (
             <ListItem p="sm" key={item.name}>
               <Link as={RouterLink} to={item.url}>
                 {item.name}
@@ -69,11 +70,16 @@ const languageSectionTheme: DefaultThemeProps = {
     }
   }
 };
-export const Footer: React.SFC<FooterData> = ({ footerSections, languages }) => (
+export const Footer: React.SFC<FooterData> = ({
+  config: {
+    menus: { footer },
+    languages
+  }
+}) => (
   <Box as="footer" defaultTheme={footerLayoutTheme}>
     <Newsletter />
 
-    <FooterSections sections={footerSections} />
+    <FooterSections sections={footer} />
 
     <Box defaultTheme={languageSectionTheme}>
       <LanguageSwitcher languages={languages} />

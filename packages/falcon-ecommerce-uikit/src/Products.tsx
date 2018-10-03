@@ -47,7 +47,9 @@ export const ProductsList: React.SFC<{ products: any[] }> = ({ products }) => (
         <ProductCardLayout to={product.urlPath}>
           <Image css={{ flex: 1, minHeight: '0%' }} src={product.thumbnail} />
 
-          <Text ellipsis>{product.name}</Text>
+          <Text mt="sm" ellipsis>
+            {product.name}
+          </Text>
 
           <Text fontSize="lg">€ {product.price}</Text>
         </ProductCardLayout>

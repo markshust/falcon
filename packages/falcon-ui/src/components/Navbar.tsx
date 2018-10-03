@@ -53,7 +53,6 @@ export const NavbarItem = themed({
 
   defaultTheme: {
     navbarItem: {
-      p: 'md',
       fontSize: 'md',
       css: ({ theme, active }) => ({
         cursor: 'pointer',
@@ -61,7 +60,8 @@ export const NavbarItem = themed({
         display: 'flex',
         listStyle: 'none',
         background: active ? theme.colors.primaryLight : 'none',
-        color: active ? theme.colors.primaryText : 'none',
+        color: active ? theme.colors.primaryText : theme.colors.secondaryText,
+
         ':hover': {
           background: theme.colors.primary,
           color: theme.colors.primaryText

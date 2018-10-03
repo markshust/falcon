@@ -33,7 +33,7 @@ enum Area {
 export const ProductDetailsLayout = themed({
   tag: 'article',
   defaultTheme: {
-    productLayout: {
+    productDetailsLayout: {
       display: 'grid',
       gridGap: 'md',
       gridTemplateColumns: {

@@ -49,6 +49,7 @@
   "dependencies": {
     "@deity/falcon-client": "1.0.0",
     "@deity/falcon-i18n": "1.0.0",
+    "@deity/falcon-theme-editor": "1.0.0",
     "@deity/falcon-ui": "1.0.0",
     "config": "^2.0.1",
     "graphql": "^14.0.2",
