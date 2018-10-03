@@ -23,7 +23,9 @@ import {
   Dropdown,
   DropdownLabel,
   DropdownMenu,
-  DropdownMenuItem
+  DropdownMenuItem,
+  H2,
+  Divider
 } from '@deity/falcon-ui';
 import { availablePresets } from './presets';
 
@@ -195,6 +197,12 @@ const SVGIcon = themed({
   tag: 'svg'
 });
 
+const editorTheme = createTheme({
+  fonts: {
+    sans: '"SF Mono", monospace'
+  }
+});
+
 const ThemeSidebar = (props: ThemeSidebarProps) => (
   <Sidebar
     as={Portal}
@@ -327,7 +335,7 @@ export class ThemeEditor extends React.Component<any, any> {
             alignItems="center"
             gridGap="xs"
             mb="sm"
-            gridTemplateColumns={themeMapping.input === 'dropdown' ? '50px auto 1.8fr 20px' : '1fr auto 1.8fr 20px'}
+            gridTemplateColumns={themeMapping.input === 'dropdown' ? '50px auto 1.8fr 20px' : '1.2fr auto 1.8fr 20px'}
             key={themeMapping.themeProps + themeProp}
           >
             <H4 p="xs">{themeProp}</H4>
@@ -399,7 +407,7 @@ export class ThemeEditor extends React.Component<any, any> {
 
   render() {
     return (
-      <ThemeProvider withoutRoot>
+      <ThemeProvider withoutRoot theme={editorTheme}>
         <ThemeSidebar open={this.state.sidebarVisible} toggle={this.toggleSidebar}>
           <GridLayout
             p="sm"
@@ -407,6 +415,10 @@ export class ThemeEditor extends React.Component<any, any> {
             gridAutoRows="min-content"
             css={{ overflow: 'auto' }}
           >
+            <H2 my="xs" css={{ textAlign: 'center' }}>
+              Theme Editor
+            </H2>
+            <Divider mb="md" />
             <Details key="presets" open={(this.state.openPanels as any)['presets']}>
               <Summary onClick={this.toggleCollapsible('presets')}>Presets</Summary>
               <DetailsContent>

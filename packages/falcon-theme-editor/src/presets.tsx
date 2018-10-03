@@ -137,11 +137,6 @@ export const availablePresets: Preset[] = [
     name: 'Insanely Pink',
     theme: {
       colors: {
-        primary: '#e0e0e0',
-        primaryLight: '#ededed',
-        primaryDark: '#aeaeae',
-        primaryText: '#000000',
-
         secondary: '#e45e93',
         secondaryLight: '#ed92b6',
         secondaryDark: '#c52163',
