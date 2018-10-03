@@ -35,7 +35,7 @@ export const defaultBaseTheme = {
 
   fonts: {
     sans: '"Segoe UI", system-ui, sans-serif',
-    mono: '"SF Mono", "Roboto Mono", Menlo, monospace'
+    mono: '"SF Mono", monospace'
   },
 
   fontSizes: {

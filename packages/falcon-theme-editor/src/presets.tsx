@@ -36,7 +36,7 @@ export const availablePresets: Preset[] = [
         xl: 74
       },
       fonts: {
-        sans: 'Consolas'
+        sans: 'Bubblegum Sans'
       },
       fontSizes: {
         xs: 14,
@@ -134,38 +134,63 @@ export const availablePresets: Preset[] = [
     }
   },
   {
-    name: 'Dark',
+    name: 'Insanely Green',
     theme: {
       colors: {
-        primary: '#616161',
-        primaryLight: '#8e8e8e',
-        primaryDark: '#373737',
-        primaryText: '#fff',
+        primary: '#e0e0e0',
+        primaryLight: '#ededed',
+        primaryDark: '#aeaeae',
+        primaryText: '#000000',
 
-        // secondary: '#546e7a',
-        // secondaryLight: '#819ca9',
-        // secondaryDark: '#29434e',
+        secondary: '#388e3c',
+        secondaryLight: '#6abf69',
+        secondaryDark: '#00600f',
 
         errorText: '#000000',
         black: '#9b9aa0'
       },
 
+      fonts: {
+        sans: 'Monoton'
+      },
+
       components: {
-        root: {
-          bg: 'primaryLight',
-          color: 'white'
+        searchbarLayout: {
+          gridTemplate: '"cart logo login" / auto 1fr auto',
+          alignItems: 'center',
+          css: {
+            justifyItems: 'center'
+          }
         },
-        sidebarLayout: {
-          bg: 'primaryLight'
+
+        icon: {
+          stroke: 'primaryDark',
+          css: {
+            transform: 'skew(15deg)'
+          }
         },
-        footerSectionLayout: {
-          bgFullWidth: 'primary'
+
+        bannerLayout: {
+          bgFullWidth: 'secondary'
         },
-        newsletterLayout: {
-          bgFullWidth: 'primary'
+
+        productListLayout: {
+          css: {
+            '& img': {
+              transform: 'skew(15deg)'
+            }
+          }
         },
-        dropdownMenu: {
-          bg: 'primaryLight'
+        navbar: {
+          color: 'black',
+          bgFullWidth: 'transparent',
+          borderColor: 'secondary',
+          justifyContent: 'center',
+          css: {
+            transform: 'skew(15deg)',
+            borderBottomStyle: 'solid',
+            borderBottomWidth: 2
+          }
         }
       }
     }

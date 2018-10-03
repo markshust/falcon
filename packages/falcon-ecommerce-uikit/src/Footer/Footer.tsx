@@ -7,7 +7,7 @@ import { Newsletter } from './Newsletter';
 import { MenuItem } from '../Header';
 
 const footerLayoutTheme: DefaultThemeProps = {
-  footer: {
+  footerLayout: {
     mt: 'lg'
   }
 };
