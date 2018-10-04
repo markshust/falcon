@@ -5,19 +5,92 @@
 [![lerna](https://img.shields.io/badge/maintained%20with-lerna-cc00ff.svg?style=flat-square)](https://lernajs.io/)
 [![code style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg?style=flat-square)](https://github.com/prettier/prettier)
 
-## Quick start
+<p align="center">
+  <img alight="center" width="100" src="https://user-images.githubusercontent.com/1118933/46464650-2f40df00-c7c7-11e8-827c-576ce330cb06.png" />
+</p>
 
-TODO
+## Introduction
 
-### Development quick start
+DEITY Falcon is a platform agnostic PWA, stand-alone but modular library to be used with any e-commerce platform.
 
-#### Installing dependencies for all packages
+#### Technologies inside
 
-```
-yarn install
-```
+- Apollo
+- NodeJS
+- Razzle
+- GraphQL
+- React
+- Koa
+- Jest (testing)
+
+#### Community
+
+Any contributions, small or big, are very welcome! Please take a look at our [Contributor guidelines](https://github.com/deity-io/falcon/blob/master/.github/CONTRIBUTING.md) and [Code of Conduct](https://github.com/deity-io/falcon/blob/master/.github/CODE_OF_CONDUCT.md)
+
+## Requirements
+
+NodeJS (8.x +) https://nodejs.org
+
+Yarn (Optional, but recommended) https://yarnpkg.com
+
 
 Yarn can be installed via `npm install -g yarn` or https://yarnpkg.com/lang/en/docs/install
+
+## Starting a project
+
+Use the project generator:
+
+[Create-falcon-app](https://github.com/deity-io/falcon/tree/master/packages/create-falcon-app)
+
+Out of the box it will connect to a public back-end service (Magento & WordPress), so you are able to start developing right away.
+
+### Connecting to your own services
+
+#### Magento
+
+Install falcon-magento2-module in Magento 2
+
+[falcon-magento2-module](https://github.com/deity-io/falcon-magento2-module)
+
+#### WordPress
+
+Install falcon-wordpress-module in WordPress
+
+[falcon-wordpress-module](https://github.com/deity-io/falcon-wordpress-module)
+
+#### Other platforms
+
+Coming soon
+
+#### Connecting to them
+
+Inside ```server/config``` change ```apis.config``` to your instance's credentials
+
+## Customizing the theme
+
+Please check out https://github.com/deity-io/falcon/tree/master/packages/falcon-ui
+
+## Basics
+
+### Project Structure
+
+[Falcon Client](https://github.com/deity-io/falcon/tree/master/packages/falcon-client)
+
+[Falcon Server](https://github.com/deity-io/falcon/tree/master/packages/falcon-server)
+
+## Advanced
+
+Coming soon
+
+### Code Splitting
+
+### Dynamic routing
+
+### State management
+
+## Development quick start
+
+Yarn and Node are required for core development
 
 #### Adding new dependency for single package
 
