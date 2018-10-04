@@ -1,15 +1,27 @@
-import { asyncComponent } from 'react-async-component';
 import React from 'react';
 import PropTypes from 'prop-types';
 import Route from 'react-router-dom/Route';
 import Switch from 'react-router-dom/Switch';
-import Home from 'src/pages/home/Home';
-import Abc from 'src/pages/abc/Abc';
 import Helmet from 'react-helmet';
+import AsyncComponent from 'src/components/Async';
+import Home from 'src/pages/Home';
+import { Loader } from '@deity/falcon-ecommerce-uikit';
+import { ThemeProvider } from '@deity/falcon-ui';
 import DynamicRoute from '@deity/falcon-client/src/components/DynamicRoute';
 import isOnline from '@deity/falcon-client/src/components/isOnline';
-import 'src/App.css';
 import logo from 'src/assets/logo.png';
+import {
+  AppLayout,
+  Header,
+  Footer,
+  FooterQuery,
+  HeaderQuery,
+  MiniCartQuery,
+  MiniCart
+} from '@deity/falcon-ecommerce-uikit';
+import { ThemeEditor, ThemeState } from '@deity/falcon-theme-editor';
+
+import { deityGreenTheme } from './theme';
 
 const HeadMetaTags = () => (
   <Helmet defaultTitle="Deity Shop with Blog" titleTemplate="%s | Deity Shop with Blog">
@@ -27,25 +39,37 @@ const HeadMetaTags = () => (
   </Helmet>
 );
 
-const components = {
-  shop: asyncComponent({
-    resolve: () => import(/* webpackChunkName: "Shop" */ './pages/dynamic/Shop')
-  }),
-  post: asyncComponent({
-    resolve: () => import(/* webpackChunkName: "Post" */ './pages/dynamic/Post')
-  })
-};
+const Category = AsyncComponent(() => import(/* webpackChunkName: "shop/category" */ './pages/shop/Category'));
+const Product = AsyncComponent(() => import(/* webpackChunkName: "shop/product" */ './pages/shop/Product'));
 
 const App = ({ online }) => (
-  <React.Fragment>
-    <HeadMetaTags />
-    {!online && <p>your are offline.</p>}
-    <Switch>
-      <Route exact path="/" component={Home} />
-      <Route exact path="/abc" component={Abc} />
-      <DynamicRoute components={components} />
-    </Switch>
-  </React.Fragment>
+  <ThemeState initial={deityGreenTheme}>
+    {props => (
+      <React.Fragment>
+        <ThemeProvider theme={props.theme}>
+          <HeadMetaTags />
+          <AppLayout>
+            <HeaderQuery>{data => <Header {...data} />}</HeaderQuery>
+            {!online && <p>your are offline.</p>}
+            <Switch>
+              <Route exact path="/" component={Home} />
+              <Route exact path="/products" component={Category} />
+              <DynamicRoute
+                loaderComponent={Loader}
+                components={{
+                  'shop-category': Category,
+                  'shop-product': Product
+                }}
+              />
+            </Switch>
+            <FooterQuery>{(data, t) => <Footer {...data} translations={t} />}</FooterQuery>
+            <MiniCartQuery>{data => <MiniCart {...data} />}</MiniCartQuery>
+          </AppLayout>
+        </ThemeProvider>
+        <ThemeEditor {...props} />
+      </React.Fragment>
+    )}
+  </ThemeState>
 );
 
 App.propTypes = {

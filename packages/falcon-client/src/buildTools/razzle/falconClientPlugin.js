@@ -1,6 +1,8 @@
 /* eslint-disable import/no-extraneous-dependencies */
 const path = require('path');
+const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 const FalconI18nLocalesPlugin = require('@deity/falcon-i18n-webpack-plugin');
+const razzlePluginTypescript = require('razzle-plugin-typescript');
 const WebpackConfigHelpers = require('razzle-dev-utils/WebpackConfigHelpers');
 const AssetsPlugin = require('assets-webpack-plugin');
 const paths = require('./../paths');
@@ -56,14 +58,36 @@ function fixUrlLoaderFallback(config, target) {
   urlLoader.test.push(/\.(ico)$/);
 }
 
-function makeFalconClientJsFileResolvedByWebpack(config) {
-  const babelLoaderFinder = webpackConfigHelper.makeLoaderFinder('babel-loader');
-  const babelLoader = config.module.rules.find(babelLoaderFinder);
-  if (!babelLoader) {
-    throw new Error(`'babel-loader' was erased from config, it is required to configure '@deity/falcon-client'`);
+function extendBabelInclude(includePaths = []) {
+  return config => {
+    const babelLoaderFinder = webpackConfigHelper.makeLoaderFinder('babel-loader');
+    const babelLoader = config.module.rules.find(babelLoaderFinder);
+    if (!babelLoader) {
+      throw new Error(`'babel-loader' was erased from config, it is required to configure '@deity/falcon-client'`);
+    }
+
+    babelLoader.include = [...babelLoader.include, ...includePaths];
+  };
+}
+
+function addTypeScript(config, { target, dev }, webpackObject) {
+  razzlePluginTypescript(config, { target, dev }, webpackObject, {
+    useBabel: true,
+    useEslint: true,
+    forkTsChecker: {
+      tslint: false
+    }
+  });
+
+  // use latest ts-Loader
+  const tsLoaderFinder = webpackConfigHelper.makeLoaderFinder('ts-loader');
+  const tsRule = config.module.rules.find(tsLoaderFinder);
+  if (!tsRule) {
+    throw new Error(`'ts-loader' was erased from config, it is required to configure '@deity/falcon-client'`);
   }
 
-  babelLoader.include.push(paths.falconClient.appSrc);
+  const indexOfTsLoader = tsRule.use.findIndex(tsLoaderFinder);
+  tsRule.use[indexOfTsLoader].loader = require.resolve('ts-loader');
 }
 
 function addVendorsBundle(modules = []) {
@@ -181,8 +205,7 @@ function addWebManifest(config, target) {
  * @param {{i18n: i18nPluginConfig }} appConfig webpack config
  * @returns {object} razzle plugin
  */
-// eslint-disable-next-line no-unused-vars
-module.exports = appConfig => (config, { target, dev } /* ,  webpackObject */) => {
+module.exports = appConfig => (config, { target, dev }, webpackObject) => {
   config.resolve.alias = {
     ...(config.resolve.alias || {}),
     src: paths.razzle.appSrc,
@@ -190,37 +213,45 @@ module.exports = appConfig => (config, { target, dev } /* ,  webpackObject */) =
   };
 
   setEntryToFalconClient(config, target);
-  makeFalconClientJsFileResolvedByWebpack(config);
-
+  extendBabelInclude([paths.falconClient.appSrc, path.join(paths.resolvePackageDir('@deity/falcon-ui'), 'src')])(
+    config
+  );
+  addTypeScript(config, { target, dev }, webpackObject);
   fixUrlLoaderFallback(config, target);
   fixAssetsWebpackPlugin(config, target);
-
   addVendorsBundle([
     'apollo-cache-inmemory',
     'apollo-client',
     'apollo-link',
     'apollo-link-http',
     'apollo-link-state',
-    `graphql-tag`,
-    `node-fetch`,
+    'apollo-utilities',
+    'graphql',
+    'graphql-tag',
+    'node-fetch',
     'i18next',
+    'i18next-xhr-backend',
     'razzle/polyfills',
+    'razzle',
     'react',
     'react-apollo',
-    'react-async-bootstrapper',
+    'react-async-bootstrapper2',
     'react-async-component',
     'react-dom',
     'react-google-tag-manager',
     `react-helmet`,
     'react-i18next',
-    'react-router-dom'
+    'react-router',
+    'react-router-dom',
+    'history'
   ])(config, { target, dev });
-
   excludeIcoFromFileLoader(config);
-
   addGraphQLTagLoader(config);
   addFalconI18nPlugin(appConfig.i18n)(config, target);
   addWebManifest(config, target);
 
+  if (target === 'web' && process.env.NODE_ANALYZE) {
+    config.plugins.push(new BundleAnalyzerPlugin());
+  }
   return config;
 };

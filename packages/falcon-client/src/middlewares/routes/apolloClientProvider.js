@@ -52,7 +52,10 @@ export default ({ clientStates }) => {
 
     const client = new ApolloClient({
       clientState: mergedClientState,
-      extraLinks: [profileMiddleware, errorLink]
+      extraLinks: [profileMiddleware, errorLink],
+      headers: {
+        cookie: ctx.get('cookie')
+      }
     });
 
     ctx.state.client = client;

@@ -4,7 +4,7 @@ import { Box } from './Box';
 import { Icon } from './Icon';
 
 const RadioInnerDOM = (
-  props: React.DetailedHTMLProps<React.InputHTMLAttributes<HTMLInputElement>, HTMLInputElement>
+  props: React.DetailedHTMLProps<React.InputHTMLAttributes<HTMLInputElement>, HTMLInputElement> & { icon: JSX.Element }
 ) => {
   const { className, ...remaining } = props;
   const { themableProps, rest } = extractThemableProps(remaining);
@@ -13,7 +13,7 @@ const RadioInnerDOM = (
     <Box {...themableProps} className={className}>
       <input {...rest} type="radio" />
       <div aria-hidden className="-inner-radio-frame">
-        <Icon className="-inner-radio-icon" src="radioCheckedIcon" fallback={<i className="-inner-radio-icon" />} />
+        {props.icon}
       </div>
     </Box>
   );
@@ -21,6 +21,10 @@ const RadioInnerDOM = (
 
 export const Radio = themed({
   tag: RadioInnerDOM,
+
+  defaultProps: {
+    icon: <Icon className="-inner-radio-icon" src="radioCheckedIcon" fallback={<i className="-inner-radio-icon" />} />
+  },
 
   defaultTheme: {
     radio: {
@@ -35,6 +39,7 @@ export const Radio = themed({
           left: 0,
           width: '100%',
           height: '100%',
+          margin: 0,
           opacity: 0,
           zIndex: 1,
           ':checked + .-inner-radio-frame': {

@@ -17,8 +17,74 @@ import {
   themed,
   Theme,
   createTheme,
-  mergeThemes
+  mergeThemes,
+  Group,
+  Button,
+  Dropdown,
+  DropdownLabel,
+  DropdownMenu,
+  DropdownMenuItem,
+  H2,
+  Divider
 } from '@deity/falcon-ui';
+import { availablePresets } from './presets';
+
+const fonts = [
+  {
+    value: '"Segoe UI", system-ui, sans-serif'
+  },
+  {
+    value: '"SF Mono", monospace'
+  },
+  {
+    value: 'Work Sans',
+    google: 'Work Sans:300,400,700'
+  },
+  {
+    value: 'Eczar',
+    google: 'Eczar:300,400,700'
+  },
+  {
+    value: 'Fira Sans',
+    google: 'Fira Sans:300,400,700'
+  },
+  {
+    value: 'Rubik',
+    google: 'Rubik:300,400,700'
+  },
+  {
+    value: 'Libre Franklin',
+    google: 'Libre Franklin:300,400,700'
+  },
+  {
+    value: 'Space Mono',
+    google: 'Space Mono:300,400,700'
+  },
+  {
+    value: 'IBM Plex Sans',
+    google: 'IBM Plex Sans:300,400,700'
+  },
+  {
+    value: 'Bangers',
+    google: 'Bangers:300,400,700'
+  },
+  {
+    value: 'Bubblegum Sans',
+    google: 'Bubblegum Sans:300,400,700'
+  },
+  {
+    value: 'Monoton',
+    google: 'Monoton:300,400,700'
+  },
+  {
+    value: 'Baloo',
+    google: 'Baloo:300,400,700'
+  },
+  {
+    value: 'Lilita One',
+    google: 'Lilita One:300,400,700'
+  }
+];
 
 const categories = {
   colors: {
@@ -47,7 +113,8 @@ const categories = {
     themeMappings: [
       {
         themeProps: 'fonts',
-        input: 'text'
+        input: 'dropdown',
+        options: fonts
       },
       {
         themeProps: 'fontSizes',
@@ -130,8 +197,21 @@ const SVGIcon = themed({
   tag: 'svg'
 });
 
+const editorTheme = createTheme({
+  fonts: {
+    sans: '"SF Mono", monospace'
+  }
+});
+
 const ThemeSidebar = (props: ThemeSidebarProps) => (
-  <Sidebar as={Portal} visible={props.open} side="right" css={{ position: 'fixed' }} boxShadow="xs" bg="primaryLight">
+  <Sidebar
+    as={Portal}
+    visible={props.open}
+    side="right"
+    css={{ position: 'fixed', overflowX: 'inherit' }}
+    boxShadow="xs"
+    bg="primaryLight"
+  >
     {props.children}
     <Box
       position="absolute"
@@ -168,7 +248,8 @@ const ThemeSidebar = (props: ThemeSidebarProps) => (
 export class ThemeEditor extends React.Component<any, any> {
   state = {
     openPanels: {},
-    sidebarVisible: false
+    sidebarVisible: false,
+    selectedTheme: 0
   };
 
   onChange = (themeKey: string, propName: string, isNumber?: boolean) => (e: any) => {
@@ -179,6 +260,55 @@ export class ThemeEditor extends React.Component<any, any> {
     });
   };
 
+  onFontChange = (fontKind: string) => (fontOption: any) => {
+    this.props.updateTheme({
+      fonts: {
+        [fontKind]: fontOption.value
+      }
+    });
+
+    if (fontOption.google) {
+      this.loadGoogleFont(fontOption.google);
+    }
+  };
+
+  onPresetChange = (presetIndex: number) => () => {
+    if (presetIndex === this.state.selectedTheme) {
+      return;
+    }
+
+    this.setState({
+      selectedTheme: presetIndex
+    });
+
+    requestAnimationFrame(() => {
+      this.props.updateTheme(availablePresets[presetIndex].theme, { useInitial: true });
+    });
+
+    if (!(availablePresets[presetIndex] as any).theme.fonts) {
+      return;
+    }
+    const newFont = (availablePresets[presetIndex] as any).theme.fonts.sans;
+
+    const potentiallFontToLoad = fonts.filter(font => font.value === newFont)[0];
+
+    if (potentiallFontToLoad && potentiallFontToLoad.google) {
+      this.loadGoogleFont(potentiallFontToLoad.google);
+    }
+  };
+
+  loadGoogleFont(font: string) {
+    // require is inline as webfontloader does not work server side
+    // https://github.com/typekit/webfontloader/issues/383
+    const WebFontLoader = require('webfontloader');
+
+    WebFontLoader.load({
+      google: {
+        families: [font]
+      }
+    });
+  }
+
   toggleSidebar = () => {
     this.setState((state: any) => ({ sidebarVisible: !state.sidebarVisible }));
   };
@@ -187,7 +317,7 @@ export class ThemeEditor extends React.Component<any, any> {
     e.preventDefault();
 
     this.setState((state: any) => {
-      const { openPanels } = state;
+      const openPanels = { ...state.openPanels };
 
       openPanels[key] = !openPanels[key];
       return {
@@ -205,29 +335,45 @@ export class ThemeEditor extends React.Component<any, any> {
             alignItems="center"
             gridGap="xs"
             mb="sm"
-            gridTemplateColumns="1fr auto 1.8fr 20px"
+            gridTemplateColumns={themeMapping.input === 'dropdown' ? '50px auto 1.8fr 20px' : '1.2fr auto 1.8fr 20px'}
             key={themeMapping.themeProps + themeProp}
           >
             <H4 p="xs">{themeProp}</H4>
             {!themeMapping.step && (
               <Box gridColumn={!themeMapping.step ? 'span 3' : ''}>
-                <Input
-                  onChange={this.onChange(themeMapping.themeProps, themeProp)}
-                  type={themeMapping.input}
-                  value={theme[themeMapping.themeProps][themeProp]}
-                  css={() => {
-                    if (themeMapping.input === 'color') {
-                      return {
-                        padding: 0,
-                        width: 60,
-                        borderRadius: 0,
-                        border: 'none'
-                      };
-                    }
+                {themeMapping.input === 'dropdown' && (
+                  <Dropdown onChange={this.onFontChange(themeProp)}>
+                    <DropdownLabel>{theme[themeMapping.themeProps][themeProp]}</DropdownLabel>
 
-                    return {};
-                  }}
-                />
+                    <DropdownMenu>
+                      {themeMapping.options.map((option: any) => (
+                        <DropdownMenuItem key={option.value} value={option}>
+                          {`${option.value} ${option.google ? ' - (Google Font)' : ''}`}
+                        </DropdownMenuItem>
+                      ))}
+                    </DropdownMenu>
+                  </Dropdown>
+                )}
+
+                {themeMapping.input !== 'dropdown' && (
+                  <Input
+                    onChange={this.onChange(themeMapping.themeProps, themeProp)}
+                    type={themeMapping.input}
+                    value={theme[themeMapping.themeProps][themeProp]}
+                    css={() => {
+                      if (themeMapping.input === 'color') {
+                        return {
+                          padding: 0,
+                          width: 60,
+                          borderRadius: 0,
+                          border: 'none'
+                        };
+                      }
+
+                      return {};
+                    }}
+                  />
+                )}
               </Box>
             )}
             {themeMapping.step && (
@@ -242,7 +388,7 @@ export class ThemeEditor extends React.Component<any, any> {
                 />
 
                 <RangeInput
-                  value={theme[themeMapping.themeProps][themeProp]}
+                  defaultValue={theme[themeMapping.themeProps][themeProp]}
                   min={themeMapping.min}
                   max={themeMapping.max}
                   step={themeMapping.step}
@@ -261,7 +407,7 @@ export class ThemeEditor extends React.Component<any, any> {
 
   render() {
     return (
-      <ThemeProvider withoutRoot>
+      <ThemeProvider withoutRoot theme={editorTheme}>
         <ThemeSidebar open={this.state.sidebarVisible} toggle={this.toggleSidebar}>
           <GridLayout
             p="sm"
@@ -269,6 +415,27 @@ export class ThemeEditor extends React.Component<any, any> {
             gridAutoRows="min-content"
             css={{ overflow: 'auto' }}
           >
+            <H2 my="xs" css={{ textAlign: 'center' }}>
+              Theme Editor
+            </H2>
+            <Divider mb="md" />
+            <Details key="presets" open={(this.state.openPanels as any)['presets']}>
+              <Summary onClick={this.toggleCollapsible('presets')}>Presets</Summary>
+              <DetailsContent>
+                <Group my="md" mx="md" display="flex">
+                  {availablePresets.map((preset, index) => (
+                    <Button
+                      key={preset.name}
+                      variant={index === this.state.selectedTheme ? '' : 'secondary'}
+                      flex="1"
+                      onClick={this.onPresetChange(index)}
+                    >
+                      {preset.name}
+                    </Button>
+                  ))}
+                </Group>
+              </DetailsContent>
+            </Details>
             {Object.keys(categories).map(categoryKey => {
               const category = (categories as any)[categoryKey];
               return (
@@ -303,7 +470,10 @@ type ThemeStateState = {
   activeTheme: Theme;
 };
 
-type ChildrenRenderProp = { theme: Theme; updateTheme: (themeDiff: Partial<Theme>) => void };
+type ChildrenRenderProp = {
+  theme: Theme;
+  updateTheme: (themeDiff: Partial<Theme>, useInitial: any) => void;
+};
 
 type ThemeStateProps = {
   initial?: Theme;
@@ -313,16 +483,21 @@ type ThemeStateProps = {
 export class ThemeState extends React.Component<ThemeStateProps, ThemeStateState> {
   constructor(props: ThemeStateProps) {
     super(props);
-
     this.state = {
       activeTheme: props.initial || createTheme()
     };
   }
 
-  updateTheme = (themeDiff: Partial<Theme>) => {
-    this.setState(state => ({
-      activeTheme: mergeThemes(state.activeTheme, themeDiff)
-    }));
+  updateTheme = (themeDiff: Partial<Theme>, { useInitial = false }: { useInitial?: boolean } = {}) => {
+    requestAnimationFrame(() => {
+      this.setState(state => {
+        const themeBase = useInitial ? this.props.initial || createTheme() : state.activeTheme;
+
+        return {
+          activeTheme: mergeThemes(themeBase, themeDiff)
+        };
+      });
+    });
   };
 
   render() {

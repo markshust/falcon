@@ -1,37 +1,36 @@
 import React from 'react';
-import Route from 'react-router-dom/Route';
+import { Redirect } from 'react-router-dom';
 import PropTypes from 'prop-types';
-import { Query } from 'react-apollo';
-import { GET_URL } from '../graphql/url.gql';
+import Query from './Query';
+import { GET_URL } from './../graphql/url.gql';
 import NotFoundRoute from './NotFoundRoute';
 
-const DynamicRoute = props => {
-  const {
-    components,
-    location: { pathname }
-  } = props;
+const DynamicRoute = ({ components, location, loaderComponent, errorComponent }) => {
+  const { pathname } = location;
+  const path = pathname.startsWith('/') ? pathname.substring(1) : pathname;
 
   return (
-    <Query query={GET_URL} variables={{ url: pathname }}>
-      {({ loading, error, data: { url } }) => {
-        if (loading) {
-          return <p>Loading...</p>;
-        }
-
-        if (error) {
-          throw error;
-        }
-
-        if (!url) {
+    <Query query={GET_URL} variables={{ path }} loaderComponent={loaderComponent} errorComponent={errorComponent}>
+      {({ data }) => {
+        if (!data || data.url === null) {
           return <NotFoundRoute />;
         }
 
-        return <Route path="/*" component={components[url.type]} />;
+        const { url } = data;
+        if (url.redirect) {
+          return <Redirect to={`/${url.path}`} />;
+        }
+
+        const Component = components[url.type];
+        if (!Component) {
+          return <p>{`Please register component for '${url.type}' content type!`}</p>;
+        }
+
+        return <Component id={url.id} path={url.path} />;
       }}
     </Query>
   );
 };
-
 DynamicRoute.propTypes = {
   components: PropTypes.shape({}),
   location: PropTypes.shape({

@@ -24,6 +24,7 @@
     "build:cjs": "rollup -c",
     "size": "size-limit",
     "start": "docz dev",
+    "watch": "babel src -d dist -x .ts,.tsx -s --watch",
     "docs": "rimraf .docz && docz build"
   },
   "devDependencies": {
@@ -46,7 +47,6 @@
     "docz-plugin-netlify": "^1.1.4",
     "react": "^16.5.2",
     "react-dom": "^16.5.2",
-    "react-powerplug": "^1.0.0-rc.1",
     "rimraf": "^2.6.1",
     "rollup": "^0.66.2",
     "rollup-plugin-babel": "^4.0.3",
@@ -62,7 +62,8 @@
     "@emotion/styled-base": "^0.10.6",
     "csstype": "^2.5.7",
     "deepmerge": "^2.1.1",
-    "is-plain-object": "^2.0.4"
+    "is-plain-object": "^2.0.4",
+    "react-powerplug": "^1.0.0-rc.1"
   },
   "size-limit": [
     {

@@ -6,10 +6,11 @@ export const Divider = themed({
   defaultTheme: {
     divider: {
       display: 'block',
-      my: 'md',
+      my: 'none',
       border: 'light',
       borderColor: 'primaryDark',
-      opacity: 0.7
+      opacity: 0.7,
+      width: '100%'
     }
   }
 });

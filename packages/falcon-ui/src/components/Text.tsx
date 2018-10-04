@@ -8,7 +8,6 @@ export const Text = themed({
   defaultTheme: {
     text: {
       display: 'block',
-      pb: 'md',
       m: 'none',
       css: ({ ellipsis }) => (ellipsis ? { overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' } : {})
     }

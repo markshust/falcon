@@ -5,12 +5,11 @@ export const defaultBaseTheme = {
     primaryDark: '#e8e8e8',
     primaryText: '#5f6367',
 
-    secondary: '#2196f3',
-    secondaryLight: '#6ec6ff',
-    secondaryDark: '#0069c0',
-    secondaryText: '#ffffff',
-
-    error: '#f44336',
+    secondary: '#A9CF38',
+    secondaryLight: '#CBDE6E',
+    secondaryDark: '#A9CF38',
+    secondaryText: '#fff',
+    error: '#E74C3C',
     errorText: '#000000',
     black: '#000000',
     white: '#ffffff',
@@ -19,8 +18,8 @@ export const defaultBaseTheme = {
 
   breakpoints: {
     xs: 0,
-    sm: 600,
-    md: 960,
+    sm: 640,
+    md: 860,
     lg: 1280,
     xl: 1920
   },
@@ -36,7 +35,7 @@ export const defaultBaseTheme = {
 
   fonts: {
     sans: '"Segoe UI", system-ui, sans-serif',
-    mono: '"SF Mono", "Roboto Mono", Menlo, monospace'
+    mono: '"SF Mono", monospace'
   },
 
   fontSizes: {
@@ -44,7 +43,7 @@ export const defaultBaseTheme = {
     sm: 14,
     md: 16,
     lg: 20,
-    xl: 24,
+    xl: 26,
     xxl: 34,
     xxxl: 48
   },
@@ -102,7 +101,12 @@ export const defaultBaseTheme = {
     long: '375ms'
   },
 
+  // animations: {
+
+  // },
+
   zIndex: {
+    dropDownMenu: 600,
     backdrop: 800,
     sidebar: 1000
   },

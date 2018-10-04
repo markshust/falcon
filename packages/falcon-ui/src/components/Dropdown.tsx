@@ -1,75 +1,130 @@
+import React from 'react';
+import { Toggle } from 'react-powerplug';
+
 import { themed } from '../theme';
+import { Box } from './Box';
+import { Icon } from './Icon';
+
+type DropDownPropsType = {
+  onChange?: (selectedItem: any) => void;
+};
+
+type DropdownContextType = {
+  open?: boolean;
+} & DropDownPropsType;
+
+const DropdownContext = React.createContext<DropdownContextType>({});
+
+const DropdownInnerDOM: React.SFC<DropDownPropsType> = ({ onChange, ...rest }) => (
+  <Toggle>
+    {({ on, toggle, set }) => {
+      const onChangeAndClose = (value: any) => () => {
+        if (onChange) {
+          onChange(value);
+        }
+      };
+
+      return (
+        <DropdownContext.Provider value={{ open: on, onChange: onChangeAndClose }}>
+          <Box {...rest} onClick={toggle} onBlur={() => set(false)} tabIndex={-1} />
+        </DropdownContext.Provider>
+      );
+    }}
+  </Toggle>
+);
 
 export const Dropdown = themed({
-  tag: 'div',
+  tag: DropdownInnerDOM,
 
   defaultTheme: {
     dropdown: {
       display: 'flex',
-      borderRadius: 'xs',
+      borderRadius: 'lg',
       border: 'light',
       borderColor: 'primaryDark',
       css: ({ theme }) => ({
+        userSelect: 'none',
         position: 'relative',
         ':hover': {
           borderColor: theme.colors.primary
+        },
+        ':focus': {
+          outline: 'none'
         }
       })
     }
   }
 });
 
-export const DropdownLabel = themed({
-  tag: 'div',
+const DropdownLabelInnerDOM: React.SFC<any> = ({ children, ...rest }) => (
+  <DropdownContext.Consumer>
+    {({ open }) => (
+      <Box {...rest}>
+        <span>{children}</span>
+        <Icon src={open ? 'dropdownArrowUp' : 'dropdownArrowDown'} fallback={open ? '▴' : '▾'} />
+      </Box>
+    )}
+  </DropdownContext.Consumer>
+);
 
-  defaultProps: {
-    active: false
-  },
+export const DropdownLabel = themed({
+  tag: DropdownLabelInnerDOM,
 
   defaultTheme: {
     dropdownLabel: {
       display: 'flex',
-      p: 'sm',
+      py: 'sm',
+      px: 'md',
       fontSize: 'md',
       justifyContent: 'space-between',
-      css: ({ active, theme }) => ({
-        backgroundColor: active ? theme.colors.primaryDark : 'none',
-        color: active ? theme.colors.primaryText : 'none',
+      css: {
         width: '100%',
         cursor: 'pointer'
-      })
+      }
     }
   }
 });
 
-export const DropdownMenu = themed({
-  tag: 'ul',
+const DropdownMenuInnerDOM: React.SFC<any> = props => (
+  <DropdownContext.Consumer>
+    {({ open }) => <Box as="ul" {...props} display={open ? 'block' : 'none'} />}
+  </DropdownContext.Consumer>
+);
 
-  defaultProps: {
-    open: false
-  },
+export const DropdownMenu = themed({
+  tag: DropdownMenuInnerDOM,
 
   defaultTheme: {
     dropdownMenu: {
       m: 'none',
       p: 'none',
-      borderRadius: 'xs',
+      borderRadius: 'sm',
       boxShadow: 'xs',
-      css: ({ theme, open }) => ({
+      bg: 'white',
+      css: ({ theme }) => ({
         position: 'absolute',
-        zIndex: theme.zIndex.backdrop + 1,
         listStyle: 'none',
-        display: open ? 'block' : 'none',
-        top: '100%',
+        top: 'calc(100% + 1px)',
         left: 0,
-        right: 0
+        right: 0,
+        zIndex: theme.zIndex.dropDownMenu
       })
     }
   }
 });
 
+const DropdownMenuItemInnerDOM: React.SFC<any> = props => (
+  <DropdownContext.Consumer>
+    {({ onChange }) => <Box as="li" {...props} onClick={onChange && onChange(props.value)} />}
+  </DropdownContext.Consumer>
+);
+
 export const DropdownMenuItem = themed({
-  tag: 'li',
+  tag: DropdownMenuItemInnerDOM,
+
+  defaultProps: {
+    value: undefined as any
+  },
 
   defaultTheme: {
     dropdownMenuItem: {

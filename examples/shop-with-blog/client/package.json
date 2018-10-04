@@ -16,10 +16,24 @@
     },
     "transform": {
       "^.+\\.(gql|graphql)$": "jest-transform-graphql",
+      "^.+\\.(ts|tsx)$": "ts-jest/preprocessor.js",
       "^.+\\.(js|jsx|mjs)$": "razzle/config/jest/babelTransform.js",
       "^.+\\.css$": "razzle/config/jest/cssTransform.js",
       "^(?!.*\\.(js|jsx|mjs|css|json)$)": "razzle/config/jest/fileTransform.js"
-    }
+    },
+    "testMatch": [
+      "<rootDir>/src/**/__tests__/**/*.(ts|js)?(x)",
+      "<rootDir>/src/**/?(*.)(spec|test).(ts|js)?(x)"
+    ],
+    "moduleFileExtensions": [
+      "ts",
+      "tsx",
+      "js",
+      "json"
+    ],
+    "collectCoverageFrom": [
+      "src/**/*.{js,jsx,ts,tsx}"
+    ]
   },
   "scripts": {
     "start": "falcon-client start",
@@ -27,6 +41,7 @@
     "start:dbg-brk": "cross-env VERBOSE=true falcon-client start -- --inspect-brk",
     "start:prod": "cross-env NODE_ENV=production node build/server.js",
     "build": "falcon-client build",
+    "size": "cross-env NODE_ANALYZE=true npm run build",
     "test": "falcon-client test --env=jsdom",
     "test:coverage": "falcon-client test --env=jsdom --ci --coverage",
     "lint": "./node_modules/.bin/eslint ./"
@@ -34,6 +49,8 @@
   "dependencies": {
     "@deity/falcon-client": "1.0.0",
     "@deity/falcon-i18n": "1.0.0",
+    "@deity/falcon-theme-editor": "1.0.0",
+    "@deity/falcon-ui": "1.0.0",
     "@deity/falcon-errors": "1.0.0",
     "config": "^2.0.1",
     "graphql": "^14.0.2",
@@ -44,14 +61,17 @@
     "react-apollo": "^2.2.3",
     "react-async-component": "^2.0.0",
     "react-dom": "^16.4.2",
+    "react-feather": "^1.1.3",
     "react-helmet": "^5.2.0",
-    "react-i18next": "^7.11.0",
+    "react-i18next": "^7.13.0",
     "react-router-dom": "^4.3.1"
   },
   "devDependencies": {
     "@deity/eslint-config-falcon": "1.0.0",
+    "@deity/falcon-ecommerce-uikit": "1.0.0",
     "cross-env": "^5.2.0",
     "eslint": "^4.13.1",
-    "jest-transform-graphql": "^2.1.0"
+    "jest-transform-graphql": "^2.1.0",
+    "ts-jest": "^22.4.5"
   }
 }

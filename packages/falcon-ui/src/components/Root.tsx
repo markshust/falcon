@@ -10,6 +10,7 @@ export const Root = themed({
       lineHeight: 'default',
       color: 'primaryText',
       css: {
+        overflowX: 'hidden',
         '*': {
           boxSizing: 'border-box'
         }

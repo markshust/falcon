@@ -27,6 +27,7 @@
   "dependencies": {
     "@deity/falcon-errors": "^1.0.0",
     "@deity/falcon-server-env": "^1.0.0",
+    "@koa/cors": "^2.2.2",
     "@deity/falcon-logger": "^1.0.0",
     "apollo-server-koa": "^2.1.0",
     "eventemitter2": "^5.0.1",

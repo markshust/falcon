@@ -13,16 +13,17 @@
     "src"
   ],
   "peerDependencies": {
+    "@deity/falcon-ui": "^1.0.0",
     "react": "^16.4.2",
-    "react-dom": "^16.4.2",
-    "@deity/falcon-ui": "^1.0.0"
+    "react-dom": "^16.4.2"
   },
   "scripts": {
     "clean": "rimraf dist",
     "prepare": "npm run clean && npm run build:esm && npm run build:cjs && npm run build:tsDeclarations",
     "build:tsDeclarations": "tsc",
     "build:esm": "babel src -d dist -x .ts,.tsx -s",
-    "build:cjs": "rollup -c"
+    "build:cjs": "rollup -c",
+    "watch": "babel src -d dist -x .ts,.tsx -s --watch"
   },
   "devDependencies": {
     "@babel/cli": "^7.0.0",
@@ -46,6 +47,7 @@
     "typescript": "^3.0.3"
   },
   "dependencies": {
-    "@babel/runtime": "^7.0.0"
+    "@babel/runtime": "^7.0.0",
+    "webfontloader": "^1.6.28"
   }
 }

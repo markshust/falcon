@@ -25,13 +25,14 @@ import fetch from 'node-fetch';
  * @return {ApolloClient} ApolloClient instance
  */
 export default (config = {}) => {
-  const addTypename = process.env.NODE_ENV !== 'test';
+  const addTypename = false;
   const {
     extraLinks = [],
     isBrowser = false,
     initialState = {},
     clientState = {},
-    serverUri = 'http://localhost:4000/graphql'
+    serverUri = 'http://localhost:4000/graphql',
+    headers
   } = config;
 
   const cache = new InMemoryCache({ addTypename }).restore(initialState || {});
@@ -42,7 +43,8 @@ export default (config = {}) => {
   const httpLink = createHttpLink({
     uri: serverUri,
     fetch,
-    credentials: 'same-origin'
+    credentials: 'include',
+    headers
   });
 
   return new ApolloClient({
