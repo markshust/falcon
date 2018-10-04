@@ -1,6 +1,6 @@
 {
   "name": "@deity/falcon-client",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "license": "OSL-3.0",
   "main": "index.js",
   "repository": "https://github.com/deity-io/falcon/tree/master/packages/falcon-client",
