@@ -12,9 +12,12 @@ By participating in this project, you and everyone else is expected to uphold to
 
 Please don't file an issue to ask a question. You'll get faster results by using the resources below
 
-We have an official message board with a detailed FAQ and where the community chimes in with helpful advice and answers if you have questions.
+
+Official chat
 
 [Slack Community Channel](http://slack.deity.io)
+
+We also have an official message board with a detailed FAQ and where the community chimes in with helpful advice and answers if you have questions. (Coming soon)
 
 [Community Forum](http://community.deity.io)
 
