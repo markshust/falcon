@@ -5,6 +5,7 @@ const FalconI18nLocalesPlugin = require('@deity/falcon-i18n-webpack-plugin');
 const razzlePluginTypescript = require('razzle-plugin-typescript');
 const WebpackConfigHelpers = require('razzle-dev-utils/WebpackConfigHelpers');
 const AssetsPlugin = require('assets-webpack-plugin');
+const NodeExternals = require('webpack-node-externals');
 const paths = require('./../paths');
 
 const webpackConfigHelper = new WebpackConfigHelpers(paths.razzle.appPath);
@@ -213,9 +214,27 @@ module.exports = appConfig => (config, { target, dev }, webpackObject) => {
   };
 
   setEntryToFalconClient(config, target);
-  extendBabelInclude([paths.falconClient.appSrc, path.join(paths.resolvePackageDir('@deity/falcon-ui'), 'src')])(
-    config
-  );
+  extendBabelInclude([
+    paths.falconClient.appSrc,
+    /\/@deity\/falcon-client\//,
+    path.join(paths.resolvePackageDir('@deity/falcon-ui'), 'src')
+  ])(config);
+
+  if (target === 'node') {
+    config.externals = [
+      NodeExternals({
+        whitelist: [
+          dev ? 'webpack/hot/poll?300' : null,
+          /\.(eot|woff|woff2|ttf|otf)$/,
+          /\.(svg|png|jpg|jpeg|gif|ico)$/,
+          /\.(mp4|mp3|ogg|swf|webp)$/,
+          /\.(css|scss|sass|sss|less)$/,
+          /\/@deity\/falcon-client\//
+        ].filter(x => x)
+      })
+    ];
+  }
+
   addTypeScript(config, { target, dev }, webpackObject);
   fixUrlLoaderFallback(config, target);
   fixAssetsWebpackPlugin(config, target);
