@@ -125,7 +125,6 @@ function addGraphQLTagLoader(config) {
 
   config.module.rules.push({
     test: /\.(graphql|gql)$/,
-    exclude: /node_modules/,
     include: [paths.falconClient.appSrc],
     use: require.resolve('graphql-tag/loader')
   });
