@@ -233,6 +233,7 @@ module.exports = appConfig => (config, { target, dev }, webpackObject) => {
   };
 
   setEntryToFalconClient(config, target);
+  // make sure that webpack handle @deity/falcon-client from shop directory
   extendBabelInclude([paths.falconClient.appSrc, /\/@deity\/falcon-client\//])(config);
   addToNodeExternals([/\/@deity\/falcon-client\//])(config, { target, dev });
 
