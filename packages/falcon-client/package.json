@@ -1,6 +1,6 @@
 {
   "name": "@deity/falcon-client",
-  "version": "0.0.2",
+  "version": "0.0.4",
   "license": "OSL-3.0",
   "main": "index.js",
   "repository": "https://github.com/deity-io/falcon/tree/master/packages/falcon-client",
@@ -88,6 +88,7 @@
     "react-i18next": "^7.11.0",
     "react-test-renderer": "^16.4.2",
     "supertest": "^3.3.0",
+    "webpack-node-externals": "^1.7.2",
     "workbox-build": "^3.5.0"
   },
   "devDependencies": {},
