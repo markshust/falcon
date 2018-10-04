@@ -5,6 +5,10 @@
 [![lerna](https://img.shields.io/badge/maintained%20with-lerna-cc00ff.svg?style=flat-square)](https://lernajs.io/)
 [![code style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg?style=flat-square)](https://github.com/prettier/prettier)
 
+<p align="center">
+  <img alight="center" width="100" src="https://user-images.githubusercontent.com/1118933/46464650-2f40df00-c7c7-11e8-827c-576ce330cb06.png" />
+</p>
+
 ## Introduction
 
 DEITY Falcon is a platform agnostic, stand-alone but modular library to be used with any e-commerce platform.
