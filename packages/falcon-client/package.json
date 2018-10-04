@@ -69,9 +69,7 @@
     "react-google-tag-manager": "2.2.1",
     "resolve": "^1.8.1",
     "serialize-javascript": "^1.5.0",
-    "webpack-bundle-analyzer": "^3.0.2"
-  },
-  "devDependencies": {
+    "webpack-bundle-analyzer": "^3.0.2",
     "@deity/falcon-i18n-webpack-plugin": "0.0.1",
     "assets-webpack-plugin": "^3.9.6",
     "app-manifest-loader": "^2.2.0",
@@ -81,7 +79,6 @@
     "jest-transform-graphql": "^2.1.0",
     "jest-extended": "^0.10.0",
     "graphql-tools": "^4.0.0",
-    "razzle-dev-utils": "2.4.0",
     "razzle-plugin-typescript": "^2.4.0",
     "ts-jest": "^22.4.5",
     "ts-loader": "^5.2.0",
@@ -93,6 +90,7 @@
     "supertest": "^3.3.0",
     "workbox-build": "^3.5.0"
   },
+  "devDependencies": {},
   "peerDependencies": {
     "graphql": "^14.0.2",
     "graphql-tag": "^2.9.2",
