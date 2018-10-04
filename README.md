@@ -90,6 +90,8 @@ Coming soon
 
 ## Development quick start
 
+Yarn and Node are required for core development
+
 #### Adding new dependency for single package
 
 ```
