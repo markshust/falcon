@@ -9,6 +9,7 @@ const ExtensionContainer = require('./containers/ExtensionContainer');
 const { EventEmitter2 } = require('eventemitter2');
 const { resolve: resolvePath } = require('path');
 const { readFileSync } = require('fs');
+const { codes } = require('@deity/falcon-errors');
 
 const BaseSchema = readFileSync(resolvePath(__dirname, './schema.graphql'), 'utf8');
 
@@ -40,6 +41,7 @@ const Events = {
 
 class FalconServer {
   constructor(config) {
+    this.loggableErrorCodes = [codes.INTERNAL_SERVER_ERROR, codes.GRAPHQL_PARSE_FAILED];
     this.config = config;
     const { maxListeners = 20, verboseEvents = false } = this.config;
     if (config.logLevel) {
@@ -50,6 +52,10 @@ class FalconServer {
       maxListeners,
       wildcard: true,
       verboseMemoryLeak: false
+    });
+
+    this.eventEmitter.on(Events.ERROR, async error => {
+      Logger.error(`FalconServer: ${error.message}`, error);
     });
 
     if (verboseEvents) {
@@ -74,6 +80,7 @@ class FalconServer {
     const apolloServerConfig = await this.extensionContainer.createGraphQLConfig({
       schemas: [BaseSchema],
       dataSources: this.apiContainer.dataSources.values(),
+      formatError: error => this.formatGraphqlError(error),
       // inject session to graph context
       // todo: re-think that - maybe we could avoid passing session here and instead pass just required data
       // from session?
@@ -206,6 +213,23 @@ class FalconServer {
 
     this.app.use(this.router.routes()).use(this.router.allowedMethods());
     await this.eventEmitter.emitAsync(Events.AFTER_ENDPOINTS_REGISTERED, this.router);
+  }
+
+  formatGraphqlError(error) {
+    const { code = codes.INTERNAL_SERVER_ERROR } = error.extensions || {};
+
+    if (this.loggableErrorCodes.includes(code)) {
+      setImmediate(async () => {
+        await this.eventEmitter.emitAsync(Events.ERROR, error);
+      });
+    }
+
+    return {
+      ...error,
+      extensions: {
+        code
+      }
+    };
   }
 
   start() {

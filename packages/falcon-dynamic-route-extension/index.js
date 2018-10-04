@@ -91,7 +91,6 @@ module.exports = class DynamicRouteExtension extends Extension {
         if (e.extensions && e.extensions.response && e.extensions.response.status === 404) {
           response = null;
         } else {
-          Logger.error(`Error while fetching dynamic route info: ${e.stack}`);
           throw e;
         }
       }

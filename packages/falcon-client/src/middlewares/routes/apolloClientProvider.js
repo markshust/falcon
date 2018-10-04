@@ -1,8 +1,9 @@
 import { ApolloLink } from 'apollo-link';
+import { onError } from 'apollo-link-error';
 import ApolloClient from '../../service/ApolloClient';
 
 /**
- * Apollo Client Provider middleware, sets ApolloClinet on ctx.state.client
+ * Apollo Client Provider middleware, sets ApolloClient on ctx.state.client
  * @param {Object.<string, {defaults, resolvers}>} - dictionary of Apollo States.
  * @return {function(ctx: object, next: function): Promise<void>} Koa middleware function
  */
@@ -43,9 +44,15 @@ export default ({ clientStates }) => {
       });
     });
 
+    const errorLink = onError(({ networkError }) => {
+      if (networkError) {
+        ctx.response.status = 500;
+      }
+    });
+
     const client = new ApolloClient({
       clientState: mergedClientState,
-      extraLinks: [profileMiddleware],
+      extraLinks: [profileMiddleware, errorLink],
       headers: {
         cookie: ctx.get('cookie')
       }

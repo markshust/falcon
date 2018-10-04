@@ -1,24 +1,37 @@
 import send from 'koa-send';
-import fs from 'fs';
-import path from 'path';
-import resolve from 'resolve';
 import Logger from '@deity/falcon-logger';
+import { existsSync } from 'fs';
+import { resolve as resolvePath, join as joinPath } from 'path';
+import resolve from 'resolve';
+import { codes } from '@deity/falcon-errors';
 
 /**
  * Custom 500 error middleware.
  * @return {function(ctx: object, next: function): Promise<void>} Koa middleware
  */
 export default () => async (ctx, next) => {
-  const { request } = ctx;
   try {
     await next();
   } catch (error) {
-    Logger.error(`Internal Server Error!\n request: ${request.url}\n`, error);
+    const { request, response } = ctx;
+    const { status = 500 } = response || {};
+    const { networkError, extensions = {} } = error;
+    const { code } = extensions;
 
-    let viewsDir = path.resolve(__dirname, './../../', 'views');
-    if (fs.existsSync(path.join(viewsDir, '/errors/500.html')) === false) {
-      viewsDir = path.resolve(resolve.sync('@deity/falcon-client/views/errors/500.html'), './../..');
+    let errorToLog = networkError;
+    if (!errorToLog) {
+      errorToLog = error;
     }
+
+    if (networkError || code !== codes.NOT_FOUND) {
+      Logger.error(`Internal Server Error!\n request: ${request.url}\n`, errorToLog);
+    }
+
+    let viewsDir = resolvePath(__dirname, './../../', 'views');
+    if (existsSync(joinPath(viewsDir, '/errors/500.html')) === false) {
+      viewsDir = resolvePath(resolve.sync('@deity/falcon-client/views/errors/500.html'), './../..');
+    }
+    ctx.status = status;
 
     await send(ctx, '/errors/500.html', { root: viewsDir });
   }
