@@ -47,11 +47,11 @@
     "lint": "./node_modules/.bin/eslint ./"
   },
   "dependencies": {
-    "@deity/falcon-client": "1.0.0",
-    "@deity/falcon-i18n": "1.0.0",
-    "@deity/falcon-theme-editor": "1.0.0",
-    "@deity/falcon-ui": "1.0.0",
-    "@deity/falcon-errors": "1.0.0",
+    "@deity/falcon-client": "0.0.1",
+    "@deity/falcon-i18n": "0.0.1",
+    "@deity/falcon-theme-editor": "0.0.1",
+    "@deity/falcon-ui": "0.0.1",
+    "@deity/falcon-errors": "0.0.1",
     "config": "^2.0.1",
     "graphql": "^14.0.2",
     "graphql-tag": "^2.9.2",
@@ -67,8 +67,8 @@
     "react-router-dom": "^4.3.1"
   },
   "devDependencies": {
-    "@deity/eslint-config-falcon": "1.0.0",
-    "@deity/falcon-ecommerce-uikit": "1.0.0",
+    "@deity/eslint-config-falcon": "0.0.1",
+    "@deity/falcon-ecommerce-uikit": "0.0.1",
     "cross-env": "^5.2.0",
     "eslint": "^4.13.1",
     "jest-transform-graphql": "^2.1.0",

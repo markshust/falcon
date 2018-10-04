@@ -9,12 +9,12 @@
     "start:prod": "cross-env NODE_ENV=production node index.js"
   },
   "dependencies": {
-    "@deity/falcon-blog-extension": "1.0.0",
-    "@deity/falcon-dynamic-route-extension": "1.0.0",
-    "@deity/falcon-magento2-api": "1.0.0",
-    "@deity/falcon-server": "1.0.0",
-    "@deity/falcon-shop-extension": "1.0.0",
-    "@deity/falcon-wordpress-api": "1.0.0",
+    "@deity/falcon-blog-extension": "0.0.1",
+    "@deity/falcon-dynamic-route-extension": "0.0.1",
+    "@deity/falcon-magento2-api": "0.0.1",
+    "@deity/falcon-server": "0.0.1",
+    "@deity/falcon-shop-extension": "0.0.1",
+    "@deity/falcon-wordpress-api": "0.0.1",
     "config": "^2.0.1",
     "cross-env": "^5.2.0"
   },

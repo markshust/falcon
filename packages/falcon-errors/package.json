@@ -3,7 +3,7 @@
   "description": "Meta-package for Falcon error codes",
   "license": "OSL-3.0",
   "main": "index.js",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "repository": "https://github.com/deity-io/falcon/tree/master/packages/falcon-errors",
   "dependencies": {
     "apollo-server-errors": "^2.0.2"

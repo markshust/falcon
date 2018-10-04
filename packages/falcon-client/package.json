@@ -1,6 +1,6 @@
 {
   "name": "@deity/falcon-client",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "license": "OSL-3.0",
   "main": "index.js",
   "repository": "https://github.com/deity-io/falcon/tree/master/packages/falcon-client",
@@ -41,8 +41,8 @@
     ]
   },
   "dependencies": {
-    "@deity/falcon-logger": "1.0.0",
-    "@deity/falcon-errors": "^1.0.0",
+    "@deity/falcon-logger": "0.0.1",
+    "@deity/falcon-errors": "0.0.1",
     "apollo-cache-inmemory": "^1.3.0",
     "apollo-client": "^2.4.2",
     "apollo-link": "^1.2.3",
@@ -72,7 +72,7 @@
     "webpack-bundle-analyzer": "^3.0.2"
   },
   "devDependencies": {
-    "@deity/falcon-i18n-webpack-plugin": "^1.0.0",
+    "@deity/falcon-i18n-webpack-plugin": "0.0.1",
     "assets-webpack-plugin": "^3.9.6",
     "app-manifest-loader": "^2.2.0",
     "apollo-link-schema": "^1.1.1",
