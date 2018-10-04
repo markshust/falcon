@@ -10,5 +10,3 @@ ProductPage.propTypes = {
 };
 
 export default ProductPage;
-
-// export default translate('shop')(Product);
