@@ -1,7 +1,7 @@
 {
   "name": "@deity/falcon-ui",
   "license": "OSL-3.0",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "repository": "https://github.com/deity-io/falcon/tree/master/packages/falcon-ui",
   "main": "dist/falcon-ui.cjs.js",
   "module": "dist/index.js",
@@ -36,7 +36,7 @@
     "@babel/preset-env": "^7.0.0",
     "@babel/preset-react": "^7.0.0",
     "@babel/preset-typescript": "^7.0.0",
-    "@deity/falcon-theme-editor": "1.0.0",
+    "@deity/falcon-theme-editor": "0.0.1",
     "@mdx-js/tag": "^0.15.0",
     "@types/deepmerge": "^2.1.0",
     "@types/react": "^16.4.14",

@@ -1,6 +1,6 @@
 {
   "name": "create-falcon-app",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "description": "CLI tool to bootstrap Falcon applications",
   "repository": "https://github.com/deity-io/falcon/tree/master/packages/create-falcon-app",
   "license": "OSL-3.0",

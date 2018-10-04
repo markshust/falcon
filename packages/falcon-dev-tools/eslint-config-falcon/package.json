@@ -1,9 +1,9 @@
 {
   "name": "@deity/eslint-config-falcon",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "license": "OSL-3.0",
   "main": "index.js",
-  "repository": "git@github.com:deity-io/falcon.git",
+  "repository": "https://github.com/deity-io/falcon/tree/master/packages/falcon-dev-tools/eslint-config-falcon",
   "dependencies": {
     "babel-eslint": "^8.2.6",
     "eslint-config-airbnb": "^16.0.0",
