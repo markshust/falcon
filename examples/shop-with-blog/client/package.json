@@ -47,7 +47,7 @@
     "lint": "./node_modules/.bin/eslint ./"
   },
   "dependencies": {
-    "@deity/falcon-client": "0.0.1",
+    "@deity/falcon-client": "^0.0.2",
     "@deity/falcon-i18n": "0.0.1",
     "@deity/falcon-theme-editor": "0.0.1",
     "@deity/falcon-ui": "0.0.1",
