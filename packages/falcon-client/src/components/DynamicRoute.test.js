@@ -39,7 +39,7 @@ describe('DynamicRoute', () => {
     );
 
     expect(App.toJSON().children).toContain('Loading...');
-    await wait(0);
+    await wait(100);
 
     expect(App.toJSON().children).toContain('Bar');
   });
