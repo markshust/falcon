@@ -11,7 +11,7 @@
 
 ## Introduction
 
-DEITY Falcon is a platform agnostic, stand-alone but modular library to be used with any e-commerce platform.
+DEITY Falcon is a platform agnostic PWA, stand-alone but modular library to be used with any e-commerce platform.
 
 #### Technologies inside
 
