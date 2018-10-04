@@ -20,12 +20,12 @@ const DynamicRoute = ({ components, location, loaderComponent, errorComponent })
           return <Redirect to={`/${url.path}`} />;
         }
 
-        const component = components[url.type];
-        if (!component) {
+        const Component = components[url.type];
+        if (!Component) {
           return <p>{`Please register component for '${url.type}' content type!`}</p>;
         }
 
-        return React.createElement(component, { id: url.id, path: url.path });
+        return <Component id={url.id} path={url.path} />;
       }}
     </Query>
   );

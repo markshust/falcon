@@ -1,26 +1,18 @@
 import React from 'react';
 import renderer from 'react-test-renderer';
 import { Switch } from 'react-router-dom';
-import gql from 'graphql-tag';
+import { asyncComponent } from 'react-async-component';
 import { FalconClientMock } from '../../test-utils';
 import { wait } from '../../../../test/helpers';
 import DynamicRoute from './DynamicRoute';
+import { GET_URL } from './../graphql/url.gql';
 
 describe('DynamicRoute', () => {
   it('Should render DynamicRoute content', async () => {
     const mocks = [
       {
         request: {
-          query: gql`
-            query URL($path: String!) {
-              url(path: $path) {
-                type
-                redirect
-                id
-                path
-              }
-            }
-          `,
+          query: GET_URL,
           variables: { path: 'test' }
         },
         result: {
@@ -35,19 +27,20 @@ describe('DynamicRoute', () => {
       <FalconClientMock apollo={{ mocks }} router={{ initialEntries: ['/test'] }}>
         <Switch>
           <DynamicRoute
+            loaderComponent={() => <span>Loading...</span>}
             components={{
-              foo: () => () => <p>Bar</p>
+              foo: asyncComponent({
+                resolve: () => import('./../__mocks__/pages/Foo')
+              })
             }}
           />
         </Switch>
       </FalconClientMock>
     );
 
-    const tree = App.toJSON();
-    expect(tree.children).toContain('Loading...');
+    expect(App.toJSON().children).toContain('Loading...');
     await wait(0);
 
-    const paragraphs = App.root.findByType('p');
-    expect(paragraphs.children).toContain('Bar');
+    expect(App.toJSON().children).toContain('Bar');
   });
 });

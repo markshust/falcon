@@ -1,5 +1,5 @@
-query GET_URL($url: String!) {
-  url(url: $url) {
+query GET_URL($path: String!) {
+  url(path: $path) {
     type
     redirect
     id

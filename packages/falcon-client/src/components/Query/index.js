@@ -1,8 +1,8 @@
 import React from 'react';
 import { Query } from 'react-apollo';
 
-export default ({ query, variables, children, loaderComponent, errorComponent }) => (
-  <Query query={query} variables={variables}>
+export default ({ query, variables, children, loaderComponent, errorComponent, ...rest }) => (
+  <Query query={query} variables={variables} {...rest}>
     {({ loading, error, data }) => {
       if (loading) {
         return loaderComponent ? React.createElement(loaderComponent) : null;
