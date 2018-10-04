@@ -201,6 +201,25 @@ function addWebManifest(config, target) {
   }
 }
 
+function addToNodeExternals(whitelist) {
+  return (config, { target, dev }) => {
+    if (target === 'node') {
+      config.externals = [
+        NodeExternals({
+          whitelist: [
+            dev ? 'webpack/hot/poll?300' : null,
+            /\.(eot|woff|woff2|ttf|otf)$/,
+            /\.(svg|png|jpg|jpeg|gif|ico)$/,
+            /\.(mp4|mp3|ogg|swf|webp)$/,
+            /\.(css|scss|sass|sss|less)$/,
+            ...whitelist
+          ].filter(x => x)
+        })
+      ];
+    }
+  };
+}
+
 /**
  * falcon-client and razzle integration plugin
  * @param {{i18n: i18nPluginConfig }} appConfig webpack config
@@ -214,26 +233,8 @@ module.exports = appConfig => (config, { target, dev }, webpackObject) => {
   };
 
   setEntryToFalconClient(config, target);
-  extendBabelInclude([
-    paths.falconClient.appSrc,
-    /\/@deity\/falcon-client\//,
-    path.join(paths.resolvePackageDir('@deity/falcon-ui'), 'src')
-  ])(config);
-
-  if (target === 'node') {
-    config.externals = [
-      NodeExternals({
-        whitelist: [
-          dev ? 'webpack/hot/poll?300' : null,
-          /\.(eot|woff|woff2|ttf|otf)$/,
-          /\.(svg|png|jpg|jpeg|gif|ico)$/,
-          /\.(mp4|mp3|ogg|swf|webp)$/,
-          /\.(css|scss|sass|sss|less)$/,
-          /\/@deity\/falcon-client\//
-        ].filter(x => x)
-      })
-    ];
-  }
+  extendBabelInclude([paths.falconClient.appSrc, /\/@deity\/falcon-client\//])(config);
+  addToNodeExternals([/\/@deity\/falcon-client\//])(config, { target, dev });
 
   addTypeScript(config, { target, dev }, webpackObject);
   fixUrlLoaderFallback(config, target);
